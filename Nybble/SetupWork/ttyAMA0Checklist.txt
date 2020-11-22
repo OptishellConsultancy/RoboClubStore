@@ -1,0 +1,228 @@
+https://www.petoi.com/forum/hardware/how-to-setup-raspberry-pi-for-programming-nybble-without-ftdi-module
+
+How-to setup Raspberry Pi for programming Nybble without FTDI module
+
+The purpose of this guide is to help people in setting up their Raspberry Pi - NyboardV0 as a stand-alone unit for programming and controlling Nybble. With the described steps you will end up with a setup that doesn't need any external connections (apart from WiFi connection to the Raspberry Pi). 
+
+The steps will go through setting up a vanilla Raspberry Pi (RPi 3A+, 3B+ and Zero W have been tested). The intention is not to describe how to setup a hardened extremely secure solution, that's a scope of many other instructions throughout the internet. Also, the only important modification to Arduino IDE / avrdude is the installation of the autoreset function. If you have already setup your system then you can just read through steps #42-#49 and you should be good to go without the external FTDI module.
+
+As for the physical hardware change you need to connect one of the GPIO pins of your Raspberry Pi to the NyBoardV0 FTDI connector's DTR pin. I have used GPIO 17 pin (physical pin 11) by soldering a connector to the back side of the RPi. You can then connect this connector (pin 11 / GPIO 17) to the FTDI socket DTR pin on NyboardV0 board.
+
+So here goes the steps (again you can skip to steps #42-#49 if you just need the RPi - Arduino programming addition):
+
+1) Download Raspbian Stretch with Desktop (for Arduino IDE compatibility) (https://www.raspberrypi.org/downloads/raspbian/)
+
+2) Download Etcher (https://etcher.io/)
+
+3) Write Raspbian Strecth to an SD disk using Etcher
+
+4) Create file "wpa_supplicant.conf" to the root of the SD card (called 'boot' partition) with the following contents (change the country to match your country code and add multiple network sections if you have multiple Wifi SSIDs as in the example):
+
+   country=FI
+
+   ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
+
+   update_config=1
+
+   network={
+
+   ssid="MyWiFiNetwork"
+
+   psk="aVeryStrongPassword"
+
+   key_mgmt=WPA-PSK
+
+   }
+
+   network={
+
+   ssid="MyWiFiNetwork2"
+
+   psk="aVeryStrongPassword2"
+
+   key_mgmt=WPA-PSK
+
+   }
+
+5) cmd prompt -> rename wpa_supplicant.conf.txt to wpa_supplicant.conf
+
+6) Create file called "ssh" to the root of the SD card (again 'boot' partition).
+
+    Note! The file can be empty as long as it exists
+
+7) Insert SD to RPI, power it up and find IP address (for example from your Router)
+
+    Note! If you have access to Linux / nmap then you can use the following (similar):
+
+    sudo nmap -sP 192.168.1.0/24 | awk '/^Nmap/{ipaddress=$NF}/B8:27:EB/{print ipaddress}'
+
+8) ssh to the pi
+
+   login: pi
+
+   password: raspberry
+
+9) Change default password
+
+   passwd
+
+10) sudo apt-get install vim git -y
+
+11) sudo vim /etc/dhcpcd.conf
+
+   Add to the end of the file (change to desired static IP address / router IP / DNS IP...):
+
+       interface wlan0
+
+       static ip_address=192.168.1.234
+
+       static routers=192.168.1.1
+
+       static domain_name_servers=192.168.1.1
+
+12) sudo service dhcpcd restart
+
+13) sudo apt-get update
+
+14) sudo apt-get dist-upgrade -y
+
+15) sudo apt clean
+
+16) sudo raspi-config
+
+    Localization -> I2 Change Timezone -> Europe/Helsinki     (or whatever your Timezone is)
+
+   Network Options -> Hostname -> Set your desired hostname
+
+   Interfacing Options -> SPI -> Enable
+
+   Interfacing Options -> I2C -> Enable
+
+   Interfacing Options -> Serial -> Disable login, Enable hardware
+
+   Interfacing Options -> VNC -> Enable (this will not be needed in full headless mode...)
+
+   Advanced Options -> Expand Filesystem
+
+   Advanced Options -> Resolution -> Change to desired resolution
+
+17) sudo vim /boot/config.txt
+
+   Add the following to the end to disable bluetooth and allow GPIO 14 and GPIO 15 to be 
+used for UART (serial communication)
+
+      dtoverlay=pi3-disable-bt
+
+18) sudo systemctl disable hciuart
+
+19) sudo reboot
+
+20) mkdir ~/Petoi
+
+21) cd ~/Petoi
+
+22) git clone https://github.com/PetoiCamp/OpenCat.git
+
+23) Download Arduino IDE for Linux ARM from https://www.arduino.cc/en/main/software
+
+   Note! The version you can install with "apt-get install arduino" is too old at the time of writing!
+
+24) cd ~/Downloads/
+25) xz -d arduino-1.8.8-linuxarm.tar.xz
+
+26) mv arduino-1.8.8-linuxarm.tar ~/Petoi
+
+27) cd ~/Petoi
+
+28) tar xvf arduino-1.8.8-linuxarm.tar
+
+29) cd ~/Petoi/arduino-1.8.8
+
+30) ./install.sh
+
+31) vim ~/Petoi/arduino-1.8.8/hardware/arduino/avr/boards.txt
+
+   Add the following code as instructed by Petoi Assembly Instructions
+
+  ## Arduino Pro or Pro Mini (5V, 20 MHz) w/ ATmega328P
+
+  ## --------------------------------------------------
+
+  pro.menu.cpu.20MHzatmega328=ATmega328P (5V, 20 MHz) NyBoard
+
+  pro.menu.cpu.20MHzatmega328.upload.maximum_size=30720
+
+  pro.menu.cpu.20MHzatmega328.upload.maximum_data_size=2048
+
+  pro.menu.cpu.20MHzatmega328.upload.speed=57600
+
+  pro.menu.cpu.20MHzatmega328.bootloader.low_fuses=0xFF
+
+  pro.menu.cpu.20MHzatmega328.bootloader.high_fuses=0xDA
+
+  pro.menu.cpu.20MHzatmega328.bootloader.extended_fuses=0xFD
+
+  pro.menu.cpu.20MHzatmega328.bootloader.file=atmega/ATmega328_20MHz.hex
+
+  pro.menu.cpu.20MHzatmega328.build.mcu=atmega328p
+
+  pro.menu.cpu.20MHzatmega328.build.f_cpu=20000000L
+
+32) cp ~/Petoi/OpenCat/Resources/NyBoard/bootloaders/atmega/ATmega328_20MHz.hex ~/Petoi/arduino-1.8.8/hardware/arduino/avr/bootloaders/atmega/
+
+33) cd ~/Petoi
+34) wget https://github.com/jrowberg/i2cdevlib/archive/master.zip
+
+35) unzip master.zip
+
+36) rm master.zip
+
+37) wget https://github.com/maniacbug/MemoryFree/archive/master.zip
+
+38) unzip master.zip
+
+39) rm master.zip
+
+40) Start Arduino IDE
+
+   ~/Petoi/arduino-1.8.8/arduino
+
+    Tools - Manage Libraries
+
+       Install  Adafruit PWM Servo Driver, IRremote and QList
+
+    Sketch -> Include Library -> Add .ZIP Library...
+
+      ~/Petoi/i2cdevlib-master/Arduino/I2Cdev
+
+      ~/Petoi/i2cdevlib-master/Arduino/MPU6050
+
+      ~/Petoi/MemoryFree-master
+
+    Tools -> Board: "Arduino Pro or Pro Mini"
+
+    Tools -> Processor: "ATmega328P (5V, 20 MHz) NyBoard"
+
+    Tools -> Port: /dev/ttyAMA0
+
+41) cd ~/Petoi
+
+42) git clone https://github.com/deanmao/avrdude-rpi.git
+
+43) cd ~/Petoi/avrdude-rpi
+
+44) sudo cp autoreset /usr/bin/
+
+   Note! autoreset already has the default DTR reset pin set at (physical) pin 11, which I've used also. You can change it if you want/need.
+
+45) sudo cp avrdude-autoreset /usr/bin/
+
+46) cd ~/Petoi/arduino-1.8.8/hardware/tools/avr/bin
+
+47) sudo cp avrdude /usr/bin/avrdude-original
+
+48) mv avrdude avrdude-ORIGINAL
+
+49) ln -s /usr/bin/avrdude-autoreset ./avrdude
+
+All done! Now you can use Arduino IDE as you would use it with the external FTDI module. "autoreset" script takes care of sending the proper DTR signal at the proper time through RPi GPIO 17 (physical pin 11), which you wire to NybbleV0 board's FTDI socket's DTR pin.
