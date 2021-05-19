@@ -1,0 +1,10 @@
+smb username: pi
+smb paassword:
+Homeworld19994!
+
+
+
+http://coffeetime.solutions/share-folder-raspberry-pi-access-windows/
+
+
+\\JamiesPi.Local

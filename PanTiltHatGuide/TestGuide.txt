@@ -1,0 +1,4 @@
+Notes:
+After running: sudo apt-get install pimoroni
+navigate to : 
+/home/pi/Pimoroni/pantilthat/
