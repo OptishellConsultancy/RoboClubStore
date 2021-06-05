@@ -41,8 +41,14 @@ void loop() {
       Serial.print("Executing serial test..");
       int servoIndexes[] = {0,1};
       ServoTest(servoIndexes);
+    }
   }
-  }
+  if(OLEDDisplayEnabled){
+    if(DebugEnabled){
+      
+    }
+    }
+    }
 
   if(UltrasonicEnabled)  {
     UpdateUltrasonicIC2Data(DebugEnabled);

@@ -1,0 +1,9 @@
+GPS moudle notes
+
+The PA1010D module is compataible with both Raspberry Pi and Arduino.
+For saving power and keeping the interfaces clean, I have decided to use ardunio.
+This means all sensors/controls (other than the simple pan/tilt hat for the camera) can be directed to one ic2 interface 
+to the raspberry pi via the voltage leveler.
+
+
+https://learn.adafruit.com/adafruit-mini-gps-pa1010d-module/arduino (Ignore the different style of chip, it's the same)

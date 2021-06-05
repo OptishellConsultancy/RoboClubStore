@@ -39,15 +39,20 @@ char LSM30D3ReportBuffer[80];
 
 //PortMappings:
 
-bool GPSEnabled;
 bool GPSSetupRequired = true;
-bool LSM303D_CompassAccelMagnetoEnabled;
 bool LSM303D_CompassAccelMagnetoInitRequired = true;
+bool OLEDDisplaySetupRequired = true;
+//
+bool GPSEnabled;
+bool LSM303D_CompassAccelMagnetoEnabled;
 bool ServoControllerEnabled;
+bool OLEDDisplayEnabled;
+//
 int GPSEnabledFeatureNumber = 0;
 int LSM303D_CompassAccelMagnetoEnabledNumber = 1;
 int ServoControllerNumber = 2;
-
+int OLEDDisplayNumber = 3;
+//
 
 //Ultrasonic vars
 // defines pins numbers

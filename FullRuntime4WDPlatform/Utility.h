@@ -82,11 +82,11 @@ bool PassCommandChk(String str){
 }
 
 
-void EnableFeatureMap(int featureToEnable)
-{
+void EnableFeatureMap(int featureToEnable){
   GPSEnabled = (featureToEnable == GPSEnabledFeatureNumber);
   LSM303D_CompassAccelMagnetoEnabled = (featureToEnable == LSM303D_CompassAccelMagnetoEnabledNumber);
   ServoControllerEnabled = (featureToEnable == ServoControllerNumber);
+  OLEDDisplayEnabled = (featureToEnable == OLEDDisplayNumber)
   //
   if(GPSEnabled){
     Serial.print("GPSEnabled\r\n");
@@ -97,10 +97,12 @@ void EnableFeatureMap(int featureToEnable)
   if(ServoControllerEnabled){
     Serial.print("ServoControllerEnabled  Enabled\r\n");
   }
+  if(OLEDDisplayEnabled){
+    Serial.print("OLEDDisplayEnabled  Enabled\r\n");
+  }
 }
 //----------------------------------------
-void ReadSerialCommForCommmandAndExecute()
-{
+void ReadSerialCommForCommmandAndExecute(){
   ReadCommand();
   if(commandEntered)  { 
       Serial.print("ReadSerialCommForCommmandAndExecute() -> Command entered");
