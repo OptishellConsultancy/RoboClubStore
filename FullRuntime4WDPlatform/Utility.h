@@ -86,7 +86,11 @@ void EnableFeatureMap(int featureToEnable){
   GPSEnabled = (featureToEnable == GPSEnabledFeatureNumber);
   LSM303D_CompassAccelMagnetoEnabled = (featureToEnable == LSM303D_CompassAccelMagnetoEnabledNumber);
   ServoControllerEnabled = (featureToEnable == ServoControllerNumber);
+<<<<<<< HEAD
+  OLEDDisplayEnabled = (featureToEnable == OLEDDisplayNumber);
+=======
   OLEDDisplayEnabled = (featureToEnable == OLEDDisplayNumber)
+>>>>>>> ee36eb3d15e3e9c6722b100c2536eac4bcdb6a64
   //
   if(GPSEnabled){
     Serial.print("GPSEnabled\r\n");

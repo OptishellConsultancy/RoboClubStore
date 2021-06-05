@@ -47,6 +47,10 @@ bool GPSEnabled;
 bool LSM303D_CompassAccelMagnetoEnabled;
 bool ServoControllerEnabled;
 bool OLEDDisplayEnabled;
+<<<<<<< HEAD
+bool FourWDHatEnabled = false;
+=======
+>>>>>>> ee36eb3d15e3e9c6722b100c2536eac4bcdb6a64
 //
 int GPSEnabledFeatureNumber = 0;
 int LSM303D_CompassAccelMagnetoEnabledNumber = 1;
@@ -63,7 +67,6 @@ const int echoPin = 10;
 long duration;
 int distance;
 //4WD commands/Port maps
-bool FourWDHatEnabled = false;
 const int E1 = 3; ///<Motor1 Speed
 const int E2 = 11;///<Motor2 Speed
 const int E3 = 5; ///<Motor3 Speed

@@ -14,15 +14,14 @@ void setup() {
    pwm.begin();
    pwm.setPWMFreq(FREQUENCY);  // Analog servos run at ~60 Hz updates
    //
+   DiscoverHubPortDevices();
    Serial.print("Please provide a feature number, e.g Feature2.\r\n");
    Serial.print("Feature0. : GPS.\r\n");
    Serial.print("Feature1. : Compass + Accel + Magneto.\r\n");
    Serial.print("Feature2. : ServoControllerNumber .\r\n");
-   
-
-   //SetupOLEDTest();
-
-}
+   Serial.print("Feature3. : OLEDSCreen .\r\n");
+   Serial.print("Feature4. : 4WD Platform control .\r\n");   
+  }
 
 
 
@@ -44,6 +43,11 @@ void loop() {
     }
   }
   if(OLEDDisplayEnabled){
+<<<<<<< HEAD
+    if(DebugEnabled){ 
+      SetupOLEDTest();
+    }
+=======
     if(DebugEnabled){
       
     }
@@ -52,10 +56,15 @@ void loop() {
 
   if(UltrasonicEnabled)  {
     UpdateUltrasonicIC2Data(DebugEnabled);
+>>>>>>> ee36eb3d15e3e9c6722b100c2536eac4bcdb6a64
   }
 
   if(FourWDHatEnabled){
     Update4WDShieldCommands(DebugEnabled);
+  }
+
+   if(UltrasonicEnabled)  {
+    UpdateUltrasonicIC2Data(DebugEnabled);
   }
 
 
