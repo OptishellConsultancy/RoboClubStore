@@ -15,6 +15,13 @@ void setup() {
    pwm.setPWMFreq(FREQUENCY);  // Analog servos run at ~60 Hz updates
    //
    Serial.print("Please provide a feature number, e.g Feature2.\r\n");
+   Serial.print("Feature0. : GPS.\r\n");
+   Serial.print("Feature1. : Compass + Accel + Magneto.\r\n");
+   Serial.print("Feature2. : ServoControllerNumber .\r\n");
+   
+
+   //SetupOLEDTest();
+
 }
 
 
@@ -26,7 +33,7 @@ void loop() {
     UpdateGPSData(DebugEnabled);
   }
    if(LSM303D_CompassAccelMagnetoEnabled) {
-    UpdateCompassAccelMagnetoData(DebugEnabled);
+    LSM303D_UpdateCompassAccelMagnetoData(DebugEnabled);
   }
   if(ServoControllerEnabled){
     UpdateServoCommands(DebugEnabled);

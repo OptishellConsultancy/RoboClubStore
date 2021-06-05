@@ -3,9 +3,15 @@
 #include <Arduino.h>
 #include "TCA9548A.h"
 #include <Adafruit_GPS.h>
+#include <LSM303.h>
 //----
 String ReadString;
 TCA9548A I2CMux;  
+LSM303 compass;
+// Set GPSECHO to 'false' to turn off echoing the GPS data to the Serial console
+// Set to 'true' if you want to debug and listen to the raw GPS sentences
+#define GPSECHO false
+Adafruit_GPS GPS;
 #include <Wire.h>
 #include <Adafruit_PWMServoDriver.h>
 
@@ -27,10 +33,16 @@ int idxOpenPort = 0;
 int idxDot = 0;
 int portToOpen;
 
+
+
+char LSM30D3ReportBuffer[80];
+
 //PortMappings:
 
 bool GPSEnabled;
+bool GPSSetupRequired = true;
 bool LSM303D_CompassAccelMagnetoEnabled;
+bool LSM303D_CompassAccelMagnetoInitRequired = true;
 bool ServoControllerEnabled;
 int GPSEnabledFeatureNumber = 0;
 int LSM303D_CompassAccelMagnetoEnabledNumber = 1;

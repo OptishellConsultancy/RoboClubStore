@@ -3,7 +3,7 @@
 void DiscoverHubPortDevices() {
   uint8_t error, i2cAddress, devCount, unCount;
  
-  Serial.println("Scanning...");
+  Serial.println("DiscoverHubPortDevices() -> Scanning...");
  
   devCount = 0;
   unCount = 0;
@@ -103,6 +103,7 @@ void ReadSerialCommForCommmandAndExecute()
 {
   ReadCommand();
   if(commandEntered)  { 
+      Serial.print("ReadSerialCommForCommmandAndExecute() -> Command entered");
     commandEntered = false;
     if(PassCommandChk(ReadString))
     {        
