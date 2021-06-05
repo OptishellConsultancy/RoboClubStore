@@ -1,39 +1,44 @@
 #include "VarsInit.h"
 //Util-----------------------------------
-void DiscoverHubPortDevices() {
+void DiscoverHubPortDevices()
+{
   uint8_t error, i2cAddress, devCount, unCount;
- 
+
   Serial.println("DiscoverHubPortDevices() -> Scanning...");
- 
+
   devCount = 0;
   unCount = 0;
-  for(i2cAddress = 1; i2cAddress < 127; i2cAddress++ )
+  for (i2cAddress = 1; i2cAddress < 127; i2cAddress++)
   {
     Wire.beginTransmission(i2cAddress);
     error = Wire.endTransmission();
- 
+
     if (error == 0)
     {
       Serial.print("I2C device found at 0x");
-      if (i2cAddress<16) Serial.print("0");
-      Serial.println(i2cAddress,HEX);
+      if (i2cAddress < 16)
+        Serial.print("0");
+      Serial.println(i2cAddress, HEX);
       devCount++;
     }
-    else if (error==4)
+    else if (error == 4)
     {
       Serial.print("Unknow error at 0x");
-      if (i2cAddress<16) Serial.print("0");
-      Serial.println(i2cAddress,HEX);
+      if (i2cAddress < 16)
+        Serial.print("0");
+      Serial.println(i2cAddress, HEX);
       unCount++;
-    }    
+    }
   }
- 
+
   if (devCount + unCount == 0)
     Serial.println("No I2C devices found\n");
-  else {
+  else
+  {
     Serial.print(devCount);
     Serial.print(" device(s) found");
-    if (unCount > 0) {
+    if (unCount > 0)
+    {
       Serial.print(", and unknown error in ");
       Serial.print(unCount);
       Serial.print(" address");
@@ -42,77 +47,99 @@ void DiscoverHubPortDevices() {
   }
   Serial.println();
 }
-void ReadCommand(){
-  while (Serial.available())   {
-    delay(3);  
-    if (Serial.available() >0) {
-      char c = Serial.read();  
-      ReadString += c; 
+void ReadCommand()
+{
+  while (Serial.available())
+  {
+    delay(3);
+    if (Serial.available() > 0)
+    {
+      char c = Serial.read();
+      ReadString += c;
     }
-    if (ReadString.length() >0) {      
-      commandEntered = true;   
+    if (ReadString.length() > 0)
+    {
+      commandEntered = true;
     }
   }
 }
 
-void PrintfOneVar(int len, char* completeStr, int var) {
-  char buffer [len];
-  int n = sprintf (buffer, completeStr, var);
+void PrintfOneVar(int len, char *completeStr, int var)
+{
+  char buffer[len];
+  int n = sprintf(buffer, completeStr, var);
   Serial.print(buffer);
   Serial.print("\r\n");
   return;
 }
 //-----------------------------------
-bool PassCommandChk(String str){
+bool PassCommandChk(String str)
+{
 
   idxOpenPort = str.indexOf("Feature");
   idxDot = str.indexOf(".");
   int strLen = str.length();
-  if(idxOpenPort >= 0 && idxDot >=0){  
-    String numberChars = str.substring(7,idxDot);
+  if (idxOpenPort >= 0 && idxDot >= 0)
+  {
+    String numberChars = str.substring(7, idxDot);
     portToOpen = numberChars.toInt();
-    PrintfOneVar(100,"Enabling Feature: %d.",portToOpen);  
+    PrintfOneVar(100, "Enabling Feature: %d.", portToOpen);
     return true;
   }
-  else {
+  else
+  {
     Serial.print("Please provide a port number, e.g Feature0.\r\n");
     return false;
-  } 
-   commandEntered = false;
+  }
+  commandEntered = false;
 }
 
-
-void EnableFeatureMap(int featureToEnable){
+void EnableFeatureMap(int featureToEnable)
+{
   GPSEnabled = (featureToEnable == GPSEnabledFeatureNumber);
   LSM303D_CompassAccelMagnetoEnabled = (featureToEnable == LSM303D_CompassAccelMagnetoEnabledNumber);
   ServoControllerEnabled = (featureToEnable == ServoControllerNumber);
-<<<<<<< HEAD
   OLEDDisplayEnabled = (featureToEnable == OLEDDisplayNumber);
-=======
-  OLEDDisplayEnabled = (featureToEnable == OLEDDisplayNumber)
->>>>>>> ee36eb3d15e3e9c6722b100c2536eac4bcdb6a64
+  FourWDHatEnabled = (featureToEnable == FourWDriveControlNumber);
+  UltrasonicEnabled = (featureToEnable == UltrasonicNumber);
   //
-  if(GPSEnabled){
+  if (GPSEnabled)
+  {
     Serial.print("GPSEnabled\r\n");
   }
-  if(LSM303D_CompassAccelMagnetoEnabled){
+  if (LSM303D_CompassAccelMagnetoEnabled)
+  {
     Serial.print("LSM303D_CompassAccelMagnetoEnabled Enabled\r\n");
   }
-  if(ServoControllerEnabled){
+  if (ServoControllerEnabled)
+  {
     Serial.print("ServoControllerEnabled  Enabled\r\n");
   }
-  if(OLEDDisplayEnabled){
+  if (OLEDDisplayEnabled)
+  {
     Serial.print("OLEDDisplayEnabled  Enabled\r\n");
+  }
+
+  if (FourWDHatEnabled)
+  {
+    Serial.print("FourWDHatEnabled  Enabled\r\n");
+  }
+
+  if(UltrasonicEnabled)
+  {
+     Serial.print("UltrasonicEnabled  Enabled\r\n");
   }
 }
 //----------------------------------------
-void ReadSerialCommForCommmandAndExecute(){
+void ReadSerialCommForCommmandAndExecute()
+{
   ReadCommand();
-  if(commandEntered)  { 
-      Serial.print("ReadSerialCommForCommmandAndExecute() -> Command entered");
+  if (commandEntered)
+  {
+    Serial.print("ReadSerialCommForCommmandAndExecute() -> Command entered");
     commandEntered = false;
-    if(PassCommandChk(ReadString))
-    {        
+    if (PassCommandChk(ReadString))
+    {
       ReadString = "";
       EnableFeatureMap(portToOpen);
       DiscoverHubPortDevices();

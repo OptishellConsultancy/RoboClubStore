@@ -348,7 +348,6 @@ void testanimate(const uint8_t *bitmap, uint8_t w, uint8_t h) {
   }
 }
 
-
 void SetupOLEDTest() {
   //Serial.begin(9600);
 

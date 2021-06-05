@@ -2,7 +2,7 @@
 int pulseWidth(int angle)
 {
   int pulse_wide, analog_value;
-  pulse_wide   = map(angle, 0, 180, MIN_PULSE_WIDTH, MAX_PULSE_WIDTH);
+  pulse_wide = map(angle, 0, 180, MIN_PULSE_WIDTH, MAX_PULSE_WIDTH);
   analog_value = int(float(pulse_wide) / 1000000 * FREQUENCY * 4096);
   Serial.println(analog_value);
   return analog_value;
@@ -39,28 +39,32 @@ void DoServoTest(int servoIndex)
 void DoServosParallelTest(int servoIndexes[], int servoIndexesCount, int delayms)
 {
   int commands[] = {0, 45, 90, 135, 180, 135, 90, 45};
-  for(int c = 0; c < 8; c++ )
+  for (int c = 0; c < 8; c++)
   {
-    for(int i = 0; i < servoIndexesCount; i++ )
+    for (int i = 0; i < servoIndexesCount; i++)
     {
       pwm.setPWM(servoIndexes[i], 0, pulseWidth(commands[c]));
       //pwm.setPWM(0, 0, commands(45));
-      //DoServoTest(servoIndexes[i]);     
+      //DoServoTest(servoIndexes[i]);
     }
     delay(delayms);
   }
 }
 
-void ServoTest(int servoIndexes[]) {
-  DoServosParallelTest(servoIndexes,2,200);
+void ServoTest(int servoIndexes[])
+{
+  DoServosParallelTest(servoIndexes, 2, 200);
 }
 
-void UpdateServoCommands(bool debug){
-  if(PWMInitialised == false){
-    if(debug){
+void UpdateServoCommands(bool debug)
+{
+  if (PWMInitialised == false)
+  {
+    if (debug)
+    {
       Serial.print("Servo PWM Enabled");
     }
     pwm = Adafruit_PWMServoDriver();
     PWMInitialised = true;
-    }
- }
+  }
+}
