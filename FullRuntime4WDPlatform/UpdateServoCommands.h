@@ -56,11 +56,11 @@ void ServoTest(int servoIndexes[])
   DoServosParallelTest(servoIndexes, 2, 200);
 }
 
-void UpdateServoCommands(bool debug)
+void UpdateServoCommands()
 {
   if (PWMInitialised == false)
   {
-    if (debug)
+    if (true)
     {
       Serial.print("Servo PWM Enabled");
     }

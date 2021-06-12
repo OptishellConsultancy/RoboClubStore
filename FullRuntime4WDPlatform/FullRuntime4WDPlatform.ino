@@ -1,5 +1,5 @@
 #include "SensorDataUpdates.h"
-#include "OLEDDemoTest.h"
+#include "OLEDDemoTest2.h"
 //-----------------------------------
 void setup()
 {
@@ -29,15 +29,15 @@ void loop()
   ReadSerialCommForCommmandAndExecute();
   if (GPSEnabled)
   {
-    UpdateGPSData(DebugEnabled);
+    UpdateGPSData();
   }
   if (LSM303D_CompassAccelMagnetoEnabled)
   {
-    LSM303D_UpdateCompassAccelMagnetoData(DebugEnabled);
+    LSM303D_UpdateCompassAccelMagnetoData();
   }
   if (ServoControllerEnabled)
   {
-    UpdateServoCommands(DebugEnabled);
+    UpdateServoCommands();
     if (ServoTestEnabled)
     {
       Serial.print("Executing serial test..");
@@ -46,28 +46,22 @@ void loop()
     }
   }
   if (OLEDDisplayEnabled)
-  {
-    if (DebugEnabled)
-    {
-      SetupOLEDTest();
-    }
-    if (DebugEnabled)
-    {
-    }
+  {     
+     SetupOLEDTest();
   }
 
   if (UltrasonicEnabled)
   {
-    UpdateUltrasonicIC2Data(DebugEnabled);
+    UpdateUltrasonicIC2Data();
   }
 
   if (FourWDHatEnabled)
   {
-    Update4WDShieldCommands(DebugEnabled);
+    Update4WDShieldCommands();
   }
 
   if (UltrasonicEnabled)
   {
-    UpdateUltrasonicIC2Data(DebugEnabled);
+    UpdateUltrasonicIC2Data();
   }
 }

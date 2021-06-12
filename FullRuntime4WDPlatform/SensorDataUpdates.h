@@ -8,7 +8,7 @@ void InitLSM303D()
 }
 
 ///
-void UpdateGPSData(bool debug)
+void UpdateGPSData()
 {
 
   if (GPSSetupRequired)
@@ -35,7 +35,7 @@ void UpdateGPSData(bool debug)
     GPS.println(PMTK_Q_RELEASE);
     GPSSetupRequired = false;
   }
-  if (debug)
+  if (true)
   {
     // read data from the GPS in the 'main loop'
     char c = GPS.read();
@@ -115,7 +115,7 @@ void UpdateGPSData(bool debug)
   }
 }
 
-void LSM303D_UpdateCompassAccelMagnetoData(bool debug)
+void LSM303D_UpdateCompassAccelMagnetoData()
 {
   if (LSM303D_CompassAccelMagnetoInitRequired)
   {
@@ -124,12 +124,13 @@ void LSM303D_UpdateCompassAccelMagnetoData(bool debug)
   }
   Serial.println("LSM303D report: \\\\\\\\\\");
   compass.read();
+  char LSM30D3ReportBuffer[80];
   snprintf(LSM30D3ReportBuffer, sizeof(LSM30D3ReportBuffer), "A: %6d %6d %6d    M: %6d %6d %6d", compass.a.x, compass.a.y, compass.a.z, compass.m.x, compass.m.y, compass.m.z);
   Serial.println(LSM30D3ReportBuffer);
   Serial.println("\\\\\\\\\\\\\\\\\\\\\\\\\\");
 }
 
-void UpdateUltrasonicIC2Data(bool debug)
+void UpdateUltrasonicIC2Data()
 {
   //Todo with new sensor
 }

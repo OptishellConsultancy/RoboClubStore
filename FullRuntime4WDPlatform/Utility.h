@@ -73,11 +73,11 @@ void PrintfOneVar(int len, char *completeStr, int var)
   return;
 }
 //-----------------------------------
-bool PassCommandChk(String str)
+bool PassCommandChk(String str, int &portToOpen)
 {
 
-  idxOpenPort = str.indexOf("Feature");
-  idxDot = str.indexOf(".");
+  int idxOpenPort = str.indexOf("Feature");
+  int idxDot = str.indexOf(".");
   int strLen = str.length();
   if (idxOpenPort >= 0 && idxDot >= 0)
   {
@@ -89,6 +89,11 @@ bool PassCommandChk(String str)
   else
   {
     Serial.print("Please provide a port number, e.g Feature0.\r\n");
+    Serial.print("Feature0. : GPS.\r\n");
+    Serial.print("Feature1. : Compass + Accel + Magneto.\r\n");
+    Serial.print("Feature2. : ServoControllerNumber .\r\n");
+    Serial.print("Feature3. : OLEDSCreen .\r\n");
+    Serial.print("Feature4. : 4WD Platform control .\r\n");
     return false;
   }
   commandEntered = false;
@@ -96,6 +101,14 @@ bool PassCommandChk(String str)
 
 void EnableFeatureMap(int featureToEnable)
 {
+  //Inline def to save program memory:
+  int GPSEnabledFeatureNumber = 0;
+  int LSM303D_CompassAccelMagnetoEnabledNumber = 1;
+  int ServoControllerNumber = 2;
+  int OLEDDisplayNumber = 3;
+  int FourWDriveControlNumber = 4;
+  int UltrasonicNumber = 5;
+  //
   GPSEnabled = (featureToEnable == GPSEnabledFeatureNumber);
   LSM303D_CompassAccelMagnetoEnabled = (featureToEnable == LSM303D_CompassAccelMagnetoEnabledNumber);
   ServoControllerEnabled = (featureToEnable == ServoControllerNumber);
@@ -125,9 +138,9 @@ void EnableFeatureMap(int featureToEnable)
     Serial.print("FourWDHatEnabled  Enabled\r\n");
   }
 
-  if(UltrasonicEnabled)
+  if (UltrasonicEnabled)
   {
-     Serial.print("UltrasonicEnabled  Enabled\r\n");
+    Serial.print("UltrasonicEnabled  Enabled\r\n");
   }
 }
 //----------------------------------------
@@ -138,7 +151,8 @@ void ReadSerialCommForCommmandAndExecute()
   {
     Serial.print("ReadSerialCommForCommmandAndExecute() -> Command entered");
     commandEntered = false;
-    if (PassCommandChk(ReadString))
+    int portToOpen = -1;
+    if (PassCommandChk(ReadString, portToOpen))
     {
       ReadString = "";
       EnableFeatureMap(portToOpen);

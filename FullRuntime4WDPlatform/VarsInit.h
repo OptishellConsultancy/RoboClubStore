@@ -26,14 +26,8 @@ Adafruit_PWMServoDriver pwm;
 // our servo # counter
 uint8_t servonum = 0;
 
-bool DebugEnabled = true;
 //Internal controls
 bool commandEntered = false;
-int idxOpenPort = 0;
-int idxDot = 0;
-int portToOpen;
-
-char LSM30D3ReportBuffer[80];
 
 //PortMappings:
 
@@ -48,12 +42,7 @@ bool OLEDDisplayEnabled;
 bool FourWDHatEnabled;
 bool UltrasonicEnabled;
 //
-int GPSEnabledFeatureNumber = 0;
-int LSM303D_CompassAccelMagnetoEnabledNumber = 1;
-int ServoControllerNumber = 2;
-int OLEDDisplayNumber = 3;
-int FourWDriveControlNumber = 4;
-int UltrasonicNumber = 5;
+
 //
 
 const int trigPin = 9;
@@ -62,15 +51,7 @@ const int echoPin = 10;
 long duration;
 int distance;
 //4WD commands/Port maps
-const int E1 = 3;  ///<Motor1 Speed
-const int E2 = 11; ///<Motor2 Speed
-const int E3 = 5;  ///<Motor3 Speed
-const int E4 = 6;  ///<Motor4 Speed
 
-const int M1 = 4;  ///<Motor1 Direction
-const int M2 = 12; ///<Motor2 Direction
-const int M3 = 8;  ///<Motor3 Direction
-const int M4 = 7;  ///<Motor4 Direction
 
 bool ServoTestEnabled = true;
 bool PWMInitialised = false;
