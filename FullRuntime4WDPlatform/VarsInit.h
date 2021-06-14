@@ -34,6 +34,7 @@ bool commandEntered = false;
 bool GPSSetupRequired = true;
 bool LSM303D_CompassAccelMagnetoInitRequired = true;
 bool OLEDDisplaySetupRequired = true;
+bool UltraSonicSetupRequired = true;
 //
 bool GPSEnabled;
 bool LSM303D_CompassAccelMagnetoEnabled;
@@ -41,17 +42,32 @@ bool ServoControllerEnabled;
 bool OLEDDisplayEnabled;
 bool FourWDHatEnabled;
 bool UltrasonicEnabled;
-//
+bool ServoTestEnabled;
+bool PWMInitialised;
 
-//
+//Ultrasonic vars:
+unsigned char addr0 = 0x11; //The ic2 address of the Ultrasonic
+unsigned char txbuf[10] = {0};
+unsigned char rxbuf[10] = {0};
 
-const int trigPin = 9;
-const int echoPin = 10;
-// defines variables
-long duration;
-int distance;
-//4WD commands/Port maps
+typedef enum {
 
+  SLAVEADDR_INDEX = 0,
+  PID_INDEX,
+  VERSION_INDEX ,
 
-bool ServoTestEnabled = true;
-bool PWMInitialised = false;
+  DIST_H_INDEX,
+  DIST_L_INDEX,
+
+  TEMP_H_INDEX,
+  TEMP_L_INDEX,
+
+  CFG_INDEX,
+  CMD_INDEX,
+  REG_NUM
+
+} regindexTypedef;
+
+#define    MEASURE_MODE_PASSIVE    (0x00)
+#define    MEASURE_RANG_500        (0x20)
+#define    CMD_DISTANCE_MEASURE    (0x01)

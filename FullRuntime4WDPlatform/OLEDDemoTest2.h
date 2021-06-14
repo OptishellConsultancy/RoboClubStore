@@ -330,7 +330,7 @@ void testanimate(const uint8_t *bitmap, uint8_t w, uint8_t h) {
 }
 
 
-void SetupOLEDTest() {
+void OLEDTest() {
   //Serial.begin(9600);
 
   // SSD1306_SWITCHCAPVCC = generate display voltage from 3.3V internally

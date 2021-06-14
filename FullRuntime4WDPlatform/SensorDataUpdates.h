@@ -7,6 +7,12 @@ void InitLSM303D()
   compass.enableDefault();
 }
 
+void InitUltraSonic()
+{
+  txbuf[0] = (MEASURE_MODE_PASSIVE | MEASURE_RANG_500); //the measurement mode is set to passive mode, measurement range is set to 500CM.
+  i2cWriteBytes(addr0, CFG_INDEX, &txbuf[0], 1);        //
+}
+
 ///
 void UpdateGPSData()
 {
@@ -132,5 +138,27 @@ void LSM303D_UpdateCompassAccelMagnetoData()
 
 void UpdateUltrasonicIC2Data()
 {
-  //Todo with new sensor
+  if (UltraSonicSetupRequired)
+  {
+    InitUltraSonic();
+    UltraSonicSetupRequired = false;
+  }
+  int16_t dist, temp;
+  txbuf[0] = CMD_DISTANCE_MEASURE;
+
+  i2cWriteBytes(addr0, CMD_INDEX, &txbuf[0], 1); //write register, send ranging command
+  delay(100);
+
+  i2cReadBytes(addr0, DIST_H_INDEX, 2); //read distance register
+  dist = ((uint16_t)rxbuf[0] << 8) + rxbuf[1];
+
+  i2cReadBytes(addr0, TEMP_H_INDEX, 2); //read temperature register
+  temp = ((uint16_t)rxbuf[0] << 8) + rxbuf[1];
+
+  Serial.print(dist, DEC);
+  Serial.print("cm");
+  Serial.print("------");
+
+  Serial.print((float)temp / 10, 1);
+  Serial.println("℃");
 }

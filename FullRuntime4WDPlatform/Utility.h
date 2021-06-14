@@ -72,6 +72,18 @@ void PrintfOneVar(int len, char *completeStr, int var)
   Serial.print("\r\n");
   return;
 }
+
+void PrintFeaturePlistInfo()
+{
+  Serial.print("Please provide a port number, e.g Feature0.\r\n");
+  Serial.print("Feature0. : GPS.\r\n");
+  Serial.print("Feature1. : Compass + Accel + Magneto.\r\n");
+  Serial.print("Feature2. : ServoControllerNumber.\r\n");
+  Serial.print("Feature3. : OLEDSCreen .\r\n");
+  Serial.print("Feature4. : 4WD Platform control.\r\n");
+  Serial.print("Feature5. : IC2 Ultrasonic enabled.\r\n");
+}
+
 //-----------------------------------
 bool PassCommandChk(String str, int &portToOpen)
 {
@@ -88,12 +100,7 @@ bool PassCommandChk(String str, int &portToOpen)
   }
   else
   {
-    Serial.print("Please provide a port number, e.g Feature0.\r\n");
-    Serial.print("Feature0. : GPS.\r\n");
-    Serial.print("Feature1. : Compass + Accel + Magneto.\r\n");
-    Serial.print("Feature2. : ServoControllerNumber .\r\n");
-    Serial.print("Feature3. : OLEDSCreen .\r\n");
-    Serial.print("Feature4. : 4WD Platform control .\r\n");
+    PrintFeaturePlistInfo();
     return false;
   }
   commandEntered = false;
@@ -158,5 +165,34 @@ void ReadSerialCommForCommmandAndExecute()
       EnableFeatureMap(portToOpen);
       DiscoverHubPortDevices();
     }
+  }
+}
+
+//Used by for example the ic2 ultrasonic 
+void i2cWriteBytes(unsigned char addr_t, unsigned char Reg, unsigned char *pdata, unsigned char datalen)
+{
+  Wire.beginTransmission(addr_t); // transmit to device #8
+  Wire.write(Reg);                // sends one byte
+
+  for (uint8_t i = 0; i < datalen; i++)
+  {
+    Wire.write(*pdata);
+    pdata++;
+  }
+
+  Wire.endTransmission(); // stop transmitting
+}
+
+void i2cReadBytes(unsigned char addr_t, unsigned char Reg, unsigned char Num)
+{
+  unsigned char i = 0;
+  Wire.beginTransmission(addr_t); // transmit to device #8
+  Wire.write(Reg);                // sends one byte
+  Wire.endTransmission();         // stop transmitting
+  Wire.requestFrom(addr_t, Num);
+  while (Wire.available()) // slave may send less than requested
+  {
+    rxbuf[i] = Wire.read();
+    i++;
   }
 }

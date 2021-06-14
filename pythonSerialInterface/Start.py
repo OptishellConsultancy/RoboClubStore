@@ -24,7 +24,7 @@ def write_read(x):
 def Read_PrintIfValue():
     value = arduino.readline().decode("utf-8")
     if(len(value) > 0):
-        print(value)
+        print(value,end='')
 
 inputThread = InputThread(write_read)        
 while True:
