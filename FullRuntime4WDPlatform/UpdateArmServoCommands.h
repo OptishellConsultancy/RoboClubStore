@@ -36,34 +36,38 @@ void DoServoTest(int servoIndex)
   delay(500);
 }
 
-void DoServosParallelTest(int servoIndexes[], int servoIndexesCount, int delayms)
+void DoServosParallelTest(int servoIndexes[], int servoIndexesCount, int delayms, int numberOfLoops)
 {
+  CurrentNumServoArmOfTests = 0;
   int commands[] = {0, 45, 90, 135, 180, 135, 90, 45};
   for (int c = 0; c < 8; c++)
   {
     for (int i = 0; i < servoIndexesCount; i++)
     {
       pwm.setPWM(servoIndexes[i], 0, pulseWidth(commands[c]));
-      //pwm.setPWM(0, 0, commands(45));
-      //DoServoTest(servoIndexes[i]);
     }
     delay(delayms);
   }
-}
-
-void ServoTest(int servoIndexes[])
-{
-  DoServosParallelTest(servoIndexes, 2, 200);
-}
-
-void UpdateServoCommands()
-{
-  if (PWMInitialised == false)
+  CurrentNumServoArmOfTests++;
+  if(numberOfLoops == CurrentNumServoArmOfTests )
   {
-    if (true)
-    {
-      Serial.print("Servo PWM Enabled");
-    }
+    ServoArmControllerEnabled = false;
+  }
+}
+
+void ArmServosTest()
+{
+  int servoIndexes[] = {0, 1};
+  int servoIndexesCount = 6;
+  int numberOfLoops = 1;
+  DoServosParallelTest(servoIndexes, servoIndexesCount, 200, numberOfLoops);
+}
+
+void EnableArmServos()
+{
+  if (!PWMInitialised)
+  {
+    Serial.print("Servo PWM Enabled");
     pwm = Adafruit_PWMServoDriver();
     PWMInitialised = true;
   }

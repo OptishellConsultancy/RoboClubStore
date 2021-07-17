@@ -47,22 +47,6 @@ void DiscoverHubPortDevices()
   }
   Serial.println();
 }
-void ReadCommand()
-{
-  while (Serial.available())
-  {
-    delay(3);
-    if (Serial.available() > 0)
-    {
-      char c = Serial.read();
-      ReadString += c;
-    }
-    if (ReadString.length() > 0)
-    {
-      commandEntered = true;
-    }
-  }
-}
 
 void PrintfOneVar(int len, char *completeStr, int var)
 {
@@ -73,55 +57,88 @@ void PrintfOneVar(int len, char *completeStr, int var)
   return;
 }
 
-void PrintFeaturePlistInfo()
+void PrintFeatureTestPlistInfo()
 {
-  Serial.print("Please provide a port number, e.g Feature0.\r\n");
-  Serial.print("Feature0. : GPS.\r\n");
-  Serial.print("Feature1. : Compass + Accel + Magneto.\r\n");
-  Serial.print("Feature2. : ServoControllerNumber.\r\n");
-  Serial.print("Feature3. : OLEDSCreen .\r\n");
-  Serial.print("Feature4. : 4WD Platform control.\r\n");
-  Serial.print("Feature5. : IC2 Ultrasonic enabled.\r\n");
+  Serial.print("\r\n");
+  Serial.print("Please provide a port number, e.g FeatureTest0.\r\n");
+  Serial.print("FeatureTest0. : GPS.\r\n");
+  Serial.print("FeatureTest1. : Compass + Accel + Magneto.\r\n");
+  Serial.print("FeatureTest2. : ServoControllerNumber.\r\n");
+  Serial.print("FeatureTest3. : OLEDSCreen .\r\n");
+  Serial.print("FeatureTest4. : 4WD Platform control.\r\n");
+  Serial.print("FeatureTest5. : IC2 Ultrasonic enabled.\r\n");
+  Serial.print("FeatureTest6. : Disable all tests.\r\n");
+  Serial.print("\r\n");
+}
+
+void ReadCommand()
+{
+  while (Serial.available())
+  {
+    if (Serial.available() > 0)
+    {
+      char c = Serial.read();
+      ReadString += c;
+    }
+    if (ReadString.length() > 0)
+    {
+      commandEntered = true;
+    }
+    else
+    {
+      PrintFeatureTestPlistInfo();
+    }
+  }
 }
 
 //-----------------------------------
-bool PassCommandChk(String str, int &portToOpen)
+bool PassCommandChk(String str, int &cmdToActivate)
 {
 
-  int idxOpenPort = str.indexOf("Feature");
+  int idxOpenPort = str.indexOf(featureTestStr);
   int idxDot = str.indexOf(".");
   int strLen = str.length();
   if (idxOpenPort >= 0 && idxDot >= 0)
   {
-    String numberChars = str.substring(7, idxDot);
-    portToOpen = numberChars.toInt();
-    PrintfOneVar(100, "Enabling Feature: %d.", portToOpen);
+    String numberChars = str.substring(featureTestStr.length(), idxDot);
+    cmdToActivate = numberChars.toInt();
+    PrintfOneVar(100, "Enabling FeatureTest: %d.", cmdToActivate);
     return true;
   }
   else
   {
-    PrintFeaturePlistInfo();
+    if (idxDot >= 0)
+    {
+      Serial.print("Emergency stop detected..\r\n");
+      StopAllTestsRequested = true;
+      return true;
+    }
+    else
+    {
+      PrintFeatureTestPlistInfo();
+    }
     return false;
   }
   commandEntered = false;
 }
 
-void EnableFeatureMap(int featureToEnable)
+void EnableFeatureTestMap(int FeatureTestToEnable)
 {
   //Inline def to save program memory:
-  int GPSEnabledFeatureNumber = 0;
+  int GPSEnabledFeatureTestNumber = 0;
   int LSM303D_CompassAccelMagnetoEnabledNumber = 1;
   int ServoControllerNumber = 2;
   int OLEDDisplayNumber = 3;
   int FourWDriveControlNumber = 4;
   int UltrasonicNumber = 5;
+  int StopAllTestsNumber = 6;
   //
-  GPSEnabled = (featureToEnable == GPSEnabledFeatureNumber);
-  LSM303D_CompassAccelMagnetoEnabled = (featureToEnable == LSM303D_CompassAccelMagnetoEnabledNumber);
-  ServoControllerEnabled = (featureToEnable == ServoControllerNumber);
-  OLEDDisplayEnabled = (featureToEnable == OLEDDisplayNumber);
-  FourWDHatEnabled = (featureToEnable == FourWDriveControlNumber);
-  UltrasonicEnabled = (featureToEnable == UltrasonicNumber);
+  GPSEnabled = (FeatureTestToEnable == GPSEnabledFeatureTestNumber);
+  LSM303D_CompassAccelMagnetoEnabled = (FeatureTestToEnable == LSM303D_CompassAccelMagnetoEnabledNumber);
+  ServoArmControllerEnabled = (FeatureTestToEnable == ServoControllerNumber);
+  OLEDDisplayEnabled = (FeatureTestToEnable == OLEDDisplayNumber);
+  FourWDHatEnabled = (FeatureTestToEnable == FourWDriveControlNumber);
+  UltrasonicEnabled = (FeatureTestToEnable == UltrasonicNumber);
   //
   if (GPSEnabled)
   {
@@ -131,9 +148,9 @@ void EnableFeatureMap(int featureToEnable)
   {
     Serial.print("LSM303D_CompassAccelMagnetoEnabled Enabled\r\n");
   }
-  if (ServoControllerEnabled)
+  if (ServoArmControllerEnabled)
   {
-    Serial.print("ServoControllerEnabled  Enabled\r\n");
+    Serial.print("ServoArmControllerEnabled  Enabled\r\n");
   }
   if (OLEDDisplayEnabled)
   {
@@ -149,6 +166,17 @@ void EnableFeatureMap(int featureToEnable)
   {
     Serial.print("UltrasonicEnabled  Enabled\r\n");
   }
+  if (StopAllTestsRequested)
+  {
+    Serial.print("Disabling All tests..\r\n");
+    GPSEnabled = false;
+    LSM303D_CompassAccelMagnetoEnabled = false;
+    ServoArmControllerEnabled = false;
+    OLEDDisplayEnabled = false;
+    UltrasonicEnabled = false;
+    StopAllTestsRequested = false;
+    PrintFeatureTestPlistInfo();
+  }
 }
 //----------------------------------------
 void ReadSerialCommForCommmandAndExecute()
@@ -156,19 +184,19 @@ void ReadSerialCommForCommmandAndExecute()
   ReadCommand();
   if (commandEntered)
   {
-    Serial.print("ReadSerialCommForCommmandAndExecute() -> Command entered");
+    Serial.print("ReadSerialCommForCommmandAndExecute() -> Command entered\r\n");
     commandEntered = false;
     int portToOpen = -1;
     if (PassCommandChk(ReadString, portToOpen))
     {
       ReadString = "";
-      EnableFeatureMap(portToOpen);
+      EnableFeatureTestMap(portToOpen);
       DiscoverHubPortDevices();
     }
   }
 }
 
-//Used by for example the ic2 ultrasonic 
+//Used by for example the ic2 ultrasonic
 void i2cWriteBytes(unsigned char addr_t, unsigned char Reg, unsigned char *pdata, unsigned char datalen)
 {
   Wire.beginTransmission(addr_t); // transmit to device #8

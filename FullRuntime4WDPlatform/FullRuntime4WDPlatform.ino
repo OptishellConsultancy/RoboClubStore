@@ -9,19 +9,22 @@ void setup()
   I2CMux.closeAll();
   I2CMux.openAll();
 
-  Serial.begin(9600);       // Starts the serial communication
+  Serial.begin(9600); // Starts the serial communication
   //
   pwm.begin();
   pwm.setPWMFreq(FREQUENCY); // Analog servos run at ~60 Hz updates
   //
   DiscoverHubPortDevices();
-  Serial.print("Please provide a port number, e.g Feature0.\r\n");
-  Serial.print("Feature0. : GPS.\r\n");
-  Serial.print("Feature1. : Compass + Accel + Magneto.\r\n");
-  Serial.print("Feature2. : ServoControllerNumber.\r\n");
-  Serial.print("Feature3. : OLEDSCreen .\r\n");
-  Serial.print("Feature4. : 4WD Platform control.\r\n");
-  Serial.print("Feature5. : IC2 Ultrasonic enabled.\r\n");
+  Serial.print("\r\n");
+  Serial.print("Please provide a port number, e.g FeatureTest0.\r\n");
+  Serial.print("FeatureTest0. : GPS.\r\n");
+  Serial.print("FeatureTest1. : Compass + Accel + Magneto.\r\n");
+  Serial.print("FeatureTest2. : ServoControllerNumber.\r\n");
+  Serial.print("FeatureTest3. : OLEDSCreen .\r\n");
+  Serial.print("FeatureTest4. : 4WD Platform control.\r\n");
+  Serial.print("FeatureTest5. : IC2 Ultrasonic enabled.\r\n");
+  Serial.print("FeatureTest6. : Disable all tests.\r\n");
+  Serial.print("\r\n");
 }
 
 void loop()
@@ -36,19 +39,14 @@ void loop()
   {
     LSM303D_UpdateCompassAccelMagnetoData();
   }
-  if (ServoControllerEnabled)
+  if (ServoArmControllerEnabled)
   {
-    UpdateServoCommands();
-    if (ServoTestEnabled)
-    {
-      Serial.print("Executing serial test..");
-      int servoIndexes[] = {0, 1};
-      ServoTest(servoIndexes);
-    }
+    EnableArmServos();
+    ArmServosTest();
   }
   if (OLEDDisplayEnabled)
-  {     
-     OLEDTest();
+  {
+    OLEDTest();
   }
 
   if (UltrasonicEnabled)
@@ -58,6 +56,7 @@ void loop()
 
   if (FourWDHatEnabled)
   {
+    Serial.print("Update4WDShieldCommands()");
     Update4WDShieldCommands();
   }
 

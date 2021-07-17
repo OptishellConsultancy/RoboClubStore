@@ -14,8 +14,8 @@ bno = BNO08X_I2C(i2c, reset=reset_pin, debug=False)
 
 bno.begin_calibration()
 # TODO: UPDATE UART/SPI
-bno.enable_feature(adafruit_bno08x.BNO_REPORT_MAGNETOMETER)
-bno.enable_feature(adafruit_bno08x.BNO_REPORT_GAME_ROTATION_VECTOR)
+bno.enable_FeatureTest(adafruit_bno08x.BNO_REPORT_MAGNETOMETER)
+bno.enable_FeatureTest(adafruit_bno08x.BNO_REPORT_GAME_ROTATION_VECTOR)
 start_time = time.monotonic()
 calibration_good_at = None
 while True:

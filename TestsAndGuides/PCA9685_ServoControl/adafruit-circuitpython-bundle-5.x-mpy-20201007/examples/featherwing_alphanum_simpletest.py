@@ -1,6 +1,6 @@
 """This example changes the fill, brightness, blink rates,
 shows number and text printing, displays a counter
-and then shows off the new marquee features."""
+and then shows off the new marquee FeatureTests."""
 
 from time import sleep
 from adafruit_featherwing import alphanum_featherwing

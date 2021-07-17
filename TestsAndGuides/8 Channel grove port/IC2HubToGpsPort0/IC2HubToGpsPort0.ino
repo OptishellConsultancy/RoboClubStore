@@ -110,6 +110,7 @@ bool PassCommandChk_OpenChannel(String str){
    commandEntered = false;
 }
 
+//This is redunant as all port are now always open
 void OpenPortMap(int portToOpen){
   switch(portToOpen)
   {
@@ -156,7 +157,7 @@ void OpenPortMap(int portToOpen){
   }
 }
 
-void EnablePortSensorFeatureMap(int portToOpen)
+void EnablePortSensorFeatureTestMap(int portToOpen)
 {
   GPSPortOpened = (portToOpen == GPSPort);
   LSM303D_CompassAccelMagnetoPortOpened = (portToOpen == LSM303D_CompassAccelMagnetoPort);
@@ -185,7 +186,7 @@ void loop() {
     {        
       readString = "";
       OpenPortMap(portToOpen);
-      EnablePortSensorFeatureMap(portToOpen);
+      EnablePortSensorFeatureTestMap(portToOpen);
       Serial.print("Channel opened..");
       DiscoverHubPortDevices();
     }

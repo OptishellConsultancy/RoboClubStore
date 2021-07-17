@@ -38,17 +38,21 @@ bool UltraSonicSetupRequired = true;
 //
 bool GPSEnabled;
 bool LSM303D_CompassAccelMagnetoEnabled;
-bool ServoControllerEnabled;
 bool OLEDDisplayEnabled;
 bool FourWDHatEnabled;
 bool UltrasonicEnabled;
-bool ServoTestEnabled;
+bool ServoArmControllerEnabled;
 bool PWMInitialised;
+bool StopAllTestsRequested;
+String featureTestStr = "FeatureTest";
 
 //Ultrasonic vars:
 unsigned char addr0 = 0x11; //The ic2 address of the Ultrasonic
 unsigned char txbuf[10] = {0};
 unsigned char rxbuf[10] = {0};
+
+//ArmServoTestVars
+int CurrentNumServoArmOfTests = 0;
 
 typedef enum {
 
