@@ -61,61 +61,36 @@ void M4_back(char Speed) ///<Motor4 Back off
 void Test4WDCommands()
 {
   M1_advance(100);
-  M2_advance(100);
-  M3_advance(100);
-  M4_advance(100);
+  //M2_advance(100);
+  //M3_advance(100);
+  //M4_advance(100);
   delay(2000); ///<Delay 2S
   M1_back(100);
-  M2_back(100);
-  M3_back(100);
-  M4_back(100);
+  //M2_back(100);
+  //M3_back(100);
+  //M4_back(100);
   delay(2000); ///<Delay 2S
 }
 
 void Do4WDAPICommand()
 {
-  if (idx4WD_FLA)
-  {
-    //M1_back(Speed4WD);
-    M2_back(Speed4WD);
-  }
-  if (idx4WD_FRA)
-  {
-    //M1_back(Speed4WD);
-  }
-  if (idx4WD_BLA)
-  {
-    //M3_advance(Speed4WD);
-  }
-  if (idx4WD_BRA)
-  {
-    // M4_advance(Speed4WD);
-  }
-  if (idx4WD_FLB)
-  {
-    //M2_advance(Speed4WD);
-  }
-  if (idx4WD_FRB)
-  {
-    //M2_back(Speed4WD);
-  }
-  if (idx4WD_BLB)
-  {
-    // M3_back(Speed4WD);
-  }
-  if (idx4WD_BRB)
-  {
-    // M4_back(Speed4WD);
-  }
+  if (idx4WD_FLA)  {M2_back(Speed4WD); } //E.G. <In>4WD[100]{1000}FLA
+  if (idx4WD_FRA)  {M1_back(Speed4WD); } //E.G. <In>4WD[100]{1000}FRA
+  if (idx4WD_BLA)  {      }
+  if (idx4WD_BRA)  {     }
+  if (idx4WD_FLB)  {     }
+  if (idx4WD_FRB)  {     }
+  if (idx4WD_BLB)  {     }
+  if (idx4WD_BRB)  {     }
 
   delay(Dur4WD); ///<Delay 2S
-  //Now stop all motors
-  M1_advance(0);
-  M2_advance(0);
-  M3_advance(0);
-  M4_advance(0);
-  M1_back(0);
-  M2_back(0);
-  M3_back(0);
-  M4_back(0);
+
+  if (idx4WD_FLA)  {M2_advance(Speed4WD); }
+  if (idx4WD_FRA)  {M1_advance(Speed4WD);    }
+  if (idx4WD_BLA)  {    }
+  if (idx4WD_BRA)  {    }
+  if (idx4WD_FLB)  {    }
+  if (idx4WD_FRB)  {    }
+  if (idx4WD_BLB)  {    }
+  if (idx4WD_BRB)  {    }
 }

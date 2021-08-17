@@ -105,7 +105,7 @@ void ReadAPICommand()
     {
       APICommandEntered = true;
     }
-    if(ReadString.indexOf("\r\n") >= 0| ReadString.length() > 512 )
+    if (ReadString.indexOf("\r\n") >= 0 | ReadString.length() > 512)
     {
       ReadString = "";
     }
@@ -163,18 +163,14 @@ bool ParseAndExecuteAPICommand(String str)
       idx4WD_FRB = (str.indexOf("FRB") >= 0); //Front Right Back
       idx4WD_BLB = (str.indexOf("BLB") >= 0); //Back Left Back
       idx4WD_BRB = (str.indexOf("BRB") >= 0); //Back Right Back
-      idx4WD_SpeedS = str.indexOf("[") ;  //Duration Parse start
-      idx4WD_SpeedE = str.indexOf("]");  //Duration End End
-      idx4WD_DurS = str.indexOf("{");  //Duration Parse start
-      idx4WD_DurE = str.indexOf("}");  //Duration End End
-      Speed4WD = str.substring(idx4WD_SpeedS+1, idx4WD_SpeedE).toInt();
-      Dur4WD = str.substring(idx4WD_DurS+1, idx4WD_DurE).toInt();
+      idx4WD_SpeedS = str.indexOf("[");       //Duration Parse start
+      idx4WD_SpeedE = str.indexOf("]");       //Duration End End
+      idx4WD_DurS = str.indexOf("{");         //Duration Parse start
+      idx4WD_DurE = str.indexOf("}");         //Duration End End
+      Speed4WD = str.substring(idx4WD_SpeedS + 1, idx4WD_SpeedE).toInt();
+      Dur4WD = str.substring(idx4WD_DurS + 1, idx4WD_DurE).toInt();
       CmdRcv4WD = (Speed4WD >= 0);
       //E.g. F7. 100 SPEED, FOR 100MS Front left Forward
-      if(idx4WD_FLA)
-      {
-        Serial.print("idx4WD_FLA!..\r\n");
-      }
       return true;
     }
     if (idx6A > 0)
