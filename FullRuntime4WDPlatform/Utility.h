@@ -154,6 +154,15 @@ bool ParseAndExecuteAPICommand(String str)
     idxScrn = str.indexOf("SCRN"); //<In>SCRN //Screen data
     if (idx4WD >= 0)
     {
+      idx4WD_FLA = false;
+      idx4WD_FRA = false;
+      idx4WD_BLA = false;
+      idx4WD_BRA = false;
+      idx4WD_FLB = false;
+      idx4WD_FRB = false;
+      idx4WD_BLB = false;
+      idx4WD_BRB = false;
+      //--
       Serial.print("idx4WD RECV!..\r\n");
       idx4WD_FLA = (str.indexOf("FLA") >= 0); //Front Left Advance
       idx4WD_FRA = (str.indexOf("FRA") >= 0); //Front Right Advance
@@ -171,6 +180,12 @@ bool ParseAndExecuteAPICommand(String str)
       Dur4WD = str.substring(idx4WD_DurS + 1, idx4WD_DurE).toInt();
       CmdRcv4WD = (Speed4WD >= 0);
       //E.g. F7. 100 SPEED, FOR 100MS Front left Forward
+      if(idx4WD_FRA)
+      {
+          Serial.print("idx4WD_FRA...\r\n");
+      }
+      Serial.print("Speed4WD: "); Serial.print(Speed4WD); Serial.print("\r\n");
+      Serial.print("Dur4WD: "); Serial.print(Dur4WD); Serial.print("\r\n");
       return true;
     }
     if (idx6A > 0)
