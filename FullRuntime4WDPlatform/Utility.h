@@ -57,17 +57,18 @@ void PrintfOneVar(int len, char *completeStr, int var)
   return;
 }
 
-void PrintFeatureTestPlistInfo()
+void PrintFPlistInfo()
 {
   Serial.print("\r\n");
-  Serial.print("Please provide a port number, e.g FeatureTest0.\r\n");
-  Serial.print("FeatureTest0. : GPS.\r\n");
-  Serial.print("FeatureTest1. : Compass + Accel + Magneto.\r\n");
-  Serial.print("FeatureTest2. : ServoControllerNumber.\r\n");
-  Serial.print("FeatureTest3. : OLEDSCreen .\r\n");
-  Serial.print("FeatureTest4. : 4WD Platform control.\r\n");
-  Serial.print("FeatureTest5. : IC2 Ultrasonic enabled.\r\n");
-  Serial.print("FeatureTest6. : Disable all tests.\r\n");
+  Serial.print("Please provide a port number, e.g F0.\r\n");
+  Serial.print("F0. : GPS.\r\n");
+  Serial.print("F1. : Compass + Accel + Magneto.\r\n");
+  Serial.print("F2. : ServoArmControllerEnabled.\r\n");
+  Serial.print("F3. : OLEDSCreen .\r\n");
+  Serial.print("F4. : 4WD Platform control.\r\n");
+  Serial.print("F5. : IC2 Ultrasonic enabled.\r\n");
+  Serial.print("F6. : Disable all tests.\r\n");
+  Serial.print("F7. : Enable NonHuman Readable APIIO.\r\n");
   Serial.print("\r\n");
 }
 
@@ -86,7 +87,27 @@ void ReadCommand()
     }
     else
     {
-      PrintFeatureTestPlistInfo();
+      PrintFPlistInfo();
+    }
+  }
+}
+
+void ReadAPICommand()
+{
+  while (Serial.available())
+  {
+    if (Serial.available() > 0)
+    {
+      char c = Serial.read();
+      ReadString += c;
+    }
+    if (ReadString.length() > 0)
+    {
+      APICommandEntered = true;
+    }
+    if(ReadString.indexOf("\r\n") >= 0| ReadString.length() > 512 )
+    {
+      ReadString = "";
     }
   }
 }
@@ -94,15 +115,14 @@ void ReadCommand()
 //-----------------------------------
 bool PassCommandChk(String str, int &cmdToActivate)
 {
-
-  int idxOpenPort = str.indexOf(featureTestStr);
+  int idxOpenPort = str.indexOf(FStr);
   int idxDot = str.indexOf(".");
   int strLen = str.length();
   if (idxOpenPort >= 0 && idxDot >= 0)
   {
-    String numberChars = str.substring(featureTestStr.length(), idxDot);
+    String numberChars = str.substring(FStr.length(), idxDot);
     cmdToActivate = numberChars.toInt();
-    PrintfOneVar(100, "Enabling FeatureTest: %d.", cmdToActivate);
+    PrintfOneVar(100, "Enabling F: %d.", cmdToActivate);
     return true;
   }
   else
@@ -115,30 +135,78 @@ bool PassCommandChk(String str, int &cmdToActivate)
     }
     else
     {
-      PrintFeatureTestPlistInfo();
+      PrintFPlistInfo();
     }
     return false;
   }
   commandEntered = false;
 }
 
-void EnableFeatureTestMap(int FeatureTestToEnable)
+bool ParseAndExecuteAPICommand(String str)
+{
+  //
+  idxCmdIn = str.indexOf("<In>");
+  idxCmdOut = str.indexOf("<Out>");
+  if (idxCmdIn >= 0)
+  {
+    idx4WD = str.indexOf("4WD");   //<In>4W //4WheelDrive Data
+    idx6A = str.indexOf("6A");     //<In>6A / Axis data
+    idxScrn = str.indexOf("SCRN"); //<In>SCRN //Screen data
+    if (idx4WD >= 0)
+    {
+      Serial.print("idx4WD RECV!..\r\n");
+      idx4WD_FLA = (str.indexOf("FLA") >= 0); //Front Left Advance
+      idx4WD_FRA = (str.indexOf("FRA") >= 0); //Front Right Advance
+      idx4WD_BLA = (str.indexOf("BLA") >= 0); //Back Left Advance
+      idx4WD_BRA = (str.indexOf("BRA") >= 0); //Back Right Advance
+      idx4WD_FLB = (str.indexOf("FLB") >= 0); //Front Left Back
+      idx4WD_FRB = (str.indexOf("FRB") >= 0); //Front Right Back
+      idx4WD_BLB = (str.indexOf("BLB") >= 0); //Back Left Back
+      idx4WD_BRB = (str.indexOf("BRB") >= 0); //Back Right Back
+      idx4WD_SpeedS = str.indexOf("[") ;  //Duration Parse start
+      idx4WD_SpeedE = str.indexOf("]");  //Duration End End
+      idx4WD_DurS = str.indexOf("{");  //Duration Parse start
+      idx4WD_DurE = str.indexOf("}");  //Duration End End
+      Speed4WD = str.substring(idx4WD_SpeedS+1, idx4WD_SpeedE).toInt();
+      Dur4WD = str.substring(idx4WD_DurS+1, idx4WD_DurE).toInt();
+      CmdRcv4WD = (Speed4WD >= 0);
+      //E.g. F7. 100 SPEED, FOR 100MS Front left Forward
+      if(idx4WD_FLA)
+      {
+        Serial.print("idx4WD_FLA!..\r\n");
+      }
+      return true;
+    }
+    if (idx6A > 0)
+    {
+    }
+    if (idxScrn > 0)
+    {
+    }
+  }
+  return false;
+}
+
+void EnableFMap(int FToEnable)
 {
   //Inline def to save program memory:
-  int GPSEnabledFeatureTestNumber = 0;
+  int GPSEnabledFNumber = 0;
   int LSM303D_CompassAccelMagnetoEnabledNumber = 1;
   int ServoControllerNumber = 2;
   int OLEDDisplayNumber = 3;
   int FourWDriveControlNumber = 4;
   int UltrasonicNumber = 5;
   int StopAllTestsNumber = 6;
+  int NonHumanReadableAPIIO = 7;
   //
-  GPSEnabled = (FeatureTestToEnable == GPSEnabledFeatureTestNumber);
-  LSM303D_CompassAccelMagnetoEnabled = (FeatureTestToEnable == LSM303D_CompassAccelMagnetoEnabledNumber);
-  ServoArmControllerEnabled = (FeatureTestToEnable == ServoControllerNumber);
-  OLEDDisplayEnabled = (FeatureTestToEnable == OLEDDisplayNumber);
-  FourWDHatEnabled = (FeatureTestToEnable == FourWDriveControlNumber);
-  UltrasonicEnabled = (FeatureTestToEnable == UltrasonicNumber);
+  GPSEnabled = (FToEnable == GPSEnabledFNumber);
+  LSM303D_CompassAccelMagnetoEnabled = (FToEnable == LSM303D_CompassAccelMagnetoEnabledNumber);
+  ServoArmControllerEnabled = (FToEnable == ServoControllerNumber);
+  OLEDDisplayEnabled = (FToEnable == OLEDDisplayNumber);
+  FourWDHatEnabled = (FToEnable == FourWDriveControlNumber);
+  UltrasonicEnabled = (FToEnable == UltrasonicNumber);
+  //
+  NonHumanReadableAPIIOEnabled = (FToEnable == NonHumanReadableAPIIO);
   //
   if (GPSEnabled)
   {
@@ -175,11 +243,16 @@ void EnableFeatureTestMap(int FeatureTestToEnable)
     OLEDDisplayEnabled = false;
     UltrasonicEnabled = false;
     StopAllTestsRequested = false;
-    PrintFeatureTestPlistInfo();
+    NonHumanReadableAPIIOEnabled = false;
+    PrintFPlistInfo();
+  }
+  if (NonHumanReadableAPIIOEnabled)
+  {
+    Serial.print("NonHumanReadableAPIIOEnabled  Enabled\r\n");
   }
 }
 //----------------------------------------
-void ReadSerialCommForCommmandAndExecute()
+void ReadSerialFeatureCommForCommmandAndExecute()
 {
   ReadCommand();
   if (commandEntered)
@@ -190,9 +263,19 @@ void ReadSerialCommForCommmandAndExecute()
     if (PassCommandChk(ReadString, portToOpen))
     {
       ReadString = "";
-      EnableFeatureTestMap(portToOpen);
+      EnableFMap(portToOpen);
       DiscoverHubPortDevices();
     }
+  }
+}
+
+void ReadAPICommAndExecute()
+{
+  ReadAPICommand();
+  if (APICommandEntered)
+  {
+    ParseAndExecuteAPICommand(ReadString);
+    APICommandEntered = false;
   }
 }
 

@@ -20,23 +20,23 @@ uart = busio.UART(board.TX, board.RX, baudrate=3000000, receiver_buffer_size=204
 
 bno = BNO08X_UART(uart)
 
-bno.enable_FeatureTest(adafruit_bno08x.BNO_REPORT_ACCELEROMETER)
-bno.enable_FeatureTest(adafruit_bno08x.BNO_REPORT_GYROSCOPE)
-bno.enable_FeatureTest(adafruit_bno08x.BNO_REPORT_MAGNETOMETER)
-bno.enable_FeatureTest(adafruit_bno08x.BNO_REPORT_ROTATION_VECTOR)
+bno.enable_F(adafruit_bno08x.BNO_REPORT_ACCELEROMETER)
+bno.enable_F(adafruit_bno08x.BNO_REPORT_GYROSCOPE)
+bno.enable_F(adafruit_bno08x.BNO_REPORT_MAGNETOMETER)
+bno.enable_F(adafruit_bno08x.BNO_REPORT_ROTATION_VECTOR)
 
 # More reports! Uncomment the enable line below along with the print
 # in the loop below
-# bno.enable_FeatureTest(adafruit_bno08x.BNO_REPORT_LINEAR_ACCELERATION)
-# bno.enable_FeatureTest(adafruit_bno08x.BNO_REPORT_GEOMAGNETIC_ROTATION_VECTOR)
-# bno.enable_FeatureTest(adafruit_bno08x.BNO_REPORT_GAME_ROTATION_VECTOR)
-# bno.enable_FeatureTest(adafruit_bno08x.BNO_REPORT_STEP_COUNTER)
-# bno.enable_FeatureTest(adafruit_bno08x.BNO_REPORT_STABILITY_CLASSIFIER)
-# bno.enable_FeatureTest(adafruit_bno08x.BNO_REPORT_ACTIVITY_CLASSIFIER)
-# bno.enable_FeatureTest(adafruit_bno08x.BNO_REPORT_SHAKE_DETECTOR)
-# bno.enable_FeatureTest(adafruit_bno08x.BNO_REPORT_RAW_ACCELEROMETER)
-# bno.enable_FeatureTest(adafruit_bno08x.BNO_REPORT_RAW_GYROSCOPE)
-# bno.enable_FeatureTest(adafruit_bno08x.BNO_REPORT_RAW_MAGNETOMETER)
+# bno.enable_F(adafruit_bno08x.BNO_REPORT_LINEAR_ACCELERATION)
+# bno.enable_F(adafruit_bno08x.BNO_REPORT_GEOMAGNETIC_ROTATION_VECTOR)
+# bno.enable_F(adafruit_bno08x.BNO_REPORT_GAME_ROTATION_VECTOR)
+# bno.enable_F(adafruit_bno08x.BNO_REPORT_STEP_COUNTER)
+# bno.enable_F(adafruit_bno08x.BNO_REPORT_STABILITY_CLASSIFIER)
+# bno.enable_F(adafruit_bno08x.BNO_REPORT_ACTIVITY_CLASSIFIER)
+# bno.enable_F(adafruit_bno08x.BNO_REPORT_SHAKE_DETECTOR)
+# bno.enable_F(adafruit_bno08x.BNO_REPORT_RAW_ACCELEROMETER)
+# bno.enable_F(adafruit_bno08x.BNO_REPORT_RAW_GYROSCOPE)
+# bno.enable_F(adafruit_bno08x.BNO_REPORT_RAW_MAGNETOMETER)
 
 while True:
     time.sleep(0.5)

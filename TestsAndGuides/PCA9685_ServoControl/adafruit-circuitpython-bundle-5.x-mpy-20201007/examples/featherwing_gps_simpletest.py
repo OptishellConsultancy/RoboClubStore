@@ -1,7 +1,7 @@
 """
 This example will connect to the GPS at the default 9600 baudrate and
 update once per second. Initialization is automatically handled and there
-are some additional FeatureTests such as MPH and KPH calculations.
+are some additional Fs such as MPH and KPH calculations.
 """
 import time
 from adafruit_featherwing import gps_featherwing

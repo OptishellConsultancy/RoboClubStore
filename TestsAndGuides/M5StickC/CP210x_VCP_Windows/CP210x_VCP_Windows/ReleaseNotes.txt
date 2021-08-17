@@ -48,12 +48,12 @@ version 6.7 (Apr 11, 2014)
 	seen only in Windows XP (x86).
 
 version 6.6.1 (Oct 24, 2013)
-	New FeatureTests/Enhancements
+	New Fs/Enhancements
 	-------------------------
 	Added certification for Windows 8.1
 
 version 6.6.1
-	New FeatureTests/Enhancements
+	New Fs/Enhancements
 	-------------------------
 	Added support for CP2108 devices
 
@@ -63,7 +63,7 @@ version 6.6.1
 	certain systems.
 
 version 6.6
-	New FeatureTests/Enhancements
+	New Fs/Enhancements
 	-------------------------
 	Moving installer format to DPInst
 	Supported under Windows 8
@@ -125,7 +125,7 @@ version 6.2
 	interface requests - this doesn't exhibit and bugs in current single interface devices but was changed
 	to be complete and correct
 
-	New FeatureTests/Enhancements
+	New Fs/Enhancements
 	-------------------------
 	Added support for CP2104 and CP2105 devices	
 
@@ -160,7 +160,7 @@ version 6.0
 	Corrected problem where IO requests were not completed/cancelled on a close
 	Corrected problem with dialing out or PPP connections
 	
-	New FeatureTests/Enhancements
+	New Fs/Enhancements
 	-------------------------
 	Created IO queueing mechanism so that multiple reads, writes, etc. can be queued and
 	waited on
@@ -174,7 +174,7 @@ version 5.4.29
 	Corrected bug in surprise removal which can cause a blue screen
 	Corrected bug where TX_EMPTY wasn't being reported properly
 
-	New FeatureTests/Enhancements
+	New Fs/Enhancements
 	-------------------------
 	Added Windows 7 to the general installer for XP/2003/Vista under KMDF 1.9
 	Modified driver to support selective suspend in Vista/7
@@ -186,7 +186,7 @@ version 5.4.24
 	-----------
 	Fixed a bug which caused a random crash if a write took longer than normal to complete
 
-	New FeatureTests/Enhancements
+	New Fs/Enhancements
 	-------------------------
 	WHQL Certified for XP/2000/2003/Vista(32/64)
 
@@ -203,7 +203,7 @@ version 5.4
 	-----------
 	Fixed bug where the first packet of data is dropped in Windows 2000.
 	
-	New FeatureTests/Enhancements
+	New Fs/Enhancements
 	-------------------------
 	Added support to keep all GPIO pin states and all baud rate and line control data if
 	the device loses power during standby or hibernation.
@@ -236,7 +236,7 @@ version 5.2
 	Fixed a crash during surprise disconnect in HyperTerminal on Vista.
 	Fixed a problem causing various incomplete reads, sometimes visible in HyperTerminal.
 	
-	New FeatureTests/Enhancements
+	New Fs/Enhancements
 	-------------------------
 	CP210xVCPInstaller.exe updated to v2.4.
 	
@@ -249,7 +249,7 @@ version 5.1
 
 
 version 5.0
-	New FeatureTests/Enhancements
+	New Fs/Enhancements
 	-------------------------
 	Driver has been updated to use the KMDF.
 	Driver now includes a Serial Enumeration filter driver.
@@ -257,14 +257,14 @@ version 5.0
 
 
 version 4.40
-	New FeatureTests/Enhancements
+	New Fs/Enhancements
 	-------------------------
 	Driver has been updated to include Vista (x86/x64) support.
 	CP210xVCPInstaller.exe updated to v2.0.
 
 
 version 4.38a
-	New FeatureTests/Enhancements
+	New Fs/Enhancements
 	-------------------------
 	Driver version 4.38 is the same, however the installation procedure changed and a new
 	installation utility has been provided.
@@ -277,20 +277,20 @@ version 4.38a
 
 
 version 4.38
-	New FeatureTests/Enhancements
+	New Fs/Enhancements
 	-------------------------
 	Extended surprise removal support added to fix COM port hang.
 	WHQL Certified for Windows XP and 2000.
 
 
 Version 4.28a
-	New FeatureTests/Enhancements
+	New Fs/Enhancements
 	-------------------------
 	WHQL Certified for Windows XP and 2000.
 
 
 Version 4.28
-	New FeatureTests/Enhancements
+	New Fs/Enhancements
 	-------------------------
 	Includes Preinstaller executable and with added preinstaller support in uninstaller
 	executable and ini files.
@@ -304,7 +304,7 @@ Version 4.28
 
 Version 4.20
 
-	New FeatureTests/Enhancements
+	New Fs/Enhancements
 	-------------------------
 
 	Changed driver binary file names from cyg_* to slab*.  Also changed 
@@ -324,7 +324,7 @@ Version 4.20
 
 Version 4.16
 
-	New FeatureTests/Enhancements
+	New Fs/Enhancements
 	-------------------------
 	
 	Corrections

@@ -60,8 +60,8 @@ def get_fingerprint_detail():
     else:
         if i == adafruit_fingerprint.IMAGEMESS:
             print("Image too messy")
-        elif i == adafruit_fingerprint.FeatureTestFAIL:
-            print("Could not identify FeatureTests")
+        elif i == adafruit_fingerprint.FFAIL:
+            print("Could not identify Fs")
         elif i == adafruit_fingerprint.INVALIDIMAGE:
             print("Image invalid")
         else:
@@ -113,8 +113,8 @@ def enroll_finger(location):
         else:
             if i == adafruit_fingerprint.IMAGEMESS:
                 print("Image too messy")
-            elif i == adafruit_fingerprint.FeatureTestFAIL:
-                print("Could not identify FeatureTests")
+            elif i == adafruit_fingerprint.FFAIL:
+                print("Could not identify Fs")
             elif i == adafruit_fingerprint.INVALIDIMAGE:
                 print("Image invalid")
             else:

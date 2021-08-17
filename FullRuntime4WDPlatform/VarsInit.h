@@ -28,6 +28,7 @@ uint8_t servonum = 0;
 
 //Internal controls
 bool commandEntered = false;
+bool APICommandEntered = false;
 
 //PortMappings:
 
@@ -44,7 +45,8 @@ bool UltrasonicEnabled;
 bool ServoArmControllerEnabled;
 bool PWMInitialised;
 bool StopAllTestsRequested;
-String featureTestStr = "FeatureTest";
+bool NonHumanReadableAPIIOEnabled;
+String FStr = "F";
 
 //Ultrasonic vars:
 unsigned char addr0 = 0x11; //The ic2 address of the Ultrasonic
@@ -54,6 +56,30 @@ unsigned char rxbuf[10] = {0};
 //ArmServoTestVars
 int CurrentNumServoArmOfTests = 0;
 
+//API parse ints:
+int idxCmdIn;
+int idxCmdOut;
+int idx4WD;
+int idx6A;
+int idxScrn;
+bool idx4WD_FLA;
+bool idx4WD_FRA;
+bool idx4WD_BLA;
+bool idx4WD_BRA;
+bool idx4WD_FLB;
+bool idx4WD_FRB;
+bool idx4WD_BLB;
+bool idx4WD_BRB;
+int idx4WD_SpeedS;
+int idx4WD_SpeedE;
+int idx4WD_DurS;
+int idx4WD_DurE;
+int Speed4WD;
+int Dur4WD;
+bool CmdRcv4WD = false;
+
+
+//------
 typedef enum {
 
   SLAVEADDR_INDEX = 0,

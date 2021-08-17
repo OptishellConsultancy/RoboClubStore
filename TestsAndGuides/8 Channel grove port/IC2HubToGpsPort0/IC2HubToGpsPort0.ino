@@ -157,7 +157,7 @@ void OpenPortMap(int portToOpen){
   }
 }
 
-void EnablePortSensorFeatureTestMap(int portToOpen)
+void EnablePortSensorFMap(int portToOpen)
 {
   GPSPortOpened = (portToOpen == GPSPort);
   LSM303D_CompassAccelMagnetoPortOpened = (portToOpen == LSM303D_CompassAccelMagnetoPort);
@@ -186,7 +186,7 @@ void loop() {
     {        
       readString = "";
       OpenPortMap(portToOpen);
-      EnablePortSensorFeatureTestMap(portToOpen);
+      EnablePortSensorFMap(portToOpen);
       Serial.print("Channel opened..");
       DiscoverHubPortDevices();
     }
