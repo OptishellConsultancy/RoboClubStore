@@ -162,6 +162,7 @@ bool ParseAndExecuteAPICommand(String str)
       idx4WD_FRB = false;
       idx4WD_BLB = false;
       idx4WD_BRB = false;
+      idx4WD_SAD = false;
       //--
       Serial.print("idx4WD RECV!..\r\n");
       idx4WD_FLA = (str.indexOf("FLA") >= 0); //Front Left Advance
@@ -175,17 +176,22 @@ bool ParseAndExecuteAPICommand(String str)
       idx4WD_SpeedS = str.indexOf("[");       //Duration Parse start
       idx4WD_SpeedE = str.indexOf("]");       //Duration End End
       idx4WD_DurS = str.indexOf("{");         //Duration Parse start
-      idx4WD_DurE = str.indexOf("}");         //Duration End End
+      idx4WD_DurE = str.indexOf("}");         //Duration Parse End
+      idx4WD_SAD = (str.indexOf("Y") >= 0);   //Duration End End
       Speed4WD = str.substring(idx4WD_SpeedS + 1, idx4WD_SpeedE).toInt();
       Dur4WD = str.substring(idx4WD_DurS + 1, idx4WD_DurE).toInt();
       CmdRcv4WD = (Speed4WD >= 0);
       //E.g. F7. 100 SPEED, FOR 100MS Front left Forward
-      if(idx4WD_FRA)
+      Serial.print("Speed4WD: ");
+      Serial.print(Speed4WD);
+      Serial.print("\n");
+      Serial.print("Dur4WD: ");
+      Serial.print(Dur4WD);
+      Serial.print("\n");
+      if (idx4WD_SAD)
       {
-          Serial.print("idx4WD_FRA...\r\n");
+        Serial.print("Stopping after cmd.\r\n");
       }
-      Serial.print("Speed4WD: "); Serial.print(Speed4WD); Serial.print("\r\n");
-      Serial.print("Dur4WD: "); Serial.print(Dur4WD); Serial.print("\r\n");
       return true;
     }
     if (idx6A > 0)

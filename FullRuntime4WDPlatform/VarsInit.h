@@ -74,6 +74,7 @@ int idx4WD_SpeedS;
 int idx4WD_SpeedE;
 int idx4WD_DurS;
 int idx4WD_DurE;
+bool idx4WD_SAD;
 int Speed4WD;
 int Dur4WD;
 bool CmdRcv4WD = false;

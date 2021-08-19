@@ -13,6 +13,8 @@ void setup()
   //
   pwm.begin();
   pwm.setPWMFreq(FREQUENCY); // Analog servos run at ~60 Hz updates
+
+  SetupW4DPins();
   //
   DiscoverHubPortDevices();
   Serial.print("\r\n");
@@ -75,6 +77,7 @@ void loop()
     {
       ReadString = "";
       //E.G. <In>4WD[100]{100}FLA
+      //     <In>4WD[100]{100}FRA
       if (CmdRcv4WD)
       {
         Do4WDAPICommand();
