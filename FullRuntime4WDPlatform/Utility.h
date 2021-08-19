@@ -117,12 +117,13 @@ bool PassCommandChk(String str, int &cmdToActivate)
 {
   int idxOpenPort = str.indexOf(FStr);
   int idxDot = str.indexOf(".");
+  int idxF = str.indexOf("F");
   int strLen = str.length();
-  if (idxOpenPort >= 0 && idxDot >= 0)
+  if (idxOpenPort >= 0 && idxDot >= 0 && idxF >= 0 && strLen >= 3)
   {
-    String numberChars = str.substring(FStr.length(), idxDot);
+    String numberChars = str.substring(idxDot-1, idxDot);
     cmdToActivate = numberChars.toInt();
-    PrintfOneVar(100, "Enabling F: %d.", cmdToActivate);
+    PrintfOneVar(100, "Enabling Function: %d.", cmdToActivate);
     return true;
   }
   else
@@ -145,59 +146,60 @@ bool PassCommandChk(String str, int &cmdToActivate)
 bool ParseAndExecuteAPICommand(String str)
 {
   //
-  idxCmdIn = str.indexOf("<In>");
-  idxCmdOut = str.indexOf("<Out>");
-  if (idxCmdIn >= 0)
+  CmdIn = (str.indexOf("<In>") >= 0);
+  CmdOut = (str.indexOf("<Out>") >= 0);
+  RetToMainMenu = (str.indexOf("RM") >= 0);
+  if (RetToMainMenu)
   {
-    idx4WD = str.indexOf("4WD");   //<In>4W //4WheelDrive Data
-    idx6A = str.indexOf("6A");     //<In>6A / Axis data
-    idxScrn = str.indexOf("SCRN"); //<In>SCRN //Screen data
-    if (idx4WD >= 0)
+    NonHumanReadableAPIIOEnabled = false;
+    RetToMainMenu = false;
+    PrintFPlistInfo();
+  }
+  if (CmdIn)
+  {
+    Do4WD = (str.indexOf("4WD") >= 0);   //<In>4W //4WheelDrive Data
+    Do6A = (str.indexOf("6A") >= 0);     //<In>6A / Axis data
+    DoScrn = (str.indexOf("SCRN") >= 0); //<In>SCRN //Screen data
+    if (Do4WD)
     {
-      idx4WD_FLA = false;
-      idx4WD_FRA = false;
-      idx4WD_BLA = false;
-      idx4WD_BRA = false;
-      idx4WD_FLB = false;
-      idx4WD_FRB = false;
-      idx4WD_BLB = false;
-      idx4WD_BRB = false;
-      idx4WD_SAD = false;
+      Do4WD_FLA = false;
+      Do4WD_FRA = false;
+      Do4WD_BLA = false;
+      Do4WD_BRA = false;
+      Do4WD_FLB = false;
+      Do4WD_FRB = false;
+      Do4WD_BLB = false;
+      Do4WD_BRB = false;
+      Do4WD_SAD = false;
       //--
       Serial.print("idx4WD RECV!..\r\n");
-      idx4WD_FLA = (str.indexOf("FLA") >= 0); //Front Left Advance
-      idx4WD_FRA = (str.indexOf("FRA") >= 0); //Front Right Advance
-      idx4WD_BLA = (str.indexOf("BLA") >= 0); //Back Left Advance
-      idx4WD_BRA = (str.indexOf("BRA") >= 0); //Back Right Advance
-      idx4WD_FLB = (str.indexOf("FLB") >= 0); //Front Left Back
-      idx4WD_FRB = (str.indexOf("FRB") >= 0); //Front Right Back
-      idx4WD_BLB = (str.indexOf("BLB") >= 0); //Back Left Back
-      idx4WD_BRB = (str.indexOf("BRB") >= 0); //Back Right Back
-      idx4WD_SpeedS = str.indexOf("[");       //Duration Parse start
-      idx4WD_SpeedE = str.indexOf("]");       //Duration End End
-      idx4WD_DurS = str.indexOf("{");         //Duration Parse start
-      idx4WD_DurE = str.indexOf("}");         //Duration Parse End
-      idx4WD_SAD = (str.indexOf("Y") >= 0);   //Duration End End
-      Speed4WD = str.substring(idx4WD_SpeedS + 1, idx4WD_SpeedE).toInt();
-      Dur4WD = str.substring(idx4WD_DurS + 1, idx4WD_DurE).toInt();
+      Do4WD_FLA = (str.indexOf("FLA") >= 0); //Front Left Advance
+      Do4WD_FRA = (str.indexOf("FRA") >= 0); //Front Right Advance
+      Do4WD_BLA = (str.indexOf("BLA") >= 0); //Back Left Advance
+      Do4WD_BRA = (str.indexOf("BRA") >= 0); //Back Right Advance
+      Do4WD_FLB = (str.indexOf("FLB") >= 0); //Front Left Back
+      Do4WD_FRB = (str.indexOf("FRB") >= 0); //Front Right Back
+      Do4WD_BLB = (str.indexOf("BLB") >= 0); //Back Left Back
+      Do4WD_BRB = (str.indexOf("BRB") >= 0); //Back Right Back
+      Do4WD_SpeedS = str.indexOf("[");       //Duration Parse start
+      Do4WD_SpeedE = str.indexOf("]");       //Duration End End
+      Do4WD_DurS = str.indexOf("{");         //Duration Parse start
+      Do4WD_DurE = str.indexOf("}");         //Duration Parse End
+      Do4WD_SAD = (str.indexOf("Y") >= 0);   //Duration End End
+      Speed4WD = str.substring(Do4WD_SpeedS + 1, Do4WD_SpeedE).toInt();
+      Dur4WD = str.substring(Do4WD_DurS + 1, Do4WD_DurE).toInt();
       CmdRcv4WD = (Speed4WD >= 0);
       //E.g. F7. 100 SPEED, FOR 100MS Front left Forward
-      Serial.print("Speed4WD: ");
+      Serial.print(" Speed4WD: ");
       Serial.print(Speed4WD);
-      Serial.print("\n");
-      Serial.print("Dur4WD: ");
+      Serial.print(" Dur4WD: ");
       Serial.print(Dur4WD);
-      Serial.print("\n");
-      if (idx4WD_SAD)
-      {
-        Serial.print("Stopping after cmd.\r\n");
-      }
       return true;
     }
-    if (idx6A > 0)
+    if (Do6A)
     {
     }
-    if (idxScrn > 0)
+    if (DoScrn)
     {
     }
   }

@@ -15,36 +15,37 @@ void M1_advance(char Speed) ///<Motor1 Advance
   digitalWrite(M1, LOW);
   analogWrite(E1, Speed);
 }
-void M2_advance(char Speed) ///<Motor2 Advance
-{
-  digitalWrite(M2, HIGH);
-  analogWrite(E2, Speed);
-}
-void M3_advance(char Speed) ///<Motor3 Advance
-{
-  digitalWrite(M3, LOW);
-  analogWrite(E3, Speed);
-}
-void M4_advance(char Speed) ///<Motor4 Advance
-{
-  digitalWrite(M4, HIGH);
-  analogWrite(E4, Speed);
-}
 
 void M1_back(char Speed) ///<Motor1 Back off
 {
   digitalWrite(M1, HIGH);
   analogWrite(E1, Speed);
 }
+void M2_advance(char Speed) ///<Motor2 Advance
+{
+  digitalWrite(M2, HIGH);
+  analogWrite(E2, Speed);
+}
 void M2_back(char Speed) ///<Motor2 Back off
 {
   digitalWrite(M2, LOW);
   analogWrite(E2, Speed);
 }
+
+void M3_advance(char Speed) ///<Motor3 Advance
+{
+  digitalWrite(M3, LOW);
+  analogWrite(E3, Speed);
+}
 void M3_back(char Speed) ///<Motor3 Back off
 {
   digitalWrite(M3, HIGH);
   analogWrite(E3, Speed);
+}
+void M4_advance(char Speed) ///<Motor4 Advance
+{
+  digitalWrite(M4, HIGH);
+  analogWrite(E4, Speed);
 }
 void M4_back(char Speed) ///<Motor4 Back off
 {
@@ -68,51 +69,61 @@ void Test4WDCommands()
 
 void SetupW4DPins()
 {
-  for (int i = 3; i < 9; i++)
-    pinMode(i, OUTPUT);
-  for (int i = 11; i < 13; i++)
-    pinMode(i, OUTPUT);
+
+  //for (int i = 3; i < 9; i++)
+  // pinMode(i, OUTPUT);
+  //for (int i = 11; i < 13; i++)
+  //  pinMode(i, OUTPUT);
+
+  pinMode(3, OUTPUT);
+  pinMode(4, OUTPUT);
+  pinMode(5, OUTPUT);
+  pinMode(6, OUTPUT);
+  pinMode(7, OUTPUT);
+  pinMode(8, OUTPUT);
+  pinMode(11, OUTPUT);
+  pinMode(12, OUTPUT);
 }
 
 void Do4WDAPICommand()
 {
   //Forward
-  if (idx4WD_FLA)
+  if (Do4WD_FLA)
   {
     M2_advance(Speed4WD); //<In>4WD[100]{100}FLAY(Stop)
   }
-  if (idx4WD_FRA) //<In>4WD[Speed]{Duration}FRA
-  { 
+  if (Do4WD_FRA) //<In>4WD[Speed]{Duration}FRA
+  {
     M1_back(Speed4WD);
   }
-  if (idx4WD_BLA)
+  if (Do4WD_BLA)
   {
-    M3_advance(Speed4WD); 
+    M3_advance(Speed4WD);
   }
-  if (idx4WD_BRA)
-  {
-    M4_advance(Speed4WD); 
-  }
-  //Back
-  if (idx4WD_FLB)
-  {
-    M2_back(Speed4WD);
-  }
-  if (idx4WD_FRB)
-  {
-    M1_advance(Speed4WD);
-  }
-  if (idx4WD_BLB)
-  {
-    M3_back(Speed4WD); 
-  }
-  if (idx4WD_BRB)
+  if (Do4WD_BRA)
   {
     M4_back(Speed4WD);
   }
+  //Back
+  if (Do4WD_FLB)
+  {
+    M2_back(Speed4WD);
+  }
+  if (Do4WD_FRB)
+  {
+    M1_advance(Speed4WD);
+  }
+  if (Do4WD_BLB)
+  {
+    M3_back(Speed4WD);
+  }
+  if (Do4WD_BRB)
+  {
+    M4_advance(Speed4WD);
+  }
   delay(Dur4WD);
   //Stop all..
-  if (idx4WD_SAD)
+  if (Do4WD_SAD)
   {
     M1_advance(0);
     M2_advance(0);

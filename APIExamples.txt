@@ -1,0 +1,34 @@
+RM = Return to function menu
+----------------------------------------------------------------------------------
+<In>4WDY(Stop)
+<In>4WD[100]{100}FLAY(Stop) Front left advance, 100 speed, 100ms, stop after duration.
+
+<In>4WD[100]{100}FLA Front left advance, 100 speed, 100ms, DON'T stop after duration
+<In>4WD[100]FLA Front left advance, 100 speed, DON'T stop 
+
+FLA //Front Left Advance
+FRA //Front Right Advance
+BLA //Back Left Advance
+BRA //Back Right Advance
+FLB //Front Left Back
+FRB //Front Right Back
+BLB //Back Left Back
+BRB //Back Right Back
+Y = Stop after duration
+
+
+//All forwards
+<In>4WD[100]FRA{1000}Y
+<In>4WD[100]FLA{1000}Y
+--
+<In>4WD[100]FRB{1000}Y
+<In>4WD[100]FLB{1000}Y
+//--All back..
+<In>4WD[100]BRA{1000}Y
+<In>4WD[100]BLA{1000}Y
+--
+<In>4WD[100]BRB{1000}Y
+<In>4WD[100]BLB{1000}Y
+
+[R] = Speed out of 255
+{R[0-255]} = Duration in ms

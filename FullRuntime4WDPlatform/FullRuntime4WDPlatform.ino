@@ -16,7 +16,7 @@ void setup()
 
   SetupW4DPins();
   //
-  DiscoverHubPortDevices();
+  //DiscoverHubPortDevices();
   Serial.print("\r\n");
   Serial.print("Please provide a port number, e.g F0.\r\n");
   Serial.print("F0. : GPS.\r\n");
@@ -52,11 +52,6 @@ void loop()
     if (OLEDDisplayEnabled)
     {
       OLEDTest();
-    }
-
-    if (UltrasonicEnabled)
-    {
-      UpdateUltrasonicIC2Data();
     }
 
     if (FourWDHatEnabled)

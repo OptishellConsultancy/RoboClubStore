@@ -57,27 +57,29 @@ unsigned char rxbuf[10] = {0};
 int CurrentNumServoArmOfTests = 0;
 
 //API parse ints:
-int idxCmdIn;
-int idxCmdOut;
-int idx4WD;
-int idx6A;
-int idxScrn;
-bool idx4WD_FLA;
-bool idx4WD_FRA;
-bool idx4WD_BLA;
-bool idx4WD_BRA;
-bool idx4WD_FLB;
-bool idx4WD_FRB;
-bool idx4WD_BLB;
-bool idx4WD_BRB;
-int idx4WD_SpeedS;
-int idx4WD_SpeedE;
-int idx4WD_DurS;
-int idx4WD_DurE;
-bool idx4WD_SAD;
+bool CmdIn;
+bool CmdOut;
+bool Do4WD;
+bool Do6A;
+bool DoScrn;
+bool Do4WD_FLA;
+bool Do4WD_FRA;
+bool Do4WD_BLA;
+bool Do4WD_BRA;
+bool Do4WD_FLB;
+bool Do4WD_FRB;
+bool Do4WD_BLB;
+bool Do4WD_BRB;
+int Do4WD_SpeedS;
+int Do4WD_SpeedE;
+int Do4WD_DurS;
+int Do4WD_DurE;
+bool Do4WD_SAD;
 int Speed4WD;
 int Dur4WD;
 bool CmdRcv4WD = false;
+//
+int RetToMainMenu = false;
 
 
 //------
