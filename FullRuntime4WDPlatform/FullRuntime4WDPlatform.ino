@@ -15,6 +15,8 @@ void setup()
   pwm.setPWMFreq(FREQUENCY); // Analog servos run at ~60 Hz updates
 
   SetupW4DPins();
+  EnableArmServos();
+
   //
   //DiscoverHubPortDevices();
   Serial.print("\r\n");
@@ -77,6 +79,11 @@ void loop()
       {
         Do4WDAPICommand();
         CmdRcv4WD = false;
+      }
+      if(Do6Axis)
+      {
+        Do6AxisAPICommand();
+        Do6Axis = false;
       }
     }
   }

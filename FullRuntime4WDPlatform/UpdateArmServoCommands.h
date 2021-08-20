@@ -49,7 +49,7 @@ void DoServosParallelTest(int servoIndexes[], int servoIndexesCount, int delayms
     delay(delayms);
   }
   CurrentNumServoArmOfTests++;
-  if(numberOfLoops == CurrentNumServoArmOfTests )
+  if (numberOfLoops == CurrentNumServoArmOfTests)
   {
     ServoArmControllerEnabled = false;
   }
@@ -70,5 +70,34 @@ void EnableArmServos()
     Serial.print("Servo PWM Enabled");
     pwm = Adafruit_PWMServoDriver();
     PWMInitialised = true;
+  }
+}
+
+void Do6AxisAPICommand()
+{
+  EnableArmServos(); //Just incase
+  if (Ang6Axis_Base > -1)
+  {
+    pwm.setPWM(motorIndex[Base], 0, pulseWidth(Ang6Axis_Base));
+  }
+  if (Ang6Axis_BaseTilt > -1)
+  {
+    pwm.setPWM(motorIndex[BaseTilt], 0, pulseWidth(Ang6Axis_BaseTilt));
+  }
+  if (Ang6Axis_Elbow > -1)
+  {
+    pwm.setPWM(motorIndex[Elbow], 0, pulseWidth(Ang6Axis_Elbow));
+  }
+  if (Ang6Axis_WristElevate > -1)
+  {
+    pwm.setPWM(motorIndex[WristElevate], 0, pulseWidth(Ang6Axis_WristElevate));
+  }
+  if (Ang6Axis_WristRotate > -1)
+  {
+    pwm.setPWM(motorIndex[WristRotate], 0, pulseWidth(Ang6Axis_WristRotate));
+  }
+  if (Ang6Axis_Claw > -1)
+  {
+    pwm.setPWM(motorIndex[Claw], 0, pulseWidth(Ang6Axis_Claw));
   }
 }

@@ -121,7 +121,7 @@ bool PassCommandChk(String str, int &cmdToActivate)
   int strLen = str.length();
   if (idxOpenPort >= 0 && idxDot >= 0 && idxF >= 0 && strLen >= 3)
   {
-    String numberChars = str.substring(idxDot-1, idxDot);
+    String numberChars = str.substring(idxDot - 1, idxDot);
     cmdToActivate = numberChars.toInt();
     PrintfOneVar(100, "Enabling Function: %d.", cmdToActivate);
     return true;
@@ -157,9 +157,9 @@ bool ParseAndExecuteAPICommand(String str)
   }
   if (CmdIn)
   {
-    Do4WD = (str.indexOf("4WD") >= 0);   //<In>4W //4WheelDrive Data
-    Do6A = (str.indexOf("6A") >= 0);     //<In>6A / Axis data
-    DoScrn = (str.indexOf("SCRN") >= 0); //<In>SCRN //Screen data
+    Do4WD = (str.indexOf("4WD") >= 0);     //<In>4W //4WheelDrive Data
+    Do6Axis = (str.indexOf("6Axis") >= 0); //<In>6A / Axis data
+    DoScrn = (str.indexOf("SCRN") >= 0);   //<In>SCRN //Screen data
     if (Do4WD)
     {
       Do4WD_FLA = false;
@@ -196,8 +196,32 @@ bool ParseAndExecuteAPICommand(String str)
       Serial.print(Dur4WD);
       return true;
     }
-    if (Do6A)
+    if (Do6Axis)
     {
+      //Convert to charArray
+      int str_len = str.length();
+      char strChar[str_len];
+      str.toCharArray(strChar, str_len);
+      //
+      char *pch;
+      pch = strtok(strChar, ".");
+      String pchStr(pch);
+      while (pch != NULL)
+      {
+        String jointName =  pchStr.substring(pchStr.indexOf("[") + 1, pchStr.indexOf("."));
+        int angle = pchStr.substring(pchStr.indexOf(".") + 1, pchStr.indexOf("]")).toInt();
+        angle = (angle < 0) ? -angle : angle;        //Invert if negative
+        angle = (angle > 180) ? angle % 180 : angle; //Constrain to max 180
+
+        pch = strtok(NULL, "."); //If delim found, set to next
+        pchStr = String(pch);
+        Ang6Axis_Base = (jointName == "B") ? angle : -1;
+        Ang6Axis_BaseTilt = (jointName == "BT") ? angle : -1;
+        Ang6Axis_Elbow = (jointName == "E") ? angle : -1;
+        Ang6Axis_WristElevate = (jointName == "WE") ? angle : -1;
+        Ang6Axis_WristRotate = (jointName == "WR") ? angle : -1;
+        Ang6Axis_Claw = (jointName == "C") ? angle : -1;
+      }
     }
     if (DoScrn)
     {

@@ -60,8 +60,10 @@ int CurrentNumServoArmOfTests = 0;
 bool CmdIn;
 bool CmdOut;
 bool Do4WD;
-bool Do6A;
+bool Do6Axis;
 bool DoScrn;
+bool RetToMainMenu = false;
+//4WD
 bool Do4WD_FLA;
 bool Do4WD_FRA;
 bool Do4WD_BLA;
@@ -78,8 +80,25 @@ bool Do4WD_SAD;
 int Speed4WD;
 int Dur4WD;
 bool CmdRcv4WD = false;
-//
-int RetToMainMenu = false;
+//6Axis
+int Ang6Axis_Base; 
+int Ang6Axis_BaseTilt;
+int Ang6Axis_Elbow;
+int Ang6Axis_WristElevate;
+int Ang6Axis_WristRotate;
+int Ang6Axis_Claw;
+
+enum MotorName
+{
+  Base,
+  BaseTilt,
+  Elbow,
+  WristElevate,
+  WristRotate,
+  Claw
+};
+
+int motorIndex[6] = {0,1,11,12,13,14};
 
 
 //------

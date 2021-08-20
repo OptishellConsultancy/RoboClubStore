@@ -1,5 +1,6 @@
 RM = Return to function menu
 ----------------------------------------------------------------------------------
+4WD commands
 <In>4WDY(Stop)
 <In>4WD[100]{100}FLAY(Stop) Front left advance, 100 speed, 100ms, stop after duration.
 
@@ -16,7 +17,6 @@ BLB //Back Left Back
 BRB //Back Right Back
 Y = Stop after duration
 
-
 //All forwards
 <In>4WD[100]FRA{1000}Y
 <In>4WD[100]FLA{1000}Y
@@ -32,3 +32,13 @@ Y = Stop after duration
 
 [R] = Speed out of 255
 {R[0-255]} = Duration in ms
+----------------------------------------------------------------------------------
+6 axis control 
+
+<In>6Axis[JointName,Angle].[JointName,Angle].[JointName,Angle]
+B//Base
+BT//BaseTilt
+E//Elbow;
+WE//WristElevate
+WR//WristRotate
+C//Claw
