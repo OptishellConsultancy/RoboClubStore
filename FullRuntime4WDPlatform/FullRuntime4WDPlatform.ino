@@ -82,6 +82,7 @@ void loop()
       }
       if(Do6Axis)
       {
+        //E.G <In>6Axis[C.5]; Claw to 5 degrees
         Do6AxisAPICommand();
         Do6Axis = false;
       }

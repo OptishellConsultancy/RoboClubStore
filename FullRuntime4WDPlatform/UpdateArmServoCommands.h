@@ -75,6 +75,7 @@ void EnableArmServos()
 
 void Do6AxisAPICommand()
 {
+  Serial.print("Do6AxisAPICommand..\r\n ");
   EnableArmServos(); //Just incase
   if (Ang6Axis_Base > -1)
   {
@@ -99,5 +100,6 @@ void Do6AxisAPICommand()
   if (Ang6Axis_Claw > -1)
   {
     pwm.setPWM(motorIndex[Claw], 0, pulseWidth(Ang6Axis_Claw));
+    Serial.print("Claw done..\r\n ");
   }
 }

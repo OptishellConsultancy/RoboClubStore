@@ -1,4 +1,5 @@
 #include "VarsInit.h"
+#include <stdio.h>
 //Util-----------------------------------
 void DiscoverHubPortDevices()
 {
@@ -119,7 +120,8 @@ bool PassCommandChk(String str, int &cmdToActivate)
   int idxDot = str.indexOf(".");
   int idxF = str.indexOf("F");
   int strLen = str.length();
-  if (idxOpenPort >= 0 && idxDot >= 0 && idxF >= 0 && strLen >= 3)
+
+  if (idxOpenPort == 0 && idxDot >= 0 && idxF >= 0 && strLen >= 3)
   {
     String numberChars = str.substring(idxDot - 1, idxDot);
     cmdToActivate = numberChars.toInt();
@@ -172,7 +174,7 @@ bool ParseAndExecuteAPICommand(String str)
       Do4WD_BRB = false;
       Do4WD_SAD = false;
       //--
-      Serial.print("idx4WD RECV!..\r\n");
+      Serial.print("Do4WD RECV!..\r\n");
       Do4WD_FLA = (str.indexOf("FLA") >= 0); //Front Left Advance
       Do4WD_FRA = (str.indexOf("FRA") >= 0); //Front Right Advance
       Do4WD_BLA = (str.indexOf("BLA") >= 0); //Back Left Advance
@@ -198,23 +200,41 @@ bool ParseAndExecuteAPICommand(String str)
     }
     if (Do6Axis)
     {
-      //Convert to charArray
+      Serial.print("Do6Axis RECV!..\r\n ");
+      //Strip '<In>6Axis' cmd
       int str_len = str.length();
+      str = str.substring(9, str_len + 1);
+      str_len = str.length();
+      //Convert to charArray
       char strChar[str_len];
       str.toCharArray(strChar, str_len);
-      //
+      
       char *pch;
-      pch = strtok(strChar, ".");
+      pch = strtok(strChar, ";");
       String pchStr(pch);
+      String angleSS, jointName;
+      int angle;
       while (pch != NULL)
       {
-        String jointName =  pchStr.substring(pchStr.indexOf("[") + 1, pchStr.indexOf("."));
-        int angle = pchStr.substring(pchStr.indexOf(".") + 1, pchStr.indexOf("]")).toInt();
+        angleSS = pchStr.substring(pchStr.indexOf(".") + 1, pchStr.indexOf("]"));
+        angle = angleSS.toInt();
+        jointName = pchStr.substring(pchStr.indexOf("[") + 1, pchStr.indexOf("."));
+
+        pch = strtok(NULL, ";"); //If delim found, set to next
+        pchStr = String(pch);
+
         angle = (angle < 0) ? -angle : angle;        //Invert if negative
         angle = (angle > 180) ? angle % 180 : angle; //Constrain to max 180
 
-        pch = strtok(NULL, "."); //If delim found, set to next
-        pchStr = String(pch);
+        Serial.print("angle:");
+        char cstr[16];
+        itoa(angle, cstr, 10);
+        Serial.print(cstr);
+        Serial.print("\r\n");
+        Serial.print("jointName:");
+        Serial.print(jointName);
+        Serial.print("\r\n");
+
         Ang6Axis_Base = (jointName == "B") ? angle : -1;
         Ang6Axis_BaseTilt = (jointName == "BT") ? angle : -1;
         Ang6Axis_Elbow = (jointName == "E") ? angle : -1;
@@ -222,9 +242,11 @@ bool ParseAndExecuteAPICommand(String str)
         Ang6Axis_WristRotate = (jointName == "WR") ? angle : -1;
         Ang6Axis_Claw = (jointName == "C") ? angle : -1;
       }
+      return true;
     }
     if (DoScrn)
     {
+      return true;
     }
   }
   return false;

@@ -17,6 +17,8 @@ BLB //Back Left Back
 BRB //Back Right Back
 Y = Stop after duration
 
+Examples
+
 //All forwards
 <In>4WD[100]FRA{1000}Y
 <In>4WD[100]FLA{1000}Y
@@ -42,3 +44,7 @@ E//Elbow;
 WE//WristElevate
 WR//WristRotate
 C//Claw
+
+
+Examples
+<In>6Axis[C,5]; Claw to 5 degrees
