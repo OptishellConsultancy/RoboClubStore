@@ -13,20 +13,21 @@ LSM303 compass;
 #define GPSECHO false
 Adafruit_GPS GPS;
 #include <Wire.h>
+#include <Adafruit_PWMServoDriver.h>
 
-//#include <Adafruit_PWMServoDriver.h>
 //REMEMBER TO HAVE BATTERIES CHARGED!
 // called this way, it uses the default address 0x40
-//Adafruit_PWMServoDriver pwm;
-//#define MIN_PULSE_WIDTH 650
-//#define MAX_PULSE_WIDTH 2350
-//#define DEFAULT_PULSE_WIDTH 1500
-//#define FREQUENCY 50
+Adafruit_PWMServoDriver pwm;
 
-#include <OzIDManager.h>
-#include <OzServoController.h>
-//https://ozeki.hu/p_3056-how-to-setup-a-servo-motor-on-arduino-nano.html
+#define MIN_PULSE_WIDTH 650
+#define MAX_PULSE_WIDTH 2350
+#define DEFAULT_PULSE_WIDTH 1500
+#define FREQUENCY 50
 
+#define SERVOMIN  125 //  minimum pulse length count (out of 4096)
+#define SERVOMAX  600 // maximum pulse length count (out of 4096)
+// our servo # counter
+uint8_t servonum = 0;
 
 //Internal controls
 bool commandEntered = false;
