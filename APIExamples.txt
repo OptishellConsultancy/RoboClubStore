@@ -45,6 +45,6 @@ WE//WristElevate
 WR//WristRotate
 C//Claw
 
-
-Examples
-<In>6Axis[C,5]; Claw to 5 degrees
+E.g.
+<In>6Axis[WR.5] Wrist rotate 5 degrees
+<In>6Axis[C.5] Claw to 5 degrees
