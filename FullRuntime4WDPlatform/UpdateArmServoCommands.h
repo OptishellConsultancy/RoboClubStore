@@ -1,12 +1,13 @@
 #include "Utility.h"
-int pulseWidth(int angle)
-{
-  int pulse_wide, analog_value;
-  pulse_wide = map(angle, 0, 180, MIN_PULSE_WIDTH, MAX_PULSE_WIDTH);
-  analog_value = int(float(pulse_wide) / 1000000 * FREQUENCY * 4096);
-  Serial.println(analog_value);
-  return analog_value;
-}
+
+// int pulseWidth(int angle)
+// {
+//   int pulse_wide, analog_value;
+//   pulse_wide = map(angle, 0, 180, MIN_PULSE_WIDTH, MAX_PULSE_WIDTH);
+//   analog_value = int(float(pulse_wide) / 1000000 * FREQUENCY * 4096);
+//   Serial.println(analog_value);
+//   return analog_value;
+// }
 
 void DoServoTest(int servoIndex)
 {
@@ -63,12 +64,13 @@ void ArmServosTest()
   DoServosParallelTest(servoIndexes, servoIndexesCount, 200, numberOfLoops);
 }
 
+//https://www.jsumo.com/mg996r-servo-motor-digital
 void EnableArmServos()
 {
   if (!PWMInitialised)
   {
     Serial.print("Servo PWM Enabled");
-    pwm = Adafruit_PWMServoDriver();
+    //pwm = Adafruit_PWMServoDriver();
     PWMInitialised = true;
   }
 }
@@ -79,27 +81,38 @@ void Do6AxisAPICommand()
   EnableArmServos(); //Just incase
   if (Ang6Axis_Base > -1)
   {
-    pwm.setPWM(motorIndex[Base], 0, pulseWidth(Ang6Axis_Base));
+    //pwm.setPWM(motorIndex[Base], 0, pulseWidth(Ang6Axis_Base));
+    delay(1000);
+    Serial.print("Base done..\r\n ");
   }
   if (Ang6Axis_BaseTilt > -1)
   {
-    pwm.setPWM(motorIndex[BaseTilt], 0, pulseWidth(Ang6Axis_BaseTilt));
+    //pwm.setPWM(motorIndex[BaseTilt], 0, pulseWidth(Ang6Axis_BaseTilt));
+    delay(1000);  
+    Serial.print("BaseTilt done..\r\n ");
   }
   if (Ang6Axis_Elbow > -1)
   {
-    pwm.setPWM(motorIndex[Elbow], 0, pulseWidth(Ang6Axis_Elbow));
+    //pwm.setPWM(motorIndex[Elbow], 0, pulseWidth(Ang6Axis_Elbow));
+    delay(1000);
+    Serial.print("Elbow done..\r\n ");
   }
   if (Ang6Axis_WristElevate > -1)
   {
-    pwm.setPWM(motorIndex[WristElevate], 0, pulseWidth(Ang6Axis_WristElevate));
+    //pwm.setPWM(motorIndex[WristElevate], 0, pulseWidth(Ang6Axis_WristElevate));
+    delay(1000);
+    Serial.print("WristElevate done..\r\n ");
   }
   if (Ang6Axis_WristRotate > -1)
   {
-    pwm.setPWM(motorIndex[WristRotate], 0, pulseWidth(Ang6Axis_WristRotate));
+    //pwm.setPWM(motorIndex[WristRotate], 0, pulseWidth(Ang6Axis_WristRotate));
+    delay(1000);
+    Serial.print("WristRotate done..\r\n ");
   }
   if (Ang6Axis_Claw > -1)
   {
-    pwm.setPWM(motorIndex[Claw], 0, pulseWidth(Ang6Axis_Claw));
+    //pwm.setPWM(motorIndex[Claw], 0, pulseWidth(Ang6Axis_Claw));
+    delay(1000);
     Serial.print("Claw done..\r\n ");
   }
 }
