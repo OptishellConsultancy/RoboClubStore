@@ -18,33 +18,34 @@ int angleToPulse(int ang){
 void DoServoTest(int servoIndex)
 {
   pwm.setPWM(servoIndex, 0, angleToPulse(0));
-  Serial.println("0");
+  Serial.println(String(servoIndex) + " 0");
   delay(500);
   pwm.setPWM(servoIndex, 0, angleToPulse(45));
-  Serial.println("45");
+  Serial.println(String(servoIndex) + " 45");
   delay(500);
   pwm.setPWM(servoIndex, 0, angleToPulse(90));
-  Serial.println("90");
+  Serial.println(String(servoIndex) + " 90");
   delay(500);
   pwm.setPWM(servoIndex, 0, angleToPulse(135));
-  Serial.println("135");
+  Serial.println(String(servoIndex) +" 135");
   delay(500);
   pwm.setPWM(servoIndex, 0, angleToPulse(180));
-  Serial.println("180");
+  Serial.println(String(servoIndex) +" 180");
   delay(500);
   pwm.setPWM(servoIndex, 0, angleToPulse(135));
-  Serial.println("135");
+  Serial.println(String(servoIndex) +" 135");
   delay(500);
   pwm.setPWM(servoIndex, 0, angleToPulse(90));
-  Serial.println("90");
+  Serial.println(String(servoIndex) +" 90");
   delay(500);
   pwm.setPWM(servoIndex, 0, angleToPulse(45));
-  Serial.println("45");
+  Serial.println(String(servoIndex) +" 45");
   delay(500);
 }
 
 void DoServosParallelTest(int servoIndexes[], int servoIndexesCount, int delayms, int numberOfLoops)
 {
+  Serial.println("DoServosParallelTest..");
   CurrentNumServoArmOfTests = 0;
   int commands[] = {0, 45, 90, 135, 180, 135, 90, 45};
   for (int c = 0; c < 8; c++)
@@ -64,10 +65,11 @@ void DoServosParallelTest(int servoIndexes[], int servoIndexesCount, int delayms
 
 void ArmServosTest()
 {
-  int servoIndexes[] = {0, 1};
-  int servoIndexesCount = 6;
-  int numberOfLoops = 1;
-  DoServosParallelTest(servoIndexes, servoIndexesCount, 200, numberOfLoops);
+  DoServoTest(15);
+  //int servoIndexes[] = {0, 1};
+  //int servoIndexesCount = 2;
+  //int numberOfLoops = 100000;
+  //DoServosParallelTest(servoIndexes, servoIndexesCount, 200, numberOfLoops);
 }
 
 //https://www.jsumo.com/mg996r-servo-motor-digital
