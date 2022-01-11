@@ -101,9 +101,11 @@ enum MotorName
   Claw
 };
 
-int motorIndex[6] = {0,1,11,12,14,15};
-
-
+int motorIndex[6] = {1,3,11,12,14,15};
+int defaultPos = 214;
+int motorNameLastAng[6] = {defaultPos,defaultPos,defaultPos,defaultPos,defaultPos,defaultPos}; //Default values set by ResetPositions
+#define stepsPerPWM 10
+#define delayPerPWN 50
 //------
 typedef enum {
 

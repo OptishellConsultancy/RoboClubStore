@@ -49,12 +49,21 @@ void DiscoverHubPortDevices()
   Serial.println();
 }
 
+void PrintfOneStr(int len, char *completeStr, String var)
+{
+  char buffer[len];
+  int n = sprintf(buffer, completeStr, var);
+  Serial.print(buffer);
+  Serial.print("\n");
+  return;
+}
+
 void PrintfOneVar(int len, char *completeStr, int var)
 {
   char buffer[len];
   int n = sprintf(buffer, completeStr, var);
   Serial.print(buffer);
-  Serial.print("\r\n");
+  Serial.print("\n");
   return;
 }
 
@@ -226,14 +235,11 @@ bool ParseAndExecuteAPICommand(String str)
         angle = (angle < 0) ? -angle : angle;        //Invert if negative
         angle = (angle > 180) ? angle % 180 : angle; //Constrain to max 180
 
-        Serial.print("angle:");
         char cstr[16];
         itoa(angle, cstr, 10);
-        Serial.print(cstr);
-        Serial.print("\r\n");
-        Serial.print("jointName:");
-        Serial.print(jointName);
-        Serial.print("\r\n");
+
+        //PrintfOneStr(100,"jointName: %s",jointName);  
+        PrintfOneVar(100,"angle: %d",angle);  
 
         Ang6Axis_Base = (jointName == "B") ? angle : -1;
         Ang6Axis_BaseTilt = (jointName == "BT") ? angle : -1;

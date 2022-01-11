@@ -46,5 +46,9 @@ WR//WristRotate
 C//Claw
 
 E.g.
+<In>6Axis[B.90] Base 5 degrees
+<In>6Axis[BT.40] Base  40 degrees
+<In>6Axis[E.70] Elbow 70 degrees
+<In>6Axis[WE.90] Wrist Elevate 90 degrees
 <In>6Axis[WR.5] Wrist rotate 5 degrees
 <In>6Axis[C.5] Claw to 5 degrees
