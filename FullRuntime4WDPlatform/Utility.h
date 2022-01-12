@@ -217,7 +217,7 @@ bool ParseAndExecuteAPICommand(String str)
       //Convert to charArray
       char strChar[str_len];
       str.toCharArray(strChar, str_len);
-      
+
       char *pch;
       pch = strtok(strChar, ";");
       String pchStr(pch);
@@ -225,7 +225,8 @@ bool ParseAndExecuteAPICommand(String str)
       int angle;
       while (pch != NULL)
       {
-        angleSS = pchStr.substring(pchStr.indexOf(".") + 1, pchStr.indexOf("]"));
+        int endBracket = pchStr.indexOf("]");
+        angleSS = pchStr.substring(pchStr.indexOf(".") + 1, endBracket);
         angle = angleSS.toInt();
         jointName = pchStr.substring(pchStr.indexOf("[") + 1, pchStr.indexOf("."));
 
@@ -238,8 +239,8 @@ bool ParseAndExecuteAPICommand(String str)
         char cstr[16];
         itoa(angle, cstr, 10);
 
-        //PrintfOneStr(100,"jointName: %s",jointName);  
-        PrintfOneVar(100,"angle: %d",angle);  
+        //PrintfOneStr(100,"jointName: %s",jointName);
+        PrintfOneVar(100, "angle: %d", angle);
 
         Ang6Axis_Base = (jointName == "B") ? angle : -1;
         Ang6Axis_BaseTilt = (jointName == "BT") ? angle : -1;
@@ -247,6 +248,7 @@ bool ParseAndExecuteAPICommand(String str)
         Ang6Axis_WristElevate = (jointName == "WE") ? angle : -1;
         Ang6Axis_WristRotate = (jointName == "WR") ? angle : -1;
         Ang6Axis_Claw = (jointName == "C") ? angle : -1;
+        Ang6Axis_HoldPos = !(pchStr.substring(endBracket + 1, endBracket + 2) == '-');
       }
       return true;
     }

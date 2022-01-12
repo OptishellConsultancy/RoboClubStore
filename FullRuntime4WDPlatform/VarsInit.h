@@ -90,6 +90,7 @@ int Ang6Axis_Elbow;
 int Ang6Axis_WristElevate;
 int Ang6Axis_WristRotate;
 int Ang6Axis_Claw;
+bool Ang6Axis_HoldPos;
 
 enum MotorName
 {
