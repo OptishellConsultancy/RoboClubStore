@@ -174,10 +174,6 @@ void EnablePortSensorFMap(int portToOpen)
   }
 }
 
-void UpdateGPSData() {
-  
-}
-
 void loop() {
   ReadCommand();
   if(commandEntered)  { 

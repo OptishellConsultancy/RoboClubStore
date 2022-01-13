@@ -65,6 +65,9 @@ bool CmdOut;
 bool Do4WD;
 bool Do6Axis;
 bool DoScrn;
+bool DoGPS;
+bool DoAccMag;
+bool DoUltraSnc;
 bool RetToMainMenu = false;
 //4WD
 bool Do4WD_FLA;
