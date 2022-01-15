@@ -38,13 +38,33 @@ Examples
 6 axis control 
 
 <In>6Axis[JointName,Angle].[JointName,Angle].[JointName,Angle]
-B//Base
-BT//BaseTilt
-E//Elbow;
-WE//WristElevate
-WR//WristRotate
-C//Claw
 
 E.g.
+<In>6Axis[B.90] Base 5 degrees
+<In>6Axis[BT.40] Base Tilt  40 degrees
+<In>6Axis[E.70] Elbow 70 degrees
+<In>6Axis[WE.90] Wrist Elevate 90 degrees
 <In>6Axis[WR.5] Wrist rotate 5 degrees
 <In>6Axis[C.5] Claw to 5 degrees
+Or chain:
+<In>6Axis[WE.90].<In>6Axis[BT.40].<In>6Axis[WR.5]
+
+--------------------------------------------------
+Screen
+TODO: Something like X,Y Coordinates and duration
+--------------------------------------------------
+Get GPS 
+<Out>GPS
+
+--------------------------------------------------
+Get Accell Mag 
+
+
+--------------------------------------------------
+ultrasonic
+
+--------------------------------------------------
+
+
+
+

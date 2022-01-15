@@ -49,12 +49,24 @@ void DiscoverHubPortDevices()
   Serial.println();
 }
 
-void PrintfOneVar(int len, char *completeStr, int var)
+void PrintfOneStr(int len, char *completeStr, String var)
 {
   char buffer[len];
   int n = sprintf(buffer, completeStr, var);
   Serial.print(buffer);
-  Serial.print("\r\n");
+  Serial.print("\n");
+  return;
+}
+
+void PrintfOneVar(int len, char *completeStr, int var, bool noNewLine = false)
+{
+  char buffer[len];
+  int n = sprintf(buffer, completeStr, var);
+  Serial.print(buffer);
+  if (!noNewLine)
+  {
+    Serial.print("\n");
+  }
   return;
 }
 
@@ -145,6 +157,159 @@ bool PassCommandChk(String str, int &cmdToActivate)
   commandEntered = false;
 }
 
+bool PassCmd4WD(String str)
+{
+  Do4WD_FLA = false;
+  Do4WD_FRA = false;
+  Do4WD_BLA = false;
+  Do4WD_BRA = false;
+  Do4WD_FLB = false;
+  Do4WD_FRB = false;
+  Do4WD_BLB = false;
+  Do4WD_BRB = false;
+  Do4WD_SAD = false;
+  //--
+  Serial.print("Do4WD RECV!..\r\n");
+  Do4WD_FLA = (str.indexOf("FLA") >= 0); //Front Left Advance
+  Do4WD_FRA = (str.indexOf("FRA") >= 0); //Front Right Advance
+  Do4WD_BLA = (str.indexOf("BLA") >= 0); //Back Left Advance
+  Do4WD_BRA = (str.indexOf("BRA") >= 0); //Back Right Advance
+  Do4WD_FLB = (str.indexOf("FLB") >= 0); //Front Left Back
+  Do4WD_FRB = (str.indexOf("FRB") >= 0); //Front Right Back
+  Do4WD_BLB = (str.indexOf("BLB") >= 0); //Back Left Back
+  Do4WD_BRB = (str.indexOf("BRB") >= 0); //Back Right Back
+  Do4WD_SpeedS = str.indexOf("[");       //Duration Parse start
+  Do4WD_SpeedE = str.indexOf("]");       //Duration End End
+  Do4WD_DurS = str.indexOf("{");         //Duration Parse start
+  Do4WD_DurE = str.indexOf("}");         //Duration Parse End
+  Do4WD_SAD = (str.indexOf("Y") >= 0);   //Duration End End
+  Speed4WD = str.substring(Do4WD_SpeedS + 1, Do4WD_SpeedE).toInt();
+  Dur4WD = str.substring(Do4WD_DurS + 1, Do4WD_DurE).toInt();
+  CmdRcv4WD = (Speed4WD >= 0);
+  //E.g. F7. 100 SPEED, FOR 100MS Front left Forward
+  PrintfOneVar(100, "Speed4WD:", Speed4WD);
+  PrintfOneVar(100, "Dur4WD:", Dur4WD);
+  return true;
+}
+
+bool PassCmd6aAxis(String str)
+{
+  Serial.print("Do6Axis RECV!..\r\n ");
+  //Strip '<In>6Axis' cmd
+  int str_len = str.length();
+  str = str.substring(9, str_len + 1);
+  str_len = str.length();
+  //Convert to charArray
+  char strChar[str_len];
+  str.toCharArray(strChar, str_len);
+
+  char *pch;
+  pch = strtok(strChar, ";");
+  String pchStr(pch);
+  String angleSS, jointName;
+  int angle;
+  while (pch != NULL)
+  {
+    int endBracket = pchStr.indexOf("]");
+    angleSS = pchStr.substring(pchStr.indexOf(".") + 1, endBracket);
+    angle = angleSS.toInt();
+    jointName = pchStr.substring(pchStr.indexOf("[") + 1, pchStr.indexOf("."));
+
+    pch = strtok(NULL, ";"); //If delim found, set to next
+    pchStr = String(pch);
+
+    angle = (angle < 0) ? -angle : angle;        //Invert if negative
+    angle = (angle > 180) ? angle % 180 : angle; //Constrain to max 180
+
+    char cstr[16];
+    itoa(angle, cstr, 10);
+
+    //PrintfOneStr(100,"jointName: %s",jointName);
+    PrintfOneVar(100, "angle: %d", angle);
+
+    Ang6Axis_Base = (jointName == "B") ? angle : -1;
+    Ang6Axis_BaseTilt = (jointName == "BT") ? angle : -1;
+    Ang6Axis_Elbow = (jointName == "E") ? angle : -1;
+    Ang6Axis_WristElevate = (jointName == "WE") ? angle : -1;
+    Ang6Axis_WristRotate = (jointName == "WR") ? angle : -1;
+    Ang6Axis_Claw = (jointName == "C") ? angle : -1;
+    Ang6Axis_HoldPos = !(pchStr.substring(endBracket + 1, endBracket + 2) == '-');
+  }
+}
+
+void PrintGPS()
+{
+  if (GPSSetupRequired)
+  {
+    GPS = Adafruit_GPS(&Wire);
+    GPS.begin(0x10); // The I2C address to use is 0x10
+    // uncomment this line to turn on RMC (recommended minimum) and GGA (fix data) including altitude
+    GPS.sendCommand(PMTK_SET_NMEA_OUTPUT_RMCGGA);
+    // uncomment this line to turn on only the "minimum recommended" data
+    //GPS.sendCommand(PMTK_SET_NMEA_OUTPUT_RMCONLY);
+    // For parsing data, we don't suggest using anything but either RMC only or RMC+GGA since
+    // the parser doesn't care about other sentences at this time
+    // Set the update rate
+    GPS.sendCommand(PMTK_SET_NMEA_UPDATE_1HZ); // 1 Hz update rate
+    // For the parsing code to work nicely and have time to sort thru the data, and
+    // print it out we don't suggest using anything higher than 1 Hz
+    //
+    // Request updates on antenna status, comment out to keep quiet
+    GPS.sendCommand(PGCMD_ANTENNA);
+
+    delay(1000);
+
+    // Ask for firmware version
+    GPS.println(PMTK_Q_RELEASE);
+    GPSSetupRequired = false;
+  }
+
+  Serial.print("<GPSTIME");
+  GPS.hour < 10 ? PrintfOneVar(200, "0%d", GPS.hour, true) : PrintfOneVar(200, "%d", GPS.hour, true);
+  Serial.print(':');
+  GPS.minute < 10 ? PrintfOneVar(200, "0%d", GPS.minute, true) : PrintfOneVar(200, "%d", GPS.minute, true);
+  Serial.print(':');
+  GPS.seconds < 10 ? PrintfOneVar(200, "0%d", GPS.seconds, true) : PrintfOneVar(200, "%d", GPS.seconds, true);
+  Serial.print('.');
+  if (GPS.milliseconds < 10)
+  {
+    Serial.print("00");
+  }
+  else if (GPS.milliseconds > 9 && GPS.milliseconds < 100)
+  {
+    Serial.print("0");
+  }
+  Serial.println(GPS.milliseconds);
+  Serial.print("GPSTIME>");
+  Serial.print("<GPSDate");
+  PrintfOneVar(100, "D: %d/", GPS.day);
+  PrintfOneVar(100, "M: %d/", GPS.month);
+  PrintfOneVar(100, "Y: %d/", GPS.year);
+  PrintfOneVar(100, "Fix: %d/", (int)GPS.fix);
+  PrintfOneVar(100, "Quality: %d/", (int)GPS.fixquality);
+  Serial.print("GPSDate>");
+  //
+  Serial.print("<GPSLoc");
+  if (GPS.fix)
+  {
+    Serial.print("Location: ");
+    Serial.print(GPS.latitude, 4);
+    Serial.print(GPS.lat);
+    Serial.print(", ");
+    Serial.print(GPS.longitude, 4);
+    Serial.println(GPS.lon);
+    PrintfOneVar(100, "SpeedKnots: %d,", GPS.speed);
+    PrintfOneVar(100, "Angle: %d,", GPS.angle);
+    PrintfOneVar(100, "Altitude: %d,", GPS.altitude);
+    PrintfOneVar(100, "SatCount: %d,", GPS.satellites);
+  }
+  else
+  {
+    Serial.print("FIXNOTAQUIRED");
+  }
+  Serial.print("GPSLoc>");
+}
+
 bool ParseAndExecuteAPICommand(String str)
 {
   //
@@ -164,89 +329,30 @@ bool ParseAndExecuteAPICommand(String str)
     DoScrn = (str.indexOf("SCRN") >= 0);   //<In>SCRN //Screen data
     if (Do4WD)
     {
-      Do4WD_FLA = false;
-      Do4WD_FRA = false;
-      Do4WD_BLA = false;
-      Do4WD_BRA = false;
-      Do4WD_FLB = false;
-      Do4WD_FRB = false;
-      Do4WD_BLB = false;
-      Do4WD_BRB = false;
-      Do4WD_SAD = false;
-      //--
-      Serial.print("Do4WD RECV!..\r\n");
-      Do4WD_FLA = (str.indexOf("FLA") >= 0); //Front Left Advance
-      Do4WD_FRA = (str.indexOf("FRA") >= 0); //Front Right Advance
-      Do4WD_BLA = (str.indexOf("BLA") >= 0); //Back Left Advance
-      Do4WD_BRA = (str.indexOf("BRA") >= 0); //Back Right Advance
-      Do4WD_FLB = (str.indexOf("FLB") >= 0); //Front Left Back
-      Do4WD_FRB = (str.indexOf("FRB") >= 0); //Front Right Back
-      Do4WD_BLB = (str.indexOf("BLB") >= 0); //Back Left Back
-      Do4WD_BRB = (str.indexOf("BRB") >= 0); //Back Right Back
-      Do4WD_SpeedS = str.indexOf("[");       //Duration Parse start
-      Do4WD_SpeedE = str.indexOf("]");       //Duration End End
-      Do4WD_DurS = str.indexOf("{");         //Duration Parse start
-      Do4WD_DurE = str.indexOf("}");         //Duration Parse End
-      Do4WD_SAD = (str.indexOf("Y") >= 0);   //Duration End End
-      Speed4WD = str.substring(Do4WD_SpeedS + 1, Do4WD_SpeedE).toInt();
-      Dur4WD = str.substring(Do4WD_DurS + 1, Do4WD_DurE).toInt();
-      CmdRcv4WD = (Speed4WD >= 0);
-      //E.g. F7. 100 SPEED, FOR 100MS Front left Forward
-      Serial.print(" Speed4WD: ");
-      Serial.print(Speed4WD);
-      Serial.print(" Dur4WD: ");
-      Serial.print(Dur4WD);
-      return true;
+      return PassCmd4WD(str);
     }
     if (Do6Axis)
     {
-      Serial.print("Do6Axis RECV!..\r\n ");
-      //Strip '<In>6Axis' cmd
-      int str_len = str.length();
-      str = str.substring(9, str_len + 1);
-      str_len = str.length();
-      //Convert to charArray
-      char strChar[str_len];
-      str.toCharArray(strChar, str_len);
-      
-      char *pch;
-      pch = strtok(strChar, ";");
-      String pchStr(pch);
-      String angleSS, jointName;
-      int angle;
-      while (pch != NULL)
-      {
-        angleSS = pchStr.substring(pchStr.indexOf(".") + 1, pchStr.indexOf("]"));
-        angle = angleSS.toInt();
-        jointName = pchStr.substring(pchStr.indexOf("[") + 1, pchStr.indexOf("."));
-
-        pch = strtok(NULL, ";"); //If delim found, set to next
-        pchStr = String(pch);
-
-        angle = (angle < 0) ? -angle : angle;        //Invert if negative
-        angle = (angle > 180) ? angle % 180 : angle; //Constrain to max 180
-
-        Serial.print("angle:");
-        char cstr[16];
-        itoa(angle, cstr, 10);
-        Serial.print(cstr);
-        Serial.print("\r\n");
-        Serial.print("jointName:");
-        Serial.print(jointName);
-        Serial.print("\r\n");
-
-        Ang6Axis_Base = (jointName == "B") ? angle : -1;
-        Ang6Axis_BaseTilt = (jointName == "BT") ? angle : -1;
-        Ang6Axis_Elbow = (jointName == "E") ? angle : -1;
-        Ang6Axis_WristElevate = (jointName == "WE") ? angle : -1;
-        Ang6Axis_WristRotate = (jointName == "WR") ? angle : -1;
-        Ang6Axis_Claw = (jointName == "C") ? angle : -1;
-      }
-      return true;
+      return PassCmd6aAxis(str);
     }
     if (DoScrn)
     {
       return true;
+    }
+    return true;
+  }
+  if (CmdOut)
+  {
+    DoGPS = (str.indexOf("GPS") >= 0); //<In>SCRN //Screen data
+    if (DoGPS)
+    {
+      PrintGPS();
+    }
+    if (DoAccMag)
+    {
+    }
+    if (DoUltraSnc)
+    {
     }
   }
   return false;
