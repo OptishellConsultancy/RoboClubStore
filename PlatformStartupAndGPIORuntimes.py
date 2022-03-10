@@ -4,7 +4,7 @@
 # To run on start:
 # sudo raspi-config -> system options -> Boot / Auto Login ->  Console Autologin”
 # sudo nano /etc/profile
-# add: sudo python /home/pi/Desktop/RoboClubStore/GPIOToggleOnOff.py &
+# add: sudo python /home/pi/Desktop/RoboClubStore/PlatformStartupAndGPIORuntimes.py &
 # CTRL+X
 
 from gpiozero import Button #import button from the Pi GPIO library
