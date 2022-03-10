@@ -43,10 +43,8 @@ shellESpeak("Please consult 'APIExamples.txt' for API documentation on these fea
 time.sleep(1)
 shellESpeak("GPIO Runtime initialised.")
 time.sleep(0.5)
-shellESpeak("Press button for shutdown.")
-shellESpeak("Double press Button for restart.")
-time.sleep(0.5)
-shellESpeak("Please consult 'APIExamples.txt' for API documentation")
+shellESpeak("Press Button quickly for restart.")
+shellESpeak("Press Button and hold for shutdown.")
 
 shellESpeak("I am now completely operational Dave, and all my circuits are functionin perfectly")
 time.sleep(0.2)
@@ -58,15 +56,12 @@ retartButtonHoldTime = 2
 while True: #infinite loop
     if btn.is_pressed: #Check to see if button is pressed
         time.sleep(1) # wait for the hold time we want. 
-        if btn.is_pressed: #check if the user let go of the button
+        if btn.is_held: #check if held after 1 second
             print("pressed and held, shutting down")
             shellESpeak("shuting down.")
             os.system("shutdown now -h") #shut down the Pi -h is or -r will reset
-        time.sleep(1) # wait to loop again so we don’t use the processor too much.
-    else:
-        btn.wait_for_press()
-        btn.wait_for_release()
-        if btn.wait_for_press(timeout=0.6):
-            print("pressed twice, restarting")
+            time.sleep(1) # wait to loop again so we don’t use the processor too much.
+        else:
+            print("Restarting, shutting down")
             shellESpeak("Restarting.")
             os.system("shutdown -r now")
