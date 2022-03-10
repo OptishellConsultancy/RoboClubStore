@@ -141,7 +141,7 @@ void doPulseLerp(MotorName motorName, int servoIndex, int finalAng, bool holdPos
 
 void Do6AxisAPICommand()
 {
-  EnableArmServos(); //Just incase
+  Serial.print("Do6AxisAPICommand");
   if (Ang6Axis_Base > -1)
   {
     PrintfOneVar(100, "Base motor index:: %d.", motorIndex[Base]);

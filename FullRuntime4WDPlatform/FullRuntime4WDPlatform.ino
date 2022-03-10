@@ -50,21 +50,26 @@ void loop()
     {
       EnableArmServos();
       ArmServosTest();
+      ServoArmControllerEnabled = false;
     }
     if (OLEDDisplayEnabled)
     {
-      OLEDTest();
+      OLEDTest_Emoji();
+      //OLEDTest_FullDefault();
+      OLEDDisplayEnabled = false;
     }
 
     if (FourWDHatEnabled)
     {
       Serial.print("Update4WDShieldCommands()");
       Test4WDCommands();
+      FourWDHatEnabled = false;
     }
 
     if (UltrasonicEnabled)
     {
       UpdateUltrasonicIC2Data();
+      UltrasonicEnabled = false;
     }
   }
   else

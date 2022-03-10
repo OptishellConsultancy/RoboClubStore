@@ -1,0 +1,3 @@
+Convert images to hex via:
+https://diyusthad.com/image2cpp
+Set output scale to 128x64 
