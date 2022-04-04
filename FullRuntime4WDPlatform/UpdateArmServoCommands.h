@@ -79,6 +79,14 @@ void ResetPositions()
   }
 }
 
+void SetZeroPWMValues()
+{
+  for (size_t i = 0; i < 6; i++)
+  {
+    pwm.setPWM(motorIndex[i], 0, 0);
+  }
+}
+
 //https://www.jsumo.com/mg996r-servo-motor-digital
 void EnableArmServos()
 {
@@ -87,6 +95,7 @@ void EnableArmServos()
     Serial.print("Servo PWM Enabled");
     pwm = Adafruit_PWMServoDriver();
     ResetPositions();
+    SetZeroPWMValues();
     PWMInitialised = true;
   }
 }

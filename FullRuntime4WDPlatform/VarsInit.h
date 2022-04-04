@@ -87,13 +87,6 @@ int Speed4WD;
 int Dur4WD;
 bool CmdRcv4WD = false;
 //6Axis
-int Ang6Axis_Base; 
-int Ang6Axis_BaseTilt;
-int Ang6Axis_Elbow;
-int Ang6Axis_WristElevate;
-int Ang6Axis_WristRotate;
-int Ang6Axis_Claw;
-bool Ang6Axis_HoldPos;
 
 enum MotorName
 {
@@ -104,6 +97,15 @@ enum MotorName
   WristRotate,
   Claw
 };
+
+int Ang6Axis_Base; 
+int Ang6Axis_BaseTilt;
+int Ang6Axis_Elbow;
+int Ang6Axis_WristElevate;
+int Ang6Axis_WristRotate;
+int Ang6Axis_Claw;
+bool Ang6Axis_HoldPos;
+
 
 int motorIndex[6] = {1,3,11,12,14,15};
 int defaultPos = 214;

@@ -26,23 +26,10 @@ def shellESpeak(text):
 
 def StartupConvo():
     shellESpeak("Welcome to the mutlipurpose platform.")
-    shellESpeak("I currently have the following functionality: ")
-    shellESpeak("GPS querying")
-    shellESpeak("Accelerometer, Magnetometer")
-    shellESpeak("3 meter sonic range finder")
-    shellESpeak("HD Camera with 2 axis pan tilt and webserver streaming option")
-    shellESpeak("Four wheeled drive")
-    shellESpeak("Six Axis High torque arm")
-    shellESpeak("OLED Screen")
-    shellESpeak("Microphone")
-    shellESpeak("Speaker")
-    shellESpeak("Spotify integration")
 
     time.sleep(0.5)
     shellESpeak("Please consult 'APIExamples.txt' for API documentation on these features")
 
-    time.sleep(1)
-    shellESpeak("GPIO Runtime initialised.")
     time.sleep(0.5)
     shellESpeak("Press Button and release quickly for shutdown.")
     shellESpeak("Press Button and hold for restart.")
