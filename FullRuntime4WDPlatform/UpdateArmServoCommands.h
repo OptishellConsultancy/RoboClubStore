@@ -65,10 +65,10 @@ void DoServosParallelTest(int servoIndexes[], int servoIndexesCount, int delayms
 void ArmServosTest()
 {
   DoServoTest(15);
-  //int servoIndexes[] = {0, 1};
-  //int servoIndexesCount = 2;
-  //int numberOfLoops = 100000;
-  //DoServosParallelTest(servoIndexes, servoIndexesCount, 200, numberOfLoops);
+  // int servoIndexes[] = {0, 1};
+  // int servoIndexesCount = 2;
+  // int numberOfLoops = 100000;
+  // DoServosParallelTest(servoIndexes, servoIndexesCount, 200, numberOfLoops);
 }
 
 void ResetPositions()
@@ -87,65 +87,30 @@ void SetZeroPWMValues()
   }
 }
 
-//https://www.jsumo.com/mg996r-servo-motor-digital
+// https://www.jsumo.com/mg996r-servo-motor-digital
 void EnableArmServos()
 {
   if (!PWMInitialised)
   {
     Serial.print("Servo PWM Enabled");
     pwm = Adafruit_PWMServoDriver();
-    ResetPositions();
-    SetZeroPWMValues();
+    // ResetPositions();
+    // SetZeroPWMValues();
     PWMInitialised = true;
   }
 }
 
-void doPulseLerp(MotorName motorName, int servoIndex, int finalAng, bool holdPos)
+void doPulseLerp(MotorName motorName, int servoIndex, int finalAng)
 {
-  int lastAng = motorNameLastAng[(int)motorName];
-  PrintfOneVar(100, "LastAng: %d.", lastAng);
-  PrintfOneVar(100, "New LastAng: %d.", finalAng);
-  int angStep = (finalAng - lastAng) / stepsPerPWM;
-  //
-  if (angStep > 0)
-  {
-    //
-    int interAng;
-    int interPulse;
-    //
-    for (size_t i = 0; i < stepsPerPWM; i++)
-    {
-      interAng = (lastAng + (angStep * i));
-      interPulse = map(interAng, 0, 180, SERVOMIN, SERVOMAX);
-      PrintfOneVar(100, "InterAng: %d.", interAng);
-      //
-      pwm.setPWM(servoIndex, 0, interPulse);
-      delay(delayPerPWN);
-    }
-  }
-  else
-  {
-    PrintfOneVar(100, "FinalAng: %d.", finalAng);
-    motorNameLastAng[(int)motorName] = finalAng;
-    pwm.setPWM(servoIndex, 0, map(finalAng, 0, 180, SERVOMIN, SERVOMAX));
-  }
 
-  PrintfOneVar(100, "Completed %d steps.", stepsPerPWM);
+  PrintfOneVar(100, "Ang: %d.", finalAng);
+  pwm.setPWM(servoIndex, 0, map(finalAng, 0, 180, SERVOMIN, SERVOMAX));
 
   int finalPulse = map(finalAng, 0, 180, SERVOMIN, SERVOMAX);
   pwm.setPWM(servoIndex, 0, finalPulse);
-  //Stop signal
-  if (holdPos)
-  {
-      motorNameLastAng[(int)motorName] = finalAng;
-      Serial.print("holdPos -> holding motor");
-  }
-  else
-  {
-    motorNameLastAng[(int)motorName] = 0;
-    pwm.setPWM(servoIndex, 0, 0);
-    Serial.print("!holdPos -> resetting motor");
-  }
+  // Stop signal
+
+  // pwm.setPWM(servoIndex, 0, 0);
 }
 
 void Do6AxisAPICommand()
@@ -154,31 +119,31 @@ void Do6AxisAPICommand()
   if (Ang6Axis_Base > -1)
   {
     PrintfOneVar(100, "Base motor index:: %d.", motorIndex[Base]);
-    doPulseLerp(Base, motorIndex[Base], Ang6Axis_Base, Ang6Axis_HoldPos);
+    doPulseLerp(Base, motorIndex[Base], Ang6Axis_Base);
   }
   if (Ang6Axis_BaseTilt > -1)
   {
     PrintfOneVar(100, "BaseTilt motor index:: %d.", motorIndex[BaseTilt]);
-    doPulseLerp(BaseTilt, motorIndex[BaseTilt], Ang6Axis_BaseTilt, Ang6Axis_HoldPos);
+    doPulseLerp(BaseTilt, motorIndex[BaseTilt], Ang6Axis_BaseTilt);
   }
   if (Ang6Axis_Elbow > -1)
   {
     PrintfOneVar(100, "Elbow motor index:: %d.", motorIndex[Elbow]);
-    doPulseLerp(Elbow, motorIndex[Elbow], Ang6Axis_Elbow, Ang6Axis_HoldPos);
+    doPulseLerp(Elbow, motorIndex[Elbow], Ang6Axis_Elbow);
   }
   if (Ang6Axis_WristElevate > -1)
   {
     PrintfOneVar(100, "WristElevate motor index:: %d.", motorIndex[WristElevate]);
-    doPulseLerp(WristElevate, motorIndex[WristElevate], Ang6Axis_WristElevate, Ang6Axis_HoldPos);
+    doPulseLerp(WristElevate, motorIndex[WristElevate], Ang6Axis_WristElevate);
   }
   if (Ang6Axis_WristRotate > -1)
   {
     PrintfOneVar(100, "WristRotate motor index:: %d.", motorIndex[WristRotate]);
-    doPulseLerp(WristRotate, motorIndex[WristRotate], Ang6Axis_WristRotate, Ang6Axis_HoldPos);
+    doPulseLerp(WristRotate, motorIndex[WristRotate], Ang6Axis_WristRotate);
   }
   if (Ang6Axis_Claw > -1)
   {
     PrintfOneVar(100, "Claw motor index:: %d.", motorIndex[Claw]);
-    doPulseLerp(Claw, motorIndex[Claw], Ang6Axis_Claw, Ang6Axis_HoldPos);
+    doPulseLerp(Claw, motorIndex[Claw], Ang6Axis_Claw);
   }
 }

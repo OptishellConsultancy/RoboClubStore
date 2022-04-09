@@ -44,8 +44,8 @@ E.g.
 <In>6Axis[BT.40] Base Tilt  40 degrees
 <In>6Axis[E.70] Elbow 70 degrees
 <In>6Axis[WE.90] Wrist Elevate 90 degrees
-<In>6Axis[WR.5] Wrist rotate 5 degrees
-<In>6Axis[C.5] Claw to 5 degrees
+<In>6Axis[WR.70] Wrist rotate 5 degrees
+<In>6Axis[C.5] Claw to 5 degrees 
 Or chain:
 <In>6Axis[WE.90].<In>6Axis[BT.40].<In>6Axis[WR.5]
 

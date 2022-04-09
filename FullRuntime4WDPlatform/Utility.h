@@ -233,7 +233,6 @@ bool PassCmd6aAxis(String str)
     Ang6Axis_WristElevate = (jointName == "WE") ? angle : -1;
     Ang6Axis_WristRotate = (jointName == "WR") ? angle : -1;
     Ang6Axis_Claw = (jointName == "C") ? angle : -1;
-    Ang6Axis_HoldPos = !(pchStr.substring(endBracket + 1, endBracket + 2) == '-');
   }
 }
 
