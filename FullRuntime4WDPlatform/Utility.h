@@ -1,6 +1,6 @@
 #include "VarsInit.h"
 #include <stdio.h>
-//Util-----------------------------------
+// Util-----------------------------------
 void DiscoverHubPortDevices()
 {
   uint8_t error, i2cAddress, devCount, unCount;
@@ -128,12 +128,13 @@ void ReadAPICommand()
 //-----------------------------------
 bool PassCommandChk(String str, int &cmdToActivate)
 {
-  int idxOpenPort = str.indexOf(FStr);
   int idxDot = str.indexOf(".");
   int idxF = str.indexOf("F");
   int strLen = str.length();
 
-  if (idxOpenPort == 0 && idxDot >= 0 && idxF >= 0 && strLen >= 3)
+  PrintfOneVar(100, "PassCommandChk-> idxF: %d.", idxF);
+
+  if (idxDot >= 0 && idxF >= 0 && strLen >= 3)
   {
     String numberChars = str.substring(idxDot - 1, idxDot);
     cmdToActivate = numberChars.toInt();
@@ -170,23 +171,23 @@ bool PassCmd4WD(String str)
   Do4WD_SAD = false;
   //--
   Serial.print("Do4WD RECV!..\r\n");
-  Do4WD_FLA = (str.indexOf("FLA") >= 0); //Front Left Advance
-  Do4WD_FRA = (str.indexOf("FRA") >= 0); //Front Right Advance
-  Do4WD_BLA = (str.indexOf("BLA") >= 0); //Back Left Advance
-  Do4WD_BRA = (str.indexOf("BRA") >= 0); //Back Right Advance
-  Do4WD_FLB = (str.indexOf("FLB") >= 0); //Front Left Back
-  Do4WD_FRB = (str.indexOf("FRB") >= 0); //Front Right Back
-  Do4WD_BLB = (str.indexOf("BLB") >= 0); //Back Left Back
-  Do4WD_BRB = (str.indexOf("BRB") >= 0); //Back Right Back
-  Do4WD_SpeedS = str.indexOf("[");       //Duration Parse start
-  Do4WD_SpeedE = str.indexOf("]");       //Duration End End
-  Do4WD_DurS = str.indexOf("{");         //Duration Parse start
-  Do4WD_DurE = str.indexOf("}");         //Duration Parse End
-  Do4WD_SAD = (str.indexOf("Y") >= 0);   //Duration End End
+  Do4WD_FLA = (str.indexOf("FLA") >= 0); // Front Left Advance
+  Do4WD_FRA = (str.indexOf("FRA") >= 0); // Front Right Advance
+  Do4WD_BLA = (str.indexOf("BLA") >= 0); // Back Left Advance
+  Do4WD_BRA = (str.indexOf("BRA") >= 0); // Back Right Advance
+  Do4WD_FLB = (str.indexOf("FLB") >= 0); // Front Left Back
+  Do4WD_FRB = (str.indexOf("FRB") >= 0); // Front Right Back
+  Do4WD_BLB = (str.indexOf("BLB") >= 0); // Back Left Back
+  Do4WD_BRB = (str.indexOf("BRB") >= 0); // Back Right Back
+  Do4WD_SpeedS = str.indexOf("[");       // Duration Parse start
+  Do4WD_SpeedE = str.indexOf("]");       // Duration End End
+  Do4WD_DurS = str.indexOf("{");         // Duration Parse start
+  Do4WD_DurE = str.indexOf("}");         // Duration Parse End
+  Do4WD_SAD = (str.indexOf("Y") >= 0);   // Duration End End
   Speed4WD = str.substring(Do4WD_SpeedS + 1, Do4WD_SpeedE).toInt();
   Dur4WD = str.substring(Do4WD_DurS + 1, Do4WD_DurE).toInt();
   CmdRcv4WD = (Speed4WD >= 0);
-  //E.g. F7. 100 SPEED, FOR 100MS Front left Forward
+  // E.g. F7. 100 SPEED, FOR 100MS Front left Forward
   PrintfOneVar(100, "Speed4WD:", Speed4WD);
   PrintfOneVar(100, "Dur4WD:", Dur4WD);
   return true;
@@ -195,11 +196,11 @@ bool PassCmd4WD(String str)
 bool PassCmd6aAxis(String str)
 {
   Serial.print("Do6Axis RECV!..\r\n ");
-  //Strip '<In>6Axis' cmd
+  // Strip '<In>6Axis' cmd
   int str_len = str.length();
   str = str.substring(9, str_len + 1);
   str_len = str.length();
-  //Convert to charArray
+  // Convert to charArray
   char strChar[str_len];
   str.toCharArray(strChar, str_len);
 
@@ -215,16 +216,16 @@ bool PassCmd6aAxis(String str)
     angle = angleSS.toInt();
     jointName = pchStr.substring(pchStr.indexOf("[") + 1, pchStr.indexOf("."));
 
-    pch = strtok(NULL, ";"); //If delim found, set to next
+    pch = strtok(NULL, ";"); // If delim found, set to next
     pchStr = String(pch);
 
-    angle = (angle < 0) ? -angle : angle;        //Invert if negative
-    angle = (angle > 180) ? angle % 180 : angle; //Constrain to max 180
+    angle = (angle < 0) ? -angle : angle;        // Invert if negative
+    angle = (angle > 180) ? angle % 180 : angle; // Constrain to max 180
 
     char cstr[16];
     itoa(angle, cstr, 10);
 
-    //PrintfOneStr(100,"jointName: %s",jointName);
+    // PrintfOneStr(100,"jointName: %s",jointName);
     PrintfOneVar(100, "angle: %d", angle);
 
     Ang6Axis_Base = (jointName == "B") ? angle : -1;
@@ -234,6 +235,65 @@ bool PassCmd6aAxis(String str)
     Ang6Axis_WristRotate = (jointName == "WR") ? angle : -1;
     Ang6Axis_Claw = (jointName == "C") ? angle : -1;
   }
+
+  return true;
+}
+
+bool PassOLEDImg(String str)
+{
+  bool dataAquired, configAquired;
+  Serial.print("PassOLEDTxt DBG ");
+  int data_Start = str.indexOf("[");
+  int data_End = str.indexOf("]");
+  int conf_Start = str.indexOf("{");
+  int conf_End = str.indexOf("}");
+  if (data_Start >= 0 && data_End >= 0)
+  {
+    String data = str.substring(data_Start + 1, data_End);
+    int data_len = data.length();
+    OLEDIMG_BITMAPDATA = data;
+    dataAquired = (data_len > 0);
+  }
+
+  if (conf_Start >= 0 && conf_End >= 0)
+  {
+    String config = str.substring(conf_Start + 1, conf_End);
+    int config_len = config.length();
+    OLEDIMG_BITMAPCONFIG = config;
+    configAquired = (config_len > 0);
+  }
+
+
+  return (dataAquired && configAquired);
+}
+
+bool PassOLEDTxt(String str)
+{
+  bool dataAquired, configAquired;
+  Serial.print("PassOLEDTxt DBG ");
+  int data_Start = str.indexOf("[");
+  int data_End = str.indexOf("]");
+  int conf_Start = str.indexOf("{");
+  int conf_End = str.indexOf("}");
+  if (data_Start >= 0 && data_End >= 0)
+  {
+    String data = str.substring(data_Start + 1, data_End);
+    int data_len = data.length();
+    OLEDTXT_TEXTDATA = data;
+    dataAquired = (data_len > 0);
+  }
+
+  if (conf_Start >= 0 && conf_End >= 0)
+  {
+    String config = str.substring(conf_Start + 1, conf_End);
+    int config_len = config.length();
+    OLEDTXT_TXTCONFIG = config;    
+    configAquired = (config_len > 0);
+  }
+
+  // OLEDTXT_TXTCONFIG = str.substring(OLEDTXT_CONFIG_Start + 1, OLEDTXT_CONFIG_End);
+
+  return (dataAquired && configAquired);
 }
 
 void PrintGPS()
@@ -245,7 +305,7 @@ void PrintGPS()
     // uncomment this line to turn on RMC (recommended minimum) and GGA (fix data) including altitude
     GPS.sendCommand(PMTK_SET_NMEA_OUTPUT_RMCGGA);
     // uncomment this line to turn on only the "minimum recommended" data
-    //GPS.sendCommand(PMTK_SET_NMEA_OUTPUT_RMCONLY);
+    // GPS.sendCommand(PMTK_SET_NMEA_OUTPUT_RMCONLY);
     // For parsing data, we don't suggest using anything but either RMC only or RMC+GGA since
     // the parser doesn't care about other sentences at this time
     // Set the update rate
@@ -261,6 +321,8 @@ void PrintGPS()
     // Ask for firmware version
     GPS.println(PMTK_Q_RELEASE);
     GPSSetupRequired = false;
+
+    return true;
   }
 
   Serial.print("<GPSTIME");
@@ -323,28 +385,37 @@ bool ParseAndExecuteAPICommand(String str)
   }
   if (CmdIn)
   {
-    Do4WD = (str.indexOf("4WD") >= 0);     //<In>4W //4WheelDrive Data
-    Do6Axis = (str.indexOf("6Axis") >= 0); //<In>6A / Axis data
-    DoScrn = (str.indexOf("SCRN") >= 0);   //<In>SCRN //Screen data
+    Do4WD = (str.indexOf("4WD") >= 0);       //<In>4W //4WheelDrive Data
+    Do6Axis = (str.indexOf("6Axis") >= 0);   //<In>6A / Axis data
+    OLEDImg = (str.indexOf("OLEDIMG") >= 0); //<In>OLEDIMG //Screen data display image
+    OLEDTxt = (str.indexOf("OLEDTXT") >= 0); //<In>OLEDIMG //Screen data display image
     if (Do4WD)
     {
+      Serial.print("Received Do4WD Command \r\n");
       return PassCmd4WD(str);
     }
     if (Do6Axis)
     {
+      Serial.print("Received Do6Axis Command \r\n");
       return PassCmd6aAxis(str);
     }
-    if (DoScrn)
+    if (OLEDImg)
     {
-      return true;
+      Serial.print("Received OLEDImg Command \r\n");
+      return PassOLEDImg(str);
     }
-    return true;
+    if (OLEDTxt)
+    {
+      Serial.print("Received OLEDTxt Command \r\n");
+      return PassOLEDTxt(str);
+    }
   }
   if (CmdOut)
   {
     DoGPS = (str.indexOf("GPS") >= 0); //<In>SCRN //Screen data
     if (DoGPS)
     {
+      Serial.print("Received GPS Command \r\n");
       PrintGPS();
     }
     if (DoAccMag)
@@ -359,7 +430,7 @@ bool ParseAndExecuteAPICommand(String str)
 
 void EnableFMap(int FToEnable)
 {
-  //Inline def to save program memory:
+  // Inline def to save program memory:
   int GPSEnabledFNumber = 0;
   int LSM303D_CompassAccelMagnetoEnabledNumber = 1;
   int ServoControllerNumber = 2;
@@ -439,17 +510,7 @@ void ReadSerialFeatureCommForCommmandAndExecute()
   }
 }
 
-void ReadAPICommAndExecute()
-{
-  ReadAPICommand();
-  if (APICommandEntered)
-  {
-    ParseAndExecuteAPICommand(ReadString);
-    APICommandEntered = false;
-  }
-}
-
-//Used by for example the ic2 ultrasonic
+// Used by for example the ic2 ultrasonic
 void i2cWriteBytes(unsigned char addr_t, unsigned char Reg, unsigned char *pdata, unsigned char datalen)
 {
   Wire.beginTransmission(addr_t); // transmit to device #8

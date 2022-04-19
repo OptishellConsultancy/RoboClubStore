@@ -15,8 +15,8 @@ Adafruit_GPS GPS;
 #include <Wire.h>
 #include <Adafruit_PWMServoDriver.h>
 
-//REMEMBER TO HAVE BATTERIES CHARGED!
-// called this way, it uses the default address 0x40
+// REMEMBER TO HAVE BATTERIES CHARGED!
+//  called this way, it uses the default address 0x40
 Adafruit_PWMServoDriver pwm;
 
 #define MIN_PULSE_WIDTH 650
@@ -24,16 +24,16 @@ Adafruit_PWMServoDriver pwm;
 #define DEFAULT_PULSE_WIDTH 1500
 #define FREQUENCY 50
 
-#define SERVOMIN  125 //  minimum pulse length count (out of 4096)
-#define SERVOMAX  600 // maximum pulse length count (out of 4096)
+#define SERVOMIN 125 //  minimum pulse length count (out of 4096)
+#define SERVOMAX 600 // maximum pulse length count (out of 4096)
 // our servo # counter
 uint8_t servonum = 0;
 
-//Internal controls
+// Internal controls
 bool commandEntered = false;
 bool APICommandEntered = false;
 
-//PortMappings:
+// PortMappings:
 
 bool GPSSetupRequired = true;
 bool LSM303D_CompassAccelMagnetoInitRequired = true;
@@ -47,29 +47,31 @@ bool FourWDHatEnabled;
 bool UltrasonicEnabled;
 bool ServoArmControllerEnabled;
 bool PWMInitialised;
+bool OLEDInitialised;
 bool StopAllTestsRequested;
 bool NonHumanReadableAPIIOEnabled;
 String FStr = "F";
 
-//Ultrasonic vars:
-unsigned char addr0 = 0x11; //The ic2 address of the Ultrasonic
+// Ultrasonic vars:
+unsigned char addr0 = 0x11; // The ic2 address of the Ultrasonic
 unsigned char txbuf[10] = {0};
 unsigned char rxbuf[10] = {0};
 
-//ArmServoTestVars
+// ArmServoTestVars
 int CurrentNumServoArmOfTests = 0;
 
-//API parse ints:
+// API parse ints:
 bool CmdIn;
 bool CmdOut;
 bool Do4WD;
 bool Do6Axis;
-bool DoScrn;
+bool OLEDImg;
+bool OLEDTxt;
 bool DoGPS;
 bool DoAccMag;
 bool DoUltraSnc;
 bool RetToMainMenu = false;
-//4WD
+// 4WD
 bool Do4WD_FLA;
 bool Do4WD_FRA;
 bool Do4WD_BLA;
@@ -86,7 +88,7 @@ bool Do4WD_SAD;
 int Speed4WD;
 int Dur4WD;
 bool CmdRcv4WD = false;
-//6Axis
+// 6Axis
 
 enum MotorName
 {
@@ -98,24 +100,34 @@ enum MotorName
   Claw
 };
 
-int Ang6Axis_Base; 
+int Ang6Axis_Base;
 int Ang6Axis_BaseTilt;
 int Ang6Axis_Elbow;
 int Ang6Axis_WristElevate;
 int Ang6Axis_WristRotate;
 int Ang6Axis_Claw;
 
-
-int motorIndex[6] = {1,3,11,12,14,15};
+int motorIndex[6] = {1, 3, 11, 12, 14, 15};
 
 #define stepsPerPWM 10
 #define delayPerPWN 50
+
+// OLEDIMG
+String OLEDIMG_BITMAPDATA;
+String OLEDIMG_BITMAPCONFIG;
+
+
+// OLEDTXT
+String OLEDTXT_TEXTDATA;
+String OLEDTXT_TXTCONFIG;
+
 //------
-typedef enum {
+typedef enum
+{
 
   SLAVEADDR_INDEX = 0,
   PID_INDEX,
-  VERSION_INDEX ,
+  VERSION_INDEX,
 
   DIST_H_INDEX,
   DIST_L_INDEX,
@@ -129,6 +141,6 @@ typedef enum {
 
 } regindexTypedef;
 
-#define    MEASURE_MODE_PASSIVE    (0x00)
-#define    MEASURE_RANG_500        (0x20)
-#define    CMD_DISTANCE_MEASURE    (0x01)
+#define MEASURE_MODE_PASSIVE (0x00)
+#define MEASURE_RANG_500 (0x20)
+#define CMD_DISTANCE_MEASURE (0x01)

@@ -71,13 +71,6 @@ void ArmServosTest()
   // DoServosParallelTest(servoIndexes, servoIndexesCount, 200, numberOfLoops);
 }
 
-void ResetPositions()
-{
-  for (size_t i = 0; i < 6; i++)
-  {
-    pwm.setPWM(motorIndex[i], 0, defaultPos);
-  }
-}
 
 void SetZeroPWMValues()
 {
@@ -94,7 +87,6 @@ void EnableArmServos()
   {
     Serial.print("Servo PWM Enabled");
     pwm = Adafruit_PWMServoDriver();
-    // ResetPositions();
     // SetZeroPWMValues();
     PWMInitialised = true;
   }

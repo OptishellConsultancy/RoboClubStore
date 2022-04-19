@@ -51,9 +51,14 @@ Or chain:
 
 --------------------------------------------------
 Screen
-TODO: Something like X,Y Coordinates and duration
+<In>OLEDIMG[BITMAPDATA]{CONFIG}
+<In>OLEDTXT['TEXT STRING']{CONFIG}
+Examples:
+<In>OLEDTXT[GOOD EVENING]{SOMECONFIG}
+<In>OLEDTXT[]{}
+
 --------------------------------------------------
-Get GPS 
+Get G
 <Out>GPS
 
 --------------------------------------------------

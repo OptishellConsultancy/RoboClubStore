@@ -1,5 +1,4 @@
-#include "SensorDataUpdateTests.h"
-#include "OLEDDemoTest2.h"
+#include "OLEDCommands.h"
 
 //-----------------------------------
 void setup()
@@ -14,11 +13,9 @@ void setup()
   pwm.begin();
   pwm.setPWMFreq(FREQUENCY); // Analog servos run at ~60 Hz updates
 
-  SetupW4DPins();
-  EnableArmServos();
-
   //
-  //DiscoverHubPortDevices();
+  // DiscoverHubPortDevices();
+  Serial.print("setup...\r\n");
   Serial.print("\r\n");
   Serial.print("Please provide a port number, e.g F0.\r\n");
   Serial.print("F0. : GPS.\r\n");
@@ -55,12 +52,14 @@ void loop()
     if (OLEDDisplayEnabled)
     {
       OLEDTest_Emoji();
-      //OLEDTest_FullDefault();
+      EnabledOLED();
+      // OLEDTest_FullDefault();
       OLEDDisplayEnabled = false;
     }
 
     if (FourWDHatEnabled)
     {
+      SetupW4DPins();
       Serial.print("Update4WDShieldCommands()");
       Test4WDCommands();
       FourWDHatEnabled = false;
@@ -75,21 +74,35 @@ void loop()
   else
   {
     ReadAPICommand();
-    if(ParseAndExecuteAPICommand(ReadString))
+    if (ParseAndExecuteAPICommand(ReadString))
     {
       ReadString = "";
-      //E.G. <In>4WD[100]{100}FLA
-      //     <In>4WD[100]{100}FRA
+      // E.G. <In>4WD[100]{100}FLA
+      //      <In>4WD[100]{100}FRA
       if (CmdRcv4WD)
       {
+        SetupW4DPins();
         Do4WDAPICommand();
         CmdRcv4WD = false;
       }
-      if(Do6Axis)
+      if (Do6Axis)
       {
-        //E.G <In>6Axis[C.5]; Claw to 60 degrees
+        EnableArmServos();
+        // E.G <In>6Axis[C.5]; Claw to 60 degrees
         Do6AxisAPICommand();
         Do6Axis = false;
+      }
+      if (OLEDImg)
+      {
+        EnabledOLED();
+        DoOLEDImgCommand();
+        OLEDImg = false;
+      }
+      if (OLEDTxt)
+      {
+        EnabledOLED();
+        DoOLEDTxtCommand();
+        OLEDTxt = false;
       }
     }
   }
