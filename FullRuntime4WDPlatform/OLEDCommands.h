@@ -15,17 +15,21 @@ void EnabledOLED()
 }
 void DoOLEDImgCommand()
 {
-    display.display();
-
     display.clearDisplay();
+
+    display.drawBitmap((display.width() - LOGO_WIDTH) / 2,
+                       (display.height() - LOGO_HEIGHT) / 2,
+                       emoji_drunk, LOGO_WIDTH, LOGO_HEIGHT, 1);
+    display.display();
 }
 
 void DoOLEDTxtCommand()
 {
     display.clearDisplay();
-    display.setTextSize(1);              // Normal 1:1 pixel scale
-    display.setTextColor(SSD1306_WHITE); // Draw white text
-    display.setCursor(40, 32);        // Start in the center
+    OLEDTXT_VALIDCONFIG ? (display.setTextSize(OLEDTXT_S)) : display.setTextSize(1); // Normal 1:1 pixel scale
+    display.setTextColor(SSD1306_WHITE);                                             // Draw white text
+    // Set position
+    OLEDTXT_VALIDCONFIG ? (display.setCursor(OLEDTXT_X, OLEDTXT_Y)) : (display.setCursor(OLEDTXT_X_DEF, OLEDTXT_Y_DEF));
     Serial.print(OLEDTXT_TEXTDATA);
     display.println(OLEDTXT_TEXTDATA);
     // display.println(F("GOOD EVENING"))

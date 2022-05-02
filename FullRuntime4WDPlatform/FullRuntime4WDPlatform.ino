@@ -32,6 +32,8 @@ void setup()
 void loop()
 {
   delay(200);
+
+  //TESTS
   if (!NonHumanReadableAPIIOEnabled)
   {
     ReadSerialFeatureCommForCommmandAndExecute();
@@ -41,20 +43,21 @@ void loop()
     }
     if (LSM303D_CompassAccelMagnetoEnabled)
     {
+      LSM303D_CompassAccelMagnetoEnabled = false;
       LSM303D_UpdateCompassAccelMagnetoData();
     }
     if (ServoArmControllerEnabled)
     {
-      EnableArmServos();
-      ArmServosTest();
       ServoArmControllerEnabled = false;
+      EnableArmServos();
+      ArmServosTest();      
     }
     if (OLEDDisplayEnabled)
     {
+      OLEDDisplayEnabled = false;
       OLEDTest_Emoji();
       EnabledOLED();
-      // OLEDTest_FullDefault();
-      OLEDDisplayEnabled = false;
+      // OLEDTest_FullDefault();      
     }
 
     if (FourWDHatEnabled)
@@ -81,28 +84,29 @@ void loop()
       //      <In>4WD[100]{100}FRA
       if (CmdRcv4WD)
       {
+        CmdRcv4WD = false;
         SetupW4DPins();
         Do4WDAPICommand();
-        CmdRcv4WD = false;
+        
       }
       if (Do6Axis)
       {
+        Do6Axis = false;
         EnableArmServos();
         // E.G <In>6Axis[C.5]; Claw to 60 degrees
-        Do6AxisAPICommand();
-        Do6Axis = false;
+        Do6AxisAPICommand();        
       }
       if (OLEDImg)
       {
-        EnabledOLED();
-        DoOLEDImgCommand();
         OLEDImg = false;
+        EnabledOLED();
+        DoOLEDImgCommand();        
       }
       if (OLEDTxt)
       {
+        OLEDTxt = false;
         EnabledOLED();
         DoOLEDTxtCommand();
-        OLEDTxt = false;
       }
     }
   }

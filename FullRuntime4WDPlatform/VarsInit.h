@@ -116,10 +116,18 @@ int motorIndex[6] = {1, 3, 11, 12, 14, 15};
 String OLEDIMG_BITMAPDATA;
 String OLEDIMG_BITMAPCONFIG;
 
+const int OLEDIMG_X_DEF = 42;
+const int OLEDIMG_Y_DEF = 32;
+int OLEDIMG_X, OLEDIMG_Y,OLEDIMG_S;
+bool OLEDIMG_VALIDCONFIG = false;
 
 // OLEDTXT
 String OLEDTXT_TEXTDATA;
 String OLEDTXT_TXTCONFIG;
+const int OLEDTXT_X_DEF = 42;
+const int OLEDTXT_Y_DEF = 32;
+int OLEDTXT_X, OLEDTXT_Y,OLEDTXT_S;
+bool OLEDTXT_VALIDCONFIG = false;
 
 //------
 typedef enum

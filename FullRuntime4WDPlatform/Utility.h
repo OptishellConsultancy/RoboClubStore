@@ -242,7 +242,7 @@ bool PassCmd6aAxis(String str)
 bool PassOLEDImg(String str)
 {
   bool dataAquired, configAquired;
-  Serial.print("PassOLEDTxt DBG ");
+  Serial.print("PassOLEDImg DBG ");
   int data_Start = str.indexOf("[");
   int data_End = str.indexOf("]");
   int conf_Start = str.indexOf("{");
@@ -255,7 +255,7 @@ bool PassOLEDImg(String str)
     dataAquired = (data_len > 0);
   }
 
-  if (conf_Start >= 0 && conf_End >= 0)
+  if (conf_Start >= 0 && conf_End >= 0 && (conf_Start + 1 != conf_End))
   {
     String config = str.substring(conf_Start + 1, conf_End);
     int config_len = config.length();
@@ -263,14 +263,12 @@ bool PassOLEDImg(String str)
     configAquired = (config_len > 0);
   }
 
-
   return (dataAquired && configAquired);
 }
 
 bool PassOLEDTxt(String str)
 {
   bool dataAquired, configAquired;
-  Serial.print("PassOLEDTxt DBG ");
   int data_Start = str.indexOf("[");
   int data_End = str.indexOf("]");
   int conf_Start = str.indexOf("{");
@@ -283,12 +281,39 @@ bool PassOLEDTxt(String str)
     dataAquired = (data_len > 0);
   }
 
-  if (conf_Start >= 0 && conf_End >= 0)
+  if (conf_Start >= 0 && conf_End >= 0 && (conf_Start + 1 != conf_End))
   {
     String config = str.substring(conf_Start + 1, conf_End);
     int config_len = config.length();
-    OLEDTXT_TXTCONFIG = config;    
+    OLEDTXT_TXTCONFIG = config;
     configAquired = (config_len > 0);
+    //
+    int idxX = config.indexOf("X:");
+    int idxY = config.indexOf("Y:");
+    int idxS = config.indexOf("S:");
+    int idxDimXend = config.indexOf(",");
+    int idxDimYend = config.indexOf(".");
+    OLEDTXT_X = -1;
+    OLEDTXT_Y = -1;
+    OLEDTXT_S = -1;
+    if (idxX >= 0 && idxY >= 0 && configAquired)
+    {
+      String xss = config.substring(idxX + 2, idxDimXend);
+      String yss = config.substring(idxY + 2, idxDimYend);
+      String sizess = config.substring(idxS + 2, conf_End);
+      Serial.print("\n");
+      Serial.print(xss);
+      Serial.print("\n");
+      Serial.print(yss);
+      Serial.print("\n");
+      Serial.print(sizess);
+
+      OLEDTXT_X = xss.toInt();
+      OLEDTXT_Y = yss.toInt();
+      OLEDTXT_S = sizess.toInt();
+
+      OLEDTXT_VALIDCONFIG = (OLEDTXT_X != -1 && OLEDTXT_Y != -1 && OLEDTXT_S != -1);
+    }
   }
 
   // OLEDTXT_TXTCONFIG = str.substring(OLEDTXT_CONFIG_Start + 1, OLEDTXT_CONFIG_End);
@@ -373,15 +398,19 @@ void PrintGPS()
 
 bool ParseAndExecuteAPICommand(String str)
 {
-  //
+  /* code */
   CmdIn = (str.indexOf("<In>") >= 0);
   CmdOut = (str.indexOf("<Out>") >= 0);
-  RetToMainMenu = (str.indexOf("RM") >= 0);
-  if (RetToMainMenu)
+  //Exit check if no in/out command
+  if (!CmdIn && !CmdOut)
   {
-    NonHumanReadableAPIIOEnabled = false;
-    RetToMainMenu = false;
-    PrintFPlistInfo();
+    RetToMainMenu = (str.indexOf("RM") >= 0 || str.indexOf("EXIT") >= 0);
+    if (RetToMainMenu)
+    {
+      NonHumanReadableAPIIOEnabled = false;
+      RetToMainMenu = false;
+      PrintFPlistInfo();
+    }
   }
   if (CmdIn)
   {

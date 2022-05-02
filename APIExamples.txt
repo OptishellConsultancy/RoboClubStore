@@ -54,10 +54,10 @@ Screen
 <In>OLEDIMG[BITMAPDATA]{CONFIG}
 <In>OLEDTXT['TEXT STRING']{CONFIG}
 Examples:
-<In>OLEDTXT[GOOD EVENING]{SOMECONFIG}
-<In>OLEDTXT[]{}
+<In>OLEDTXT[Hello there]{X:42,Y:32.S:1} (X,Y Position, text size)
+<In>OLEDTXT[Good Afternoon]{} (No config centeres the text, size of 1)
 
---------------------------------------------------
+-------------------------------------------------
 Get G
 <Out>GPS
 
@@ -71,5 +71,8 @@ ultrasonic
 --------------------------------------------------
 
 
+Other:
+To exit the api interface :
+Type 'RM' (Root Menu) or 'EXIT' As a shortcut
 
 
