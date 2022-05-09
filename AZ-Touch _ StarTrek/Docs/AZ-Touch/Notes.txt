@@ -1,0 +1,26 @@
+https://learn.adafruit.com/adafruit-feather-m0-basic-proto/setup
+https://adafruit.github.io/arduino-board-index/package_adafruit_index.json to board manager urls..
+Adafruit AVR Boards - Install latest package 
+Adafruit SAMD Boards  - Install latest package
+Arduino Leonardo & Micro MIDI-USB - Install latest package
+
+http://arduino.esp8266.com/stable/package_esp8266com_index.json to board manager for esp8266
+
+
+Side note:
+Arduion dark theme:
+https://github.com/konrad91/OneDarkArduino
+
+
+https://github.com/squix78/json-streaming-parser
+
+https://github.com/ThingPulse/esp8266-weather-station
+ESP8266 Weather Station
+JSON Streaming Parser by Daniel Eichhorn
+ESP8266 OLED Driver for SSD1306 display by Daniel Eichhorn. Use Version 3.0.0 or higher!
+
+As per instructions:
+https://docs.thingpulse.com/how-tos/openweathermap-key/
+
+
+JShelley API Key: d11242d9951cf0befe4dbd4fb997687f
