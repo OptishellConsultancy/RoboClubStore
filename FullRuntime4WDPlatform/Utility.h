@@ -347,10 +347,10 @@ void PrintGPS()
     GPS.println(PMTK_Q_RELEASE);
     GPSSetupRequired = false;
 
-    return true;
+
   }
 
-  Serial.print("<GPSTIME");
+  Serial.print("<GPSTIME.Start: \n");
   GPS.hour < 10 ? PrintfOneVar(200, "0%d", GPS.hour, true) : PrintfOneVar(200, "%d", GPS.hour, true);
   Serial.print(':');
   GPS.minute < 10 ? PrintfOneVar(200, "0%d", GPS.minute, true) : PrintfOneVar(200, "%d", GPS.minute, true);
@@ -366,16 +366,21 @@ void PrintGPS()
     Serial.print("0");
   }
   Serial.println(GPS.milliseconds);
-  Serial.print("GPSTIME>");
-  Serial.print("<GPSDate");
-  PrintfOneVar(100, "D: %d/", GPS.day);
-  PrintfOneVar(100, "M: %d/", GPS.month);
-  PrintfOneVar(100, "Y: %d/", GPS.year);
-  PrintfOneVar(100, "Fix: %d/", (int)GPS.fix);
-  PrintfOneVar(100, "Quality: %d/", (int)GPS.fixquality);
-  Serial.print("GPSDate>");
+  Serial.print("<GPSTIME.END> \n");
   //
-  Serial.print("<GPSLoc");
+  Serial.print("<GPSDate.Start>");
+  PrintfOneVar(100, "D: %d", GPS.day, true);
+  Serial.print(',');
+  PrintfOneVar(100, "M: %d", GPS.month, true);
+  Serial.print(',');
+  PrintfOneVar(100, "Y: %d", GPS.year, true);
+  Serial.print(',');
+  PrintfOneVar(100, "Fix: %d", (int)GPS.fix, true);
+  Serial.print(',');
+  PrintfOneVar(100, "Quality: %d", (int)GPS.fixquality, true);
+  Serial.print("<GPSDate.End> \n");
+  //
+  Serial.print("<GPSLoc.Start>");
   if (GPS.fix)
   {
     Serial.print("Location: ");
@@ -391,9 +396,9 @@ void PrintGPS()
   }
   else
   {
-    Serial.print("FIXNOTAQUIRED");
+    Serial.print(" ERROR: FIX NOT AQUIRED ");
   }
-  Serial.print("GPSLoc>");
+  Serial.print("<GPSLoc.End>");
 }
 
 bool ParseAndExecuteAPICommand(String str)
@@ -442,10 +447,11 @@ bool ParseAndExecuteAPICommand(String str)
   if (CmdOut)
   {
     DoGPS = (str.indexOf("GPS") >= 0); //<In>SCRN //Screen data
+
     if (DoGPS)
     {
       Serial.print("Received GPS Command \r\n");
-      PrintGPS();
+      return true;
     }
     if (DoAccMag)
     {

@@ -54,11 +54,11 @@ Screen
 <In>OLEDIMG[BITMAPDATA]{CONFIG}
 <In>OLEDTXT['TEXT STRING']{CONFIG}
 Examples:
-<In>OLEDTXT[Hello there]{X:42,Y:32.S:1} (X,Y Position, text size)
+<In>OLEDTXT[Goodbye world]{X:42,Y:32.S:1} (X,Y Position, text size)
 <In>OLEDTXT[Good Afternoon]{} (No config centeres the text, size of 1)
 
 -------------------------------------------------
-Get G
+Get GPS
 <Out>GPS
 
 --------------------------------------------------

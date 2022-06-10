@@ -33,7 +33,7 @@ void loop()
 {
   delay(200);
 
-  //TESTS
+  // TESTS
   if (!NonHumanReadableAPIIOEnabled)
   {
     ReadSerialFeatureCommForCommmandAndExecute();
@@ -50,14 +50,14 @@ void loop()
     {
       ServoArmControllerEnabled = false;
       EnableArmServos();
-      ArmServosTest();      
+      ArmServosTest();
     }
     if (OLEDDisplayEnabled)
     {
       OLEDDisplayEnabled = false;
       OLEDTest_Emoji();
       EnabledOLED();
-      // OLEDTest_FullDefault();      
+      // OLEDTest_FullDefault();
     }
 
     if (FourWDHatEnabled)
@@ -87,26 +87,30 @@ void loop()
         CmdRcv4WD = false;
         SetupW4DPins();
         Do4WDAPICommand();
-        
       }
       if (Do6Axis)
       {
         Do6Axis = false;
         EnableArmServos();
         // E.G <In>6Axis[C.5]; Claw to 60 degrees
-        Do6AxisAPICommand();        
+        Do6AxisAPICommand();
       }
       if (OLEDImg)
       {
         OLEDImg = false;
         EnabledOLED();
-        DoOLEDImgCommand();        
+        DoOLEDImgCommand();
       }
       if (OLEDTxt)
       {
         OLEDTxt = false;
         EnabledOLED();
         DoOLEDTxtCommand();
+      }
+      if (DoGPS)
+      {
+        DoGPS = false;
+        PrintGPS();
       }
     }
   }
