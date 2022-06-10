@@ -1,0 +1,6 @@
+Setup:
+.Download Adafruit_FONA library manger - arduino
+
+Note: need to wire in serial collections to the fona.
+This is an independent board that needs to be programmed seperately.
+Hoping I can write a static driver 
