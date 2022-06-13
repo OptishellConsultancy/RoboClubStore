@@ -15,11 +15,13 @@ void EnabledOLED()
 }
 void DoOLEDImgCommand()
 {
+    Serial.print("DoOLEDImgCommand\r\n");
+
     display.clearDisplay();
 
     display.drawBitmap((display.width() - LOGO_WIDTH) / 2,
                        (display.height() - LOGO_HEIGHT) / 2,
-                       emoji_drunk, LOGO_WIDTH, LOGO_HEIGHT, 1);
+                       logo_bmp, LOGO_WIDTH, LOGO_HEIGHT, 1);
     display.display();
 }
 

@@ -300,17 +300,6 @@ void testdrawbitmap(void)
   delay(1000);
 }
 
-void drawbitmapCustom(unsigned char *bitmap)
-{
-  display.clearDisplay();
-  display.drawBitmap(
-      (display.width() - LOGO_WIDTH) / 2,
-      (display.height() - LOGO_HEIGHT) / 2,
-      bitmap, LOGO_WIDTH, LOGO_HEIGHT, 1);
-  display.display();
-  delay(1000);
-}
-
 #define XPOS 0 // Indexes into the 'icons' array in function below
 #define YPOS 1
 #define DELTAY 2

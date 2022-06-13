@@ -51,11 +51,14 @@ Or chain:
 
 --------------------------------------------------
 Screen
-<In>OLEDIMG[BITMAPDATA]{CONFIG} //TODO
+<In>OLEDIMG[BITMAPDATA]{CONFIG} //TOO FINISH
 <In>OLEDTXT['TEXT STRING']{CONFIG}
+
 Examples:
 <In>OLEDTXT[Goodbye world]{X:42,Y:32.S:1} (X,Y Position, text size)
 <In>OLEDTXT[Good Afternoon]{} (No config centeres the text, size of 1)
+//
+<In>OLEDIMG[BITMAPDATA]{X:0,Y:0.S:1} 
 
 -------------------------------------------------
 Get GPS
