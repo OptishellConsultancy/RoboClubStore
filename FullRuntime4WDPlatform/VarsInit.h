@@ -7,7 +7,7 @@
 //----
 String ReadString;
 TCA9548A I2CMux;
-LSM303 compass;
+LSM303 lsm303D;
 // Set GPSECHO to 'false' to turn off echoing the GPS data to the Serial console
 // Set to 'true' if you want to debug and listen to the raw GPS sentences
 #define GPSECHO false
@@ -50,7 +50,6 @@ bool PWMInitialised;
 bool OLEDInitialised;
 bool StopAllTestsRequested;
 bool NonHumanReadableAPIIOEnabled;
-String FStr = "F";
 
 // Ultrasonic vars:
 unsigned char addr0 = 0x11; // The ic2 address of the Ultrasonic
@@ -118,7 +117,7 @@ String OLEDIMG_BITMAPCONFIG;
 
 const int OLEDIMG_X_DEF = 42;
 const int OLEDIMG_Y_DEF = 32;
-int OLEDIMG_X, OLEDIMG_Y,OLEDIMG_S;
+int OLEDIMG_X, OLEDIMG_Y, OLEDIMG_S;
 bool OLEDIMG_VALIDCONFIG = false;
 
 // OLEDTXT
@@ -126,9 +125,21 @@ String OLEDTXT_TEXTDATA;
 String OLEDTXT_TXTCONFIG;
 const int OLEDTXT_X_DEF = 42;
 const int OLEDTXT_Y_DEF = 32;
-int OLEDTXT_X, OLEDTXT_Y,OLEDTXT_S;
+int OLEDTXT_X, OLEDTXT_Y, OLEDTXT_S;
 bool OLEDTXT_VALIDCONFIG = false;
 
+//
+// GPS meta data
+int GPSSampleCount = 1;
+bool GPSPrintOLED = false;
+
+// AccMag meta data
+int AccMagSampleCount = 1;
+bool AccMagPrintOLED  = false;
+//
+//Ultrasonic meta data
+int UltraSoncSampleCount = 1;
+bool UltraSoncPrintOLED  = false;
 //------
 typedef enum
 {

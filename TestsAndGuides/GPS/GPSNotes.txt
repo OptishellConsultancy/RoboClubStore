@@ -7,3 +7,5 @@ to the raspberry pi via the voltage leveler.
 
 
 https://learn.adafruit.com/adafruit-mini-gps-pa1010d-module/arduino (Ignore the different style of chip, it's the same)
+
+https://learn.adafruit.com/flora-wearable-gps/getting-location-data

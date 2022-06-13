@@ -128,6 +128,7 @@ void ReadAPICommand()
 //-----------------------------------
 bool PassCommandChk(String str, int &cmdToActivate)
 {
+  str.toUpperCase();
   int idxDot = str.indexOf(".");
   int idxF = str.indexOf("F");
   int strLen = str.length();
@@ -301,27 +302,91 @@ bool PassOLEDTxt(String str)
       String xss = config.substring(idxX + 2, idxDimXend);
       String yss = config.substring(idxY + 2, idxDimYend);
       String sizess = config.substring(idxS + 2, conf_End);
-      Serial.print("\n");
-      Serial.print(xss);
-      Serial.print("\n");
-      Serial.print(yss);
-      Serial.print("\n");
-      Serial.print(sizess);
 
       OLEDTXT_X = xss.toInt();
       OLEDTXT_Y = yss.toInt();
       OLEDTXT_S = sizess.toInt();
 
       OLEDTXT_VALIDCONFIG = (OLEDTXT_X != -1 && OLEDTXT_Y != -1 && OLEDTXT_S != -1);
+      String isValid = +(OLEDTXT_VALIDCONFIG ? "True" : "False");
+      Serial.println("OLEDTXT_VALIDCONFIG: " + isValid);
     }
   }
-
-  // OLEDTXT_TXTCONFIG = str.substring(OLEDTXT_CONFIG_Start + 1, OLEDTXT_CONFIG_End);
 
   return (dataAquired && configAquired);
 }
 
-void PrintGPS()
+void ParseGPSCommand(String str)
+{
+  int start = str.indexOf("[");
+  int end = str.indexOf("]");
+  if (start > 0 && end > 0)
+  {
+    GPSSampleCount = str.substring(start + 1, end).toInt();
+  }
+  else
+  {
+    // Fallback
+    GPSSampleCount = 1;
+  }
+  int optisStart = str.indexOf("{");
+  int optisEnd = str.indexOf("}");
+  if (optisStart > 0 && optisEnd > 0)
+  {
+    GPSPrintOLED = str.substring(start + 1, end) == 'OLEDPRNT';
+  }
+
+  // str = <In>OLEDTXT[]{X:0,Y:32.S:1}
+}
+
+void ParseAccMagCommand(String str)
+{
+
+  int start = str.indexOf("[");
+  int end = str.indexOf("]");
+  if (start > 0 && end > 0)
+  {
+    AccMagSampleCount = str.substring(start + 1, end).toInt();
+  }
+  else
+  {
+    // Fallback
+    AccMagSampleCount = 1;
+  }
+
+  int optisStart = str.indexOf("{");
+  int optisEnd = str.indexOf("}");
+  if (optisStart > 0 && optisEnd > 0)
+  {
+    AccMagPrintOLED = str.substring(start + 1, end) == 'OLEDPRNT';
+  }
+}
+
+void ParseUltSoncCommand(String str)
+{
+  int start = str.indexOf("[");
+  int end = str.indexOf("]");
+  if (start > 0 && end > 0)
+  {
+    UltraSoncSampleCount = str.substring(start + 1, end).toInt();
+  }
+  else
+  {
+    // Fallback
+    UltraSoncSampleCount = 1;
+  }
+
+  int optisStart = str.indexOf("{");
+  int optisEnd = str.indexOf("}");
+  if (optisStart > 0 && optisEnd > 0)
+  {
+    UltraSoncSampleCount = str.substring(start + 1, end) == 'OLEDPRNT';
+  }
+
+  Serial.println("UltraSoncSampleCount: " + UltraSoncSampleCount);
+}
+
+void SetupGPS()
 {
   if (GPSSetupRequired)
   {
@@ -346,59 +411,7 @@ void PrintGPS()
     // Ask for firmware version
     GPS.println(PMTK_Q_RELEASE);
     GPSSetupRequired = false;
-
-
   }
-
-  Serial.print("<GPSTIME.Start: \n");
-  GPS.hour < 10 ? PrintfOneVar(200, "0%d", GPS.hour, true) : PrintfOneVar(200, "%d", GPS.hour, true);
-  Serial.print(':');
-  GPS.minute < 10 ? PrintfOneVar(200, "0%d", GPS.minute, true) : PrintfOneVar(200, "%d", GPS.minute, true);
-  Serial.print(':');
-  GPS.seconds < 10 ? PrintfOneVar(200, "0%d", GPS.seconds, true) : PrintfOneVar(200, "%d", GPS.seconds, true);
-  Serial.print('.');
-  if (GPS.milliseconds < 10)
-  {
-    Serial.print("00");
-  }
-  else if (GPS.milliseconds > 9 && GPS.milliseconds < 100)
-  {
-    Serial.print("0");
-  }
-  Serial.println(GPS.milliseconds);
-  Serial.print("<GPSTIME.END> \n");
-  //
-  Serial.print("<GPSDate.Start>");
-  PrintfOneVar(100, "D: %d", GPS.day, true);
-  Serial.print(',');
-  PrintfOneVar(100, "M: %d", GPS.month, true);
-  Serial.print(',');
-  PrintfOneVar(100, "Y: %d", GPS.year, true);
-  Serial.print(',');
-  PrintfOneVar(100, "Fix: %d", (int)GPS.fix, true);
-  Serial.print(',');
-  PrintfOneVar(100, "Quality: %d", (int)GPS.fixquality, true);
-  Serial.print("<GPSDate.End> \n");
-  //
-  Serial.print("<GPSLoc.Start>");
-  if (GPS.fix)
-  {
-    Serial.print("Location: ");
-    Serial.print(GPS.latitude, 4);
-    Serial.print(GPS.lat);
-    Serial.print(", ");
-    Serial.print(GPS.longitude, 4);
-    Serial.println(GPS.lon);
-    PrintfOneVar(100, "SpeedKnots: %d,", GPS.speed);
-    PrintfOneVar(100, "Angle: %d,", GPS.angle);
-    PrintfOneVar(100, "Altitude: %d,", GPS.altitude);
-    PrintfOneVar(100, "SatCount: %d,", GPS.satellites);
-  }
-  else
-  {
-    Serial.print(" ERROR: FIX NOT AQUIRED ");
-  }
-  Serial.print("<GPSLoc.End>");
 }
 
 bool ParseAndExecuteAPICommand(String str)
@@ -406,7 +419,7 @@ bool ParseAndExecuteAPICommand(String str)
   /* code */
   CmdIn = (str.indexOf("<In>") >= 0);
   CmdOut = (str.indexOf("<Out>") >= 0);
-  //Exit check if no in/out command
+  // Exit check if no in/out command
   if (!CmdIn && !CmdOut)
   {
     RetToMainMenu = (str.indexOf("RM") >= 0 || str.indexOf("EXIT") >= 0);
@@ -441,23 +454,36 @@ bool ParseAndExecuteAPICommand(String str)
     if (OLEDTxt)
     {
       Serial.print("Received OLEDTxt Command \r\n");
+      if (!GPSPrintOLED)
+      {
+        GPSPrintOLED = false;
+      }
       return PassOLEDTxt(str);
     }
   }
   if (CmdOut)
   {
     DoGPS = (str.indexOf("GPS") >= 0); //<In>SCRN //Screen data
+    DoAccMag = (str.indexOf("AccMag") >= 0);
+    DoUltraSnc = (str.indexOf("UltSonc") >= 0);
 
     if (DoGPS)
     {
       Serial.print("Received GPS Command \r\n");
+      ParseGPSCommand(str);
       return true;
     }
     if (DoAccMag)
     {
+      Serial.print("Received AccMag Command \r\n");
+      ParseAccMagCommand(str);
+      return true;
     }
     if (DoUltraSnc)
     {
+      Serial.print("Received UltraSonic Command \r\n");
+      ParseUltSoncCommand(str);
+      return true;
     }
   }
   return false;
@@ -572,4 +598,101 @@ void i2cReadBytes(unsigned char addr_t, unsigned char Reg, unsigned char Num)
     rxbuf[i] = Wire.read();
     i++;
   }
+}
+
+String GPSLocLat()
+{
+  if (!GPS.fix)
+  {
+    return "NODATA";
+  }
+  String LatStr(GPS.latitudeDegrees, 8);
+  String LatNameStr(GPS.lat);
+  return (LatStr + LatNameStr);
+}
+
+String GPSLocLon()
+{
+  if (!GPS.fix)
+  {
+    return "NODATA";
+  }
+  String lonStr(GPS.longitudeDegrees, 8);
+  String lonNameStr(GPS.lon);
+  return (lonStr + lonNameStr);
+}
+
+String GPSMisc()
+{
+  String speedStr(GPS.speed, 3);
+  String angStr(GPS.angle, 3);
+  String altStr(GPS.altitude, 3);
+  String satCountStr(GPS.satellites, 2);
+
+  return "Speed:" + speedStr + " Ang:" + angStr + "\n" +
+         "Alt: " + altStr + " Sats: " + satCountStr;
+}
+
+String GPSDateTime()
+{
+  String dt = "";
+  //
+  if (GPS.year == 0)
+  {
+    return "00:00:00.000\n00/00/0000";
+  }
+  if (GPS.hour < 10)
+  {
+    dt += "0";
+  }
+  dt += String(GPS.hour, DEC);
+
+  dt += ":";
+  if (GPS.minute < 10)
+  {
+    dt += "0";
+  }
+  dt += String(GPS.minute, DEC);
+  dt += ":";
+  if (GPS.seconds < 10)
+  {
+    dt += "0";
+  }
+  dt += String(GPS.seconds, DEC);
+  dt += '.';
+  if (GPS.milliseconds < 10)
+  {
+    dt += "00";
+  }
+  else if (GPS.milliseconds > 9 && GPS.milliseconds < 100)
+  {
+    dt += "0";
+  }
+  dt += String(GPS.milliseconds);
+  dt += "\n";
+  if (GPS.day < 10)
+  {
+    dt += "0";
+  }
+  dt += String(GPS.day, DEC);
+  dt += "/";
+  if (GPS.month < 10)
+  {
+    dt += "0";
+  }
+  dt += String(GPS.month, DEC);
+  dt += "/";
+  dt += String(GPS.year, DEC);
+  dt += "\n";
+  //
+  return dt;
+}
+
+// https://forum.arduino.cc/t/function-optimization-wind-direction-open-for-ideas/92493/11
+char direction[17][4] = {"N", "NNE", "NE", "ENE", "E", "ESE", "SE", "SSE", "S", "SSW", "SW", "WSW", "W", "WNW", "NW", "NNW", "N"}; // 68 bytes
+char *Deg2Dir(int degrees)
+{
+  degrees = degrees % 360;
+  int idx = (degrees * 10 + 112) / 225;
+  return direction[idx];
 }

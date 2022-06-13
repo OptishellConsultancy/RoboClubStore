@@ -7,6 +7,7 @@ void setup()
   I2CMux.begin(Wire);
   I2CMux.closeAll();
   I2CMux.openAll();
+  SetupGPS();
 
   Serial.begin(9600); // Starts the serial communication
   //
@@ -31,6 +32,7 @@ void setup()
 
 void loop()
 {
+
   delay(200);
 
   // TESTS
@@ -39,7 +41,7 @@ void loop()
     ReadSerialFeatureCommForCommmandAndExecute();
     if (GPSEnabled)
     {
-      UpdateGPSData();
+      UpdateGPSDataTest();
     }
     if (LSM303D_CompassAccelMagnetoEnabled)
     {
@@ -80,38 +82,52 @@ void loop()
     if (ParseAndExecuteAPICommand(ReadString))
     {
       ReadString = "";
-      // E.G. <In>4WD[100]{100}FLA
-      //      <In>4WD[100]{100}FRA
-      if (CmdRcv4WD)
-      {
-        CmdRcv4WD = false;
-        SetupW4DPins();
-        Do4WDAPICommand();
-      }
-      if (Do6Axis)
-      {
-        Do6Axis = false;
-        EnableArmServos();
-        // E.G <In>6Axis[C.5]; Claw to 60 degrees
-        Do6AxisAPICommand();
-      }
-      if (OLEDImg)
-      {
-        OLEDImg = false;
-        EnabledOLED();
-        DoOLEDImgCommand();
-      }
-      if (OLEDTxt)
-      {
-        OLEDTxt = false;
-        EnabledOLED();
-        DoOLEDTxtCommand();
-      }
-      if (DoGPS)
-      {
-        DoGPS = false;
-        PrintGPS();
-      }
     }
+    // E.G. <In>4WD[100]{100}FLA
+    //      <In>4WD[100]{100}FRA
+    if (CmdRcv4WD)
+    {
+      CmdRcv4WD = false;
+      SetupW4DPins();
+      Do4WDAPICommand();
+    }
+    if (Do6Axis)
+    {
+      Do6Axis = false;
+      EnableArmServos();
+      // E.G <In>6Axis[C.5]; Claw to 60 degrees
+      Do6AxisAPICommand();
+    }
+    if (OLEDImg)
+    {
+      OLEDImg = false;
+      EnabledOLED();
+      DoOLEDImgCommand();
+    }
+    if (OLEDTxt)
+    {
+      OLEDTxt = false;
+      EnabledOLED();
+      DoOLEDTxtCommand();
+    }
+    if (DoGPS)
+    {
+      PrintGPS();
+      GPSSampleCount--;
+      DoGPS = !(GPSSampleCount == 0);
+    }
+    if (DoAccMag)
+    {
+      AccMagSampleCount--;
+      DoAccMag = !(AccMagSampleCount == 0);
+      PrintDoAccMag();
+    }
+    if (DoUltraSnc)
+    {
+      UltraSoncSampleCount--;
+      DoUltraSnc = !(UltraSoncSampleCount == 0);
+      PrintDoUltSonc();
+    }
+
   }
 }

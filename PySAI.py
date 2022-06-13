@@ -22,7 +22,7 @@ def write_read(x):
     arduino.write(bytes(x, 'utf-8'))
 
 def Read_PrintIfValue():
-    value = arduino.readline().decode("utf-8")
+    value = arduino.readline().decode("windows-1252")
     if(len(value) > 0):
         print(value)
 

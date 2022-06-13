@@ -3,44 +3,23 @@
 void InitLSM303D()
 {
   Serial.println("InitLSM303D()..");
-  compass.init();
-  compass.enableDefault();
+  lsm303D.init();
+  lsm303D.enableDefault();
+  lsm303D.getDeviceType();
+
+  lsm303D.m_min = (LSM303::vector<int16_t>){-32767, -32767, -32767};
+  lsm303D.m_max = (LSM303::vector<int16_t>){+32767, +32767, +32767};
 }
 
 void InitUltraSonic()
 {
-  txbuf[0] = (MEASURE_MODE_PASSIVE | MEASURE_RANG_500); //the measurement mode is set to passive mode, measurement range is set to 500CM.
+  txbuf[0] = (MEASURE_MODE_PASSIVE | MEASURE_RANG_500); // the measurement mode is set to passive mode, measurement range is set to 500CM.
   i2cWriteBytes(addr0, CFG_INDEX, &txbuf[0], 1);        //
 }
 
 ///
-void UpdateGPSData(bool doAPICondensedFormat = false)
+void UpdateGPSDataTest(bool doAPICondensedFormat = false)
 {
-
-  if (GPSSetupRequired)
-  {
-    GPS = Adafruit_GPS(&Wire);
-    GPS.begin(0x10); // The I2C address to use is 0x10
-    // uncomment this line to turn on RMC (recommended minimum) and GGA (fix data) including altitude
-    GPS.sendCommand(PMTK_SET_NMEA_OUTPUT_RMCGGA);
-    // uncomment this line to turn on only the "minimum recommended" data
-    //GPS.sendCommand(PMTK_SET_NMEA_OUTPUT_RMCONLY);
-    // For parsing data, we don't suggest using anything but either RMC only or RMC+GGA since
-    // the parser doesn't care about other sentences at this time
-    // Set the update rate
-    GPS.sendCommand(PMTK_SET_NMEA_UPDATE_1HZ); // 1 Hz update rate
-    // For the parsing code to work nicely and have time to sort thru the data, and
-    // print it out we don't suggest using anything higher than 1 Hz
-    //
-    // Request updates on antenna status, comment out to keep quiet
-    GPS.sendCommand(PGCMD_ANTENNA);
-
-    delay(1000);
-
-    // Ask for firmware version
-    GPS.println(PMTK_Q_RELEASE);
-    GPSSetupRequired = false;
-  }
 
   // read data from the GPS in the 'main loop'
   char c = GPS.read();
@@ -125,22 +104,110 @@ void UpdateGPSData(bool doAPICondensedFormat = false)
   }
 }
 
-void LSM303D_UpdateCompassAccelMagnetoData()
+void PrintGPS()
 {
+  // read data from the GPS in the 'main loop'
+  char c = GPS.read();
+  // if you want to debug, this is a good time to do it!
+  if (GPSECHO)
+    if (c)
+      Serial.print(c);
+  // if a sentence is received, we can check the checksum, parse it...
+  if (GPS.newNMEAreceived())
+  {
+    // a tricky thing here is if we print the NMEA sentence, or data
+    // we end up not listening and catching other sentences!
+    // so be very wary if using OUTPUT_ALLDATA and trying to print out data
+    Serial.println(GPS.lastNMEA()); // this also sets the newNMEAreceived() flag to false
+    if (!GPS.parse(GPS.lastNMEA())) // this also sets the newNMEAreceived() flag to false
+      return;                       // we can fail to parse a sentence in which case we should just wait for another
+  }
+  if (GPS.available())
+  {
+
+    Serial.print("<GPSDATETIME.Start: \n");
+    Serial.println(GPSDateTime());
+    Serial.print("<GPSDATETIME.End> \n");
+    //
+    Serial.print("<GPSLoc.Start> \n");
+    if (GPS.fix)
+    {
+      Serial.println(GPSLocLat());
+      Serial.println(GPSLocLon());
+      Serial.println(GPSMisc());
+
+      if (GPSPrintOLED)
+      {
+        OLEDTxt = true;
+        //
+        String oledCommand = ("<In>OLEDTXT[" + GPSDateTime() + "\n" + GPSLocLat() + "\n" + GPSLocLon() + "\n" + GPSMisc() + "]{X:0,Y:0.S:1}");
+        PassOLEDTxt(oledCommand);
+      }
+      DoGPS = false;
+    }
+    else
+    {
+      Serial.print(" ERROR: FIX NOT ACQUIRED \n");
+
+      OLEDTxt = true;
+      String gpsTimeStr = GPSDateTime();
+      String oledCommand = "<In>OLEDTXT[" + GPSDateTime() + "\n" + GPSLocLat() + "\n" + GPSLocLon() + "\n" + GPSMisc() + "\nERR:FIX NOT ACQUIRED]{X:0,Y:0.S:1}";
+      PassOLEDTxt(oledCommand);
+    }
+    Serial.print("<GPSLoc.End> \n");
+  }
+  else
+  {
+    Serial.print("ERROR: GPS NOT AVAILABLE \n");
+
+    OLEDTxt = true;
+    String gpsTimeStr = GPSDateTime();
+    Serial.print(" GPS NOT AVAILABLE \n ");
+    String oledCommand = "<In>OLEDTXT[" + GPSDateTime() + "\n" + GPSLocLat() + "\n" + GPSLocLon() + "\n" + GPSMisc() + "\nERR:GPS NOT AVAILABLE]{X:0,Y:0.S:1}";
+    Serial.print(oledCommand);
+  }
+}
+
+PrintDoAccMag()
+{
+
   if (LSM303D_CompassAccelMagnetoInitRequired)
   {
     InitLSM303D();
     LSM303D_CompassAccelMagnetoInitRequired = false;
   }
-  Serial.println("LSM303D report: \\\\\\\\\\");
-  compass.read();
-  char LSM30D3ReportBuffer[80];
-  snprintf(LSM30D3ReportBuffer, sizeof(LSM30D3ReportBuffer), "A: %6d %6d %6d    M: %6d %6d %6d", compass.a.x, compass.a.y, compass.a.z, compass.m.x, compass.m.y, compass.m.z);
-  Serial.println(LSM30D3ReportBuffer);
-  Serial.println("\\\\\\\\\\\\\\\\\\\\\\\\\\");
+  lsm303D.read();
+  // Raw values:
+  lsm303D.readAcc();
+  char LSM30D3ReportBuffer_AccRaw[30];
+  snprintf(LSM30D3ReportBuffer_AccRaw, sizeof(LSM30D3ReportBuffer_AccRaw), "Acc:%d,%d,%d", lsm303D.a.x, lsm303D.a.y, lsm303D.a.z);
+  lsm303D.readMag();
+  char LSM30D3ReportBuffer_MagRaw[30];
+  snprintf(LSM30D3ReportBuffer_MagRaw, sizeof(LSM30D3ReportBuffer_MagRaw), "Mag:%d,%d,%d", (lsm303D.m.x / 32767.0) * 2.0, (lsm303D.m.y * 32767.0) * 2.0, (lsm303D.m.z * 32767.0) * 2.0);
+
+  int headingInt = (int)lsm303D.heading();
+  String heading = String(headingInt, DEC) + "Deg/" + String(Deg2Dir(headingInt));
+
+  Serial.println(LSM30D3ReportBuffer_AccRaw);
+  Serial.println(LSM30D3ReportBuffer_MagRaw);
+  Serial.println(heading);
+
+  if (AccMagPrintOLED)
+  {
+    OLEDTxt = true;
+    String LSM30DStrAcc = String(LSM30D3ReportBuffer_AccRaw);
+    String LSM30DStrMag = String(LSM30D3ReportBuffer_MagRaw);
+    //
+    String oledCommand = ("<In>OLEDTXT[" + LSM30DStrAcc + "\n" + LSM30DStrMag + "\n" + heading + "]{X:0,Y:0.S:1}");
+  }
 }
 
-void UpdateUltrasonicIC2Data()
+void LSM303D_UpdateCompassAccelMagnetoData()
+{
+  PrintDoAccMag();
+}
+
+void PrintDoUltSonc()
 {
   if (UltraSonicSetupRequired)
   {
@@ -150,19 +217,29 @@ void UpdateUltrasonicIC2Data()
   int16_t dist, temp;
   txbuf[0] = CMD_DISTANCE_MEASURE;
 
-  i2cWriteBytes(addr0, CMD_INDEX, &txbuf[0], 1); //write register, send ranging command
+  i2cWriteBytes(addr0, CMD_INDEX, &txbuf[0], 1); // write register, send ranging command
   delay(100);
 
-  i2cReadBytes(addr0, DIST_H_INDEX, 2); //read distance register
+  i2cReadBytes(addr0, DIST_H_INDEX, 2); // read distance register
   dist = ((uint16_t)rxbuf[0] << 8) + rxbuf[1];
 
-  i2cReadBytes(addr0, TEMP_H_INDEX, 2); //read temperature register
+  i2cReadBytes(addr0, TEMP_H_INDEX, 2); // read temperature register
   temp = ((uint16_t)rxbuf[0] << 8) + rxbuf[1];
 
-  Serial.print(dist, DEC);
-  Serial.print("cm");
-  Serial.print("------");
+  String distStr = String(dist, DEC);
+  String tempStr = String((float)temp / 10, 1) + "c";
 
-  Serial.print((float)temp / 10, 1);
-  Serial.println("℃");
+  Serial.println(distStr);
+  Serial.println(tempStr);
+
+  if (UltraSoncPrintOLED)
+  {
+    OLEDTxt = true;
+    String oledCommand = ("<In>OLEDTXT[" + distStr + "\n" + tempStr + "]{X:0,Y:26.S:3}");
+  }
+}
+
+void UpdateUltrasonicIC2Data()
+{
+  PrintDoUltSonc();
 }

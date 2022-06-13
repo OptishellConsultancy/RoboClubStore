@@ -1,0 +1,17 @@
+<html>
+<body>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/index.css') }}">
+
+    <p>
+        Welcome to the basic 4DW Multi sensor array platform
+    </p>
+
+
+    <button type="button" class="collapsible">Open Collapsible</button>
+    <div class="content">
+        <iframe src="http://192.168.4.21:8000/html/" title="RPI Cam control iframe" width="70%" height="70%"></iframe>
+    </div>
+
+    <script src="{{url_for('static', filename='index.js')}}"></script>
+</body>
+</html>
