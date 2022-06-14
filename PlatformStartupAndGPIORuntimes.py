@@ -25,11 +25,11 @@ def shellESpeak(text):
     os.popen('espeak "' + text + '" --stdout | aplay 2> /dev/null').read()
 
 def StartupConvo():
-    #shellESpeak("Welcome to the mutlipurpose platform.")
+    shellESpeak("Welcome to the mutlipurpose platform.")
 
-    #time.sleep(0.5)
-    #shellESpeak("READ 'APIExamples.txt' for API documentation")
-    #time.sleep(0.5)
+    time.sleep(0.5)
+    shellESpeak("READ 'APIExamples.txt' for API documentation")
+    time.sleep(0.5)
     thisExternIP = get('https://api.ipify.org').text
     print("IP Addr: ", thisExternIP);
     shellESpeak("Access this IP Address " +thisExternIP + " on Port '2223' for Web interface")
