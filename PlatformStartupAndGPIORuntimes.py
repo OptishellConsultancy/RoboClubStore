@@ -10,7 +10,7 @@
 from gpiozero import Button #import button from the Pi GPIO library
 import time # import time functions
 import os #imports OS library for Shutdown control
-
+from requests import get
 
 
 def check_privileges():
@@ -22,17 +22,20 @@ check_privileges()
 # http://espeak.sourceforge.net/commands.html
 def shellESpeak(text):
 
-    os.popen('espeak "' + text + '" --stdout | aplay 5> /dev/null').read()
+    os.popen('espeak "' + text + '" --stdout | aplay 2> /dev/null').read()
 
 def StartupConvo():
-    shellESpeak("Welcome to the mutlipurpose platform.")
+    #shellESpeak("Welcome to the mutlipurpose platform.")
+
+    #time.sleep(0.5)
+    #shellESpeak("READ 'APIExamples.txt' for API documentation")
+    #time.sleep(0.5)
+    thisExternIP = get('https://api.ipify.org').text
+    print("IP Addr: ", thisExternIP);
+    shellESpeak("Access this IP Address " +thisExternIP + " on Port '2223' for Web interface")
 
     time.sleep(0.5)
-    shellESpeak("Please consult 'APIExamples.txt' for API documentation on these features")
-
-    time.sleep(0.5)
-    shellESpeak("Press Button and release quickly for shutdown.")
-    shellESpeak("Press Button and hold for restart.")
+    shellESpeak("Press Button and hold for for shutdown.")
 
     shellESpeak("I am now completely operational Dave, and all my circuits are functionin perfectly")
     time.sleep(0.2)
@@ -41,28 +44,17 @@ def StartupConvo():
 
 StartupConvo()
 
-def deactivated():
-    print(btn.active_time)
-    print("released after {} seconds".format(btn.active_time))
-    if btn.active_time < btn.hold_time:
-        time.sleep(3)
-        print("pressed and held, shutting down")
-        shellESpeak("shutting down.")
-        os.system("shutdown now -h") #shut down the Pi -h is or -r will reset
-        quit()
-
 
 def held():
     print("Restarting")
-    shellESpeak("Restarting.")
-    os.system("shutdown -r now")
+    shellESpeak("Shutting Down.")
+    os.system("shutdown -h now")
     quit()
 
 
 
 btn = Button(26, hold_time=2) # defines the button as an object and chooses GPIO 26
 btn.when_held = held
-btn.when_deactivated = deactivated
 
 while True: #infinite loop
         time.sleep(1)
