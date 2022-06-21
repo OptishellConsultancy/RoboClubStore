@@ -1,0 +1,32 @@
+
+
+
+.collapsible {
+    background-color: #eee;
+    color: #444;
+    cursor: pointer;
+    padding: 18px;
+    width: 100px;
+    border: none;
+    text-align: justify;
+    outline: black;
+    font-size: 15px;
+  }
+  .content{
+    width: 515px;
+    height: 292px;
+  }
+
+  :checked {
+    background-position: 14px;
+  }
+  /* Add a background color to the button if it is clicked on (add the .active class with JS), and when you move the mouse over it (hover) */
+  .active, .collapsible:hover {
+    text-align: left;
+  }
+  
+  /* Style the collapsible content. Note: hidden by default */
+  .content {
+    overflow: hidden;
+    background-color: #f1f1f1;
+  }

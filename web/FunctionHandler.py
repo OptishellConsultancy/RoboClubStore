@@ -14,26 +14,28 @@ class InputThread(threading.Thread):
         while True:            
             self.input_cbk(input()) 
 
-class HandleFunctionRequest():
+class FunctionHandler():
    arduino = 0
    inputThread = 0
 
-   def __init__(self, function, functionData):
+   def __init__(self):
       print("HandlePySAIWebRequest Invoke..")
 
-
    def write_read(self,x):
-      arduino.write(bytes(x, 'utf-8'))
+      self.arduino.write(bytes(x, 'utf-8'))
 
    def Read_PrintIfValue(self):
-      value = arduino.readline().decode("windows-1252")
+      value = self.arduino.readline().decode("windows-1252")
       if(len(value) > 0):
          print(value)
 
    def InvokeSerialComm(self):
       self.arduino = serial.Serial(port='/dev/ttyACM0', baudrate=9600, timeout=.5)
-      self.inputThread = InputThread(write_read)   
+      self.inputThread = InputThread(self.write_read)   
       while True:
-         Read_PrintIfValue()
+         self.Read_PrintIfValue()
+
+   def AddToFunctionList(self, functionName, commandData):
+      print("AddToFunctionList: " + functionName)
 
 

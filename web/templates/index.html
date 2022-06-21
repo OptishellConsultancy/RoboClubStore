@@ -1,17 +1,76 @@
 <html>
+
 <body>
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/index.css') }}">
+    <h1 class="cyberpunk glitched title">
+        4DW Multi-sensor platform
+    </h1>
+    <span class="toggleCam">
+        <label class="label">LiveCamera</label>
+        <input type="checkbox" class="collapsible"></button>
+    </span>
 
-    <p>
-        Welcome to the basic 4DW Multi sensor array platform
-    </p>
-
-
-    <button type="button" class="collapsible">Open Collapsible</button>
+    <!-- Camera -->
     <div class="content">
-        <iframe src="http://192.168.4.21:8000/html/" title="RPI Cam control iframe" width="70%" height="70%"></iframe>
+        <iframe src="http://jamiespi:8000/picamFeed/cam_pic_new.php" title="RPI Cam control iframe" width="100%"
+            height="100%"></iframe>
+        <a href="http://jamiespi:8000/html" target="_blank">Camera settings console and file managed</a>
+    </div>
+
+    <!-- Controls -->
+    <div class='controls'>
+        <!-- All functions -->
+        <div class="functionsContainer">
+            <form class="btnForm" action="/AddToFunctionList/?functionName=4WD" method="post">
+                <button class='btn btn-default' submit="submit">4WD Move</button>
+            </form>
+            <form class="btnForm" action="/AddToFunctionList/?functionName=6AxisArm" method="post">
+                <button class='btn btn-default' submit="submit">6Axis Arm</button>
+            </form>
+            <form class="btnForm" action="/AddToFunctionList/?functionName=OLEDScreen" method="post">
+                <button class='btn btn-default' submit="submit">OLED Screen</button>
+            </form>
+            <form class="btnForm" action="/AddToFunctionList/?functionName=GetGPS" method="post">
+                <button class='btn btn-default' submit="submit">Get GPS</button>
+            </form>
+            <form class="btnForm" action="/AddToFunctionList/?functionName=GetCompassheading" method="post">
+                <button class='btn btn-default' submit="submit">Get Compass heading</button>
+            </form>
+            <form class="btnForm" action="/AddToFunctionList/?functionName=GetUltrasonicDistance" method="post">
+                <button class='btn btn-default' submit="submit">Get ultrasonic distance</button>
+            </form>
+            <form class="btnForm" action="/AddToFunctionList/?functionName=MoveCamera" method="post">
+                <button class='btn btn-default' submit="submit">MoveCamera</button>
+            </form>
+            <form class="btnForm" action="/AddToFunctionList/?functionName=PlaySpotifyTrack" method="post">
+                <button class='btn btn-default' submit="submit">Play spotify track</button>
+            </form>
+            <form class="btnForm" action="/AddToFunctionList/?functionName=Speak" method="post">
+                <button class='btn btn-default' submit="submit">Speak</button>
+            </form>
+            <form class="btnForm" action="/AddToFunctionList/?functionName=Speak" method="post">
+                <button class='btn btn-default' submit="submit">Speak</button>
+            </form>
+            <form class="btnForm" action="/AddToFunctionList/?functionName=RecordAudio" method="post">
+                <button class='btn btn-default' submit="submit">Record Audio</button>
+            </form>
+        </div>
+        <!-- Execute functions -->
+        <form class="executeFunctions" action="/ExecuteFunctions/" method="post">
+            <button class='btnCyb btn-default'>Execute Functions</button>
+        </form>
+
     </div>
 
     <script src="{{url_for('static', filename='index.js')}}"></script>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/index.css') }}">
+    <!-- https://dev.to/leandroruel/how-to-make-a-cyberpunk-2077-button-with-css-c9m-->
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/cyberpunkButton.css') }}">
+    <!-- https://developpaper.com/css-steps-to-achieve-the-visual-effect-of-cyberpunk-2077-style/-->
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/cyberGlitchTitle.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/collapseToggle.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/textBox.scss') }}">
+
+
 </body>
+
 </html>

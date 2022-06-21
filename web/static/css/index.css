@@ -1,26 +1,47 @@
-body {background-color: rgb(44, 79, 100);}
+body {background-color: rgb(0, 0, 0);}
+:root {
+  --yellow-color: #fcee09; 
+  --red-color: #ff003c;
+  --black-color: #050a0e;
+  --blue-color: #00f0ff;
+}
 
-.collapsible {
-    background-color: #eee;
-    color: #444;
-    cursor: pointer;
-    padding: 18px;
-    width: 100%;
-    border: none;
+.title {
+  background-color: #fcee09;
+}
+
+
+:checked {
+  background-position: 14px;
+}
+
+.toggleCam {
+  display:flex;
+  flex-direction:column;
+}
+
+.toggleCam .label{
     text-align: left;
-    outline: none;
-    font-size: 15px;
-  }
-  
-  /* Add a background color to the button if it is clicked on (add the .active class with JS), and when you move the mouse over it (hover) */
-  .active, .collapsible:hover {
-    background-color: rgb(187, 14, 14);
-  }
-  
-  /* Style the collapsible content. Note: hidden by default */
-  .content {
-    padding: 0 18px;
-    display: none;
-    overflow: hidden;
-    background-color: #f1f1f1;
-  }
+    padding-left: 10px;
+    color: aqua;
+}
+
+.controls {
+  padding-left: 300px;
+}
+.controls .functionsContainer {
+  background-color: aliceblue;
+  grid-template-areas: "b1 b2 b3"
+                        "b4 b5 b5";
+  display: grid;
+  width: 500px;
+  grid-gap: 5px;
+}
+
+.controls .executeFunctions {
+  padding-left: 160px;
+}
+
+.controls .btnForm{
+  padding: 5px;
+}

@@ -22,3 +22,4 @@ Backup startup profile script commands:
 sudo python3 /home/pi/Desktop/RoboClubStore/PlatformStartupAndGPIORuntimes.py &
 sudo python3 /home/pi/Desktop/RoboClubStore/web/runServer.py runServer.py &
 bash ./home/pi/Desktop/RPi_Cam_Web_Interface/start.sh &
+

@@ -21,7 +21,6 @@ check_privileges()
 
 # http://espeak.sourceforge.net/commands.html
 def shellESpeak(text):
-
     os.popen('espeak "' + text + '" --stdout | aplay 2> /dev/null').read()
 
 def StartupConvo():
