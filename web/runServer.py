@@ -14,6 +14,10 @@ import threading
 import subprocess
 import os  # imports OS library for Shutdown control
 from flask.sessions import SecureCookieSessionInterface
+import json
+
+from mapEntity import MapEntity
+
 
 if sys.version_info[0] < 3:
     raise Exception("Python 3 or a more recent version is required.")
@@ -21,6 +25,7 @@ if sys.version_info[0] < 3:
 functionHandler = FunctionHandler()
 app = Flask(__name__)
 #vc = cv2.VideoCapture(0)
+
 
 def shellESpeak(text):
     os.popen('espeak "' + text + '" --stdout | aplay 2> /dev/null').read()
@@ -55,6 +60,27 @@ def AddToFunctionList():
     shellESpeak("Added function: "+ functionName)
     functionHandler.AddToFunctionList(functionName, ["Some function data"]) 
     return redirect("/") 
+
+
+
+# See mapApp.js
+@app.route("/mapinjectapi", methods=['POST'])
+def MapApi():
+    infornation_dic = {}
+    infornation_list = []
+    db_data = []
+    db_data.append(MapEntity('Test', 'marker-icon-2x.png','red', '51.5072', '0.1276' ))
+    for data in db_data:
+        infornation_dic['data'] = []
+        infornation_dic['Name'] = data.Name
+        infornation_dic['Picture'] = data.Picture
+        infornation_dic['Color'] = data.Color
+        infornation_dic['Longitude'] = data.Longitude
+        infornation_dic['Latitude'] = data.Latitude
+        infornation_list.append(infornation_dic)
+        infornation_dic = {}
+    print("MapApi requested..")
+    return json.dumps(infornation_list)    
 
 def execv(command, path):
     if(len(path) > 0):
