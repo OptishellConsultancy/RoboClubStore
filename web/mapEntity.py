@@ -1,14 +1,7 @@
 
 class MapEntity():
-    def __init__(self
-                 , Name
-                 , Picture
-                 , Color
-                 , Longitude
-                 , Latitude
-                 ):
-        self.Name = Name
-        self.Picture = Picture
-        self.Color = Color
-        self.Longitude = Longitude
-        self.Latitude = Latitude
+    def __init__(self, name, longitude, latitude, dateTime):
+        self.Name = name
+        self.Longitude = longitude
+        self.Latitude = latitude
+        self.DataTime = dateTime

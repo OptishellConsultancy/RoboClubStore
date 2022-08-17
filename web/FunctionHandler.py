@@ -38,4 +38,7 @@ class FunctionHandler():
    def AddToFunctionList(self, functionName, commandData):
       print("AddToFunctionList: " + functionName)
 
+   def DoFunctionNow(self, functionName, commandData = []):
+      print("DoFunctionNow: " + functionName)
+
 
