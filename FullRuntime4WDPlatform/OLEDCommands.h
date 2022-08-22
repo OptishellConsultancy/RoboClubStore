@@ -33,6 +33,9 @@ void DoOLEDTxtCommand()
     // Set position
     OLEDTXT_VALIDCONFIG ? (display.setCursor(OLEDTXT_X, OLEDTXT_Y)) : (display.setCursor(OLEDTXT_X_DEF, OLEDTXT_Y_DEF));
     Serial.print(OLEDTXT_TEXTDATA);
+    Serial.print(OLEDTXT_X);
+    Serial.print(OLEDTXT_Y);
+    
     display.println(OLEDTXT_TEXTDATA);
     // display.println(F("GOOD EVENING"))
     display.display();

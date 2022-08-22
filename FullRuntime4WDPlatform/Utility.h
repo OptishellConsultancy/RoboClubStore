@@ -82,6 +82,10 @@ void PrintFPlistInfo()
   Serial.print("F5. : IC2 Ultrasonic enabled.\r\n");
   Serial.print("F6. : Disable all tests.\r\n");
   Serial.print("F7. : Enable NonHuman Readable APIIO.\r\n");
+  GPS.println(PMTK_Q_RELEASE);
+  Serial.print("'RM' or 'EXIT' to return to main menu\r\n");
+  Serial.print("'.' for emergency stop\r\n");
+
   Serial.print("\r\n");
 }
 
@@ -318,22 +322,13 @@ bool PassOLEDTxt(String str)
 
 void ParseGPSCommand(String str)
 {
-  int start = str.indexOf("[");
-  int end = str.indexOf("]");
-  if (start > 0 && end > 0)
-  {
-    GPSSampleCount = str.substring(start + 1, end).toInt();
-  }
-  else
-  {
-    // Fallback
-    GPSSampleCount = 1;
-  }
+  GPSSampleCount = 1;
+    
   int optisStart = str.indexOf("{");
   int optisEnd = str.indexOf("}");
   if (optisStart > 0 && optisEnd > 0)
   {
-    GPSPrintOLED = str.substring(start + 1, end) == 'OLEDPRNT';
+    GPSPrintOLED = str.substring(optisStart + 1, optisEnd) == 'OLEDPRNT';
   }
 
   // str = <In>OLEDTXT[]{X:0,Y:32.S:1}
@@ -409,7 +404,9 @@ void SetupGPS()
     delay(1000);
 
     // Ask for firmware version
-    GPS.println(PMTK_Q_RELEASE);
+    GPS.println(PMTK_Q_RELEASE);    
+
+
     GPSSetupRequired = false;
   }
 }

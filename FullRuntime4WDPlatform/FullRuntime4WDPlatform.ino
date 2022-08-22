@@ -7,32 +7,20 @@ void setup()
   I2CMux.begin(Wire);
   I2CMux.closeAll();
   I2CMux.openAll();
-  SetupGPS();
 
-  Serial.begin(9600); // Starts the serial communication
   //
   pwm.begin();
   pwm.setPWMFreq(FREQUENCY); // Analog servos run at ~60 Hz updates
 
-  //
-  // DiscoverHubPortDevices();
-  Serial.print("setup...\r\n");
-  Serial.print("\r\n");
-  Serial.print("Please provide a port number, e.g F0.\r\n");
-  Serial.print("F0. : GPS.\r\n");
-  Serial.print("F1. : Compass + Accel + Magneto.\r\n");
-  Serial.print("F2. : 6AxisServoController.\r\n");
-  Serial.print("F3. : OLEDSCreen .\r\n");
-  Serial.print("F4. : 4WD Platform control.\r\n");
-  Serial.print("F5. : IC2 Ultrasonic enabled.\r\n");
-  Serial.print("F6. : Disable all tests.\r\n");
-  Serial.print("F7. : Enable NonHuman Readable APIIO.\r\n");
-  Serial.print("\r\n");
+  DiscoverHubPortDevices();
+  SetupGPS();
+  
+  PrintFPlistInfo();
 }
 
 void loop()
 {
-
+  GPSReadAndResultCache(); //Do GPS read continuously, later on we print data, this prevents an error wwhere we dsync requests and get empty data - annoying
   delay(200);
 
   // TESTS
@@ -42,6 +30,7 @@ void loop()
     if (GPSEnabled)
     {
       UpdateGPSDataTest();
+      GPSEnabled = false;
     }
     if (LSM303D_CompassAccelMagnetoEnabled)
     {
@@ -57,9 +46,9 @@ void loop()
     if (OLEDDisplayEnabled)
     {
       OLEDDisplayEnabled = false;
-      OLEDTest_Emoji();
+      //OLEDTest_Emoji();
       EnabledOLED();
-      // OLEDTest_FullDefault();
+      OLEDTest_FullDefault();
     }
 
     if (FourWDHatEnabled)
@@ -112,7 +101,7 @@ void loop()
     }
     if (DoGPS)
     {
-      PrintGPS();
+      ProcessGPSData();
       GPSSampleCount--;
       DoGPS = !(GPSSampleCount == 0);
     }

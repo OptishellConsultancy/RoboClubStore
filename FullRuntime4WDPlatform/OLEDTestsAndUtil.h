@@ -294,8 +294,8 @@ void testdrawbitmap(void)
   display.clearDisplay();
 
   display.drawBitmap((display.width() - LOGO_WIDTH) / 2,
-      (display.height() - LOGO_HEIGHT) / 2,
-      logo_bmp, LOGO_WIDTH, LOGO_HEIGHT, 1);
+                     (display.height() - LOGO_HEIGHT) / 2,
+                     logo_bmp, LOGO_WIDTH, LOGO_HEIGHT, 1);
   display.display();
   delay(1000);
 }
@@ -322,8 +322,8 @@ void testanimate(const uint8_t *bitmap, uint8_t w, uint8_t h)
     Serial.println(icons[f][DELTAY], DEC);
   }
 
-  for (;;)
-  {                         // Loop forever...
+  for (int i = 0; i < 10; i++)
+  {                         
     display.clearDisplay(); // Clear the display buffer
 
     // Draw each snowflake:
@@ -362,10 +362,10 @@ void OLEDTest_Emoji()
   display.display();
   delay(2000); // Pause for 2 seconds
   display.clearDisplay();
-  //testdrawrect();
+  // testdrawrect();
   testdrawbitmap(); // Draw a small bitmap image
-  //drawbitmapCustom(logo_bmp);
-  //display.display();
+  // drawbitmapCustom(logo_bmp);
+  // display.display();
 }
 void OLEDTest_FullDefault()
 {

@@ -25,28 +25,97 @@
     <script src="static/js/L.Control.Locate.min.js"></script>
     <script src="static/js/Control.FullScreen.js"></script>
     <script src="static/js/jquery.min.js"></script>
+    <script src="https://open.spotify.com/embed-podcast/iframe-api/v1" async></script>
 </head>
 
 <body>
     <h1 class="cyberpunk glitched title">
         4DW Multi-sensor platform
     </h1>
-    <span class="toggleCam">
-        <label class="label">LiveCamera</label>
-        <input type="checkbox" class="collapsible"></button>
-    </span>
+    <div class="mainToggles">
+        <span class="toggle">
+            <label class="label">LiveCamera</label>
+            <input checked="camToggled" type="checkbox" class="collapsible"
+                onclick='hndlToggle(this,"camContent", "camToggled")'></input>
+        </span>
+        <span class="toggle">
+            <label class="label">GPS</label>
+            <input checked="gpsToggled" type="checkbox" class="collapsible"
+                onclick='hndlToggle(this,"map","gpsToggled")'></input>
+        </span>
+        <span class="toggle">
+            <label class="label">Text to Speech</label>
+            <input checked="textToSpeechToggled" type="checkbox" class="collapsible"
+                onclick='hndlToggle(this,"textToSpeach","textToSpeechToggled")'></input>
+        </span>
+        <span class="toggle">
+            <label class="label">Spotify info</label>
+            <input type="checkbox" class="collapsible"
+                onclick='hndlToggle(this,"spotifyInfo","spotifyPlayerToggled")'></input>
+        </span>
+        <span class="toggle">
+            <label class="label">OLED Text</label>
+            <input checked="oLEDDisplayToggled" type="checkbox" class="collapsible" 
+            onclick='hndlToggle(this,"textToSpeach","oLEDTxtToggled")'></input>
+        </span>
+    </div>
+
+    <div class="subTaskToggles">
+        <span class="toggleSub" action="/ToggledoGPSOLEDPrint/" method="post">
+            <label class="label">OLED GPS Display</label>
+            <input type="checkbox" class="collapsible" onclick="toggleGPSOLEDDisplay()"></input>
+        </span>
+    </div>
+
+
+    <!--spotifyInfo-->
+    <div id="spotifyInfo">
+        <a href="https://github.com/dtcooper/raspotify" target="_blank">Raspotify github page</a>
+        <p>
+            <li>.Raspotify library exposed this platform to the internet as a remote device for playing music</li>
+            <li>.The file '/etc/default/raspotify' contains an account config that exposes the device for Jamie's
+                account</li>
+            <li>.On the desktop/mobile spotify app navigate to 'spotify-connect' symbol as follows:</li>
+            <li>Finally, select and play audio as normal through the platform!</li>
+        </p>
+        <img id="imgSelectDeviceHelp" src="static/images/Spotify_SetDeviceImg.png "
+            alt="selecting correct remote device image" width="300">
+
+    </div>
+
 
     <!-- Camera -->
-    <div class="content">
-        <a href="http://optishell.duckdns.org:8000/html" target="_blank">Camera settings console and file manager</a>
+    <div id="camContent">
+        <!-- <a href="http://optishell.duckdns.org:8000/html" target="_blank">Camera settings console and file manager</a> -->
         <iframe src="http://optishell.duckdns.org:8000/picamFeed/cam_pic_new.php" title="RPI Cam control ifr!ame"
             width="100%" height="100%"></iframe>
     </div>
-
+    <!--Map-->
     <div id="map">
     </div>
-
     <script src="static/js/mapApp.js"></script>
+
+    <!--text to speach-->
+    <div id="textToSpeach">
+        <form id="textToSpeachForm" action="textToSpeach" method="POST">
+            <label id="fname">Text input for speach:</label><br>
+            <textarea id="ftextField" name="string" rows="1" oninput="auto_height(this)">You talk'n to me?. Huh, punk?
+            </textarea>
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+
+
+    <!--oLEDTxt write-->
+    <div id="oLEDDisplayTxt">
+        <form id="oledDisplayTextForm" action="writeOLEDText" method="POST">
+            <label id="fname">Text input for OLED Display:</label><br>
+            <textarea id="ftextField" name="string" rows="1" oninput="auto_height(this)">Can you read this, human?
+            </textarea>
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+
 
     <!-- Controls -->
     <div class='controls'>
@@ -61,9 +130,6 @@
             <form class="btnForm" action="/AddToFunctionList/?functionName=OLEDScreen" method="post">
                 <button class='btn btn-default' submit="submit">OLED Screen</button>
             </form>
-            <form class="btnForm" action="/AddToFunctionList/?functionName=GetGPS" method="post">
-                <button class='btn btn-default' submit="submit">Get GPS</button>
-            </form>
             <form class="btnForm" action="/AddToFunctionList/?functionName=GetCompassheading" method="post">
                 <button class='btn btn-default' submit="submit">Get Compass heading</button>
             </form>
@@ -72,12 +138,6 @@
             </form>
             <form class="btnForm" action="/AddToFunctionList/?functionName=MoveCamera" method="post">
                 <button class='btn btn-default' submit="submit">MoveCamera</button>
-            </form>
-            <form class="btnForm" action="/AddToFunctionList/?functionName=PlaySpotifyTrack" method="post">
-                <button class='btn btn-default' submit="submit">Play spotify track</button>
-            </form>
-            <form class="btnForm" action="/AddToFunctionList/?functionName=Speak" method="post">
-                <button class='btn btn-default' submit="submit">Speak</button>
             </form>
             <form class="btnForm" action="/AddToFunctionList/?functionName=RecordAudio" method="post">
                 <button class='btn btn-default' submit="submit">Record Audio</button>

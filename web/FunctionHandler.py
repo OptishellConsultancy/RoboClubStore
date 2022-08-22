@@ -2,43 +2,82 @@ import sys
 import serial
 import time
 import threading
+import re
 
-class InputThread(threading.Thread):
-
-    def __init__(self, input_cbk = None, name='InputThread'):
-        self.input_cbk = input_cbk
-        super(InputThread, self).__init__(name=name)
-        self.start()
-	
-    def run(self):
-        while True:            
-            self.input_cbk(input()) 
 
 class FunctionHandler():
-   arduino = 0
-   inputThread = 0
 
-   def __init__(self):
-      print("HandlePySAIWebRequest Invoke..")
+    GPSTime = ''
+    GPSDate = ''
+    GPSLatNorth = ''
+    GPSLonEast = ''
+    GPSSpeed = ''
+    GPSAltAndSats = ''
 
-   def write_read(self,x):
-      self.arduino.write(bytes(x, 'utf-8'))
+    def __init__(self):
+        print("HandlePySAIWebRequest Invoke..")
+        self.arduino = serial.Serial(
+            port='/dev/ttyACM0', baudrate=9600, timeout=.5)
 
-   def Read_PrintIfValue(self):
-      value = self.arduino.readline().decode("windows-1252")
-      if(len(value) > 0):
-         print(value)
+    def write(self, x):
+        self.arduino.write(bytes(x, 'utf-8'))
 
-   def InvokeSerialComm(self):
-      self.arduino = serial.Serial(port='/dev/ttyACM0', baudrate=9600, timeout=.5)
-      self.inputThread = InputThread(self.write_read)   
-      while True:
-         self.Read_PrintIfValue()
+    def Read_PrintIfValueUntilNoData(self, results=[]):
+        value = self.arduino.readline().decode("windows-1252")
+        if(len(value) > 0):
+            print(value)
+            results.append(value)
+            if(len(results) > 0):
+                self.Read_PrintIfValueUntilNoData(results)
+        return results
 
-   def AddToFunctionList(self, functionName, commandData):
-      print("AddToFunctionList: " + functionName)
+    def InvokeSerialComm(self):
+        self.arduino = serial.Serial(
+            port='/dev/ttyACM0', baudrate=9600, timeout=.5)
+        while True:
+            self.Read_PrintIfValueUntilNoData()
 
-   def DoFunctionNow(self, functionName, commandData = []):
-      print("DoFunctionNow: " + functionName)
+    def AddToFunctionList(self, functionName, commandData):
+        print("AddToFunctionList: " + functionName)
 
+    def HandleGPS(self, resultsConcat):
+        idx = 0
+        foundGPSCoords = False
+        self.GPSTime = resultsConcat[1].replace("\n", "")
+        self.GPSDate = resultsConcat[2].replace("\n", "")
+        self.GPSLatNorth = resultsConcat[6].replace('N', '').replace("\n", "")
+        self.GPSLonEast = resultsConcat[7].replace('E', '').replace("\n", "")
+        self.GPSSpeed = resultsConcat[8].replace("\n", "")
+        self.GPSAltAndSats = resultsConcat[9].replace("\n", "")
 
+    def DoFunctionNow(self, functionName, commandData=[], configData=[]):
+
+        # Encase not in F7. API Mode..
+        self.Read_PrintIfValueUntilNoData()
+        self.write("F7.")
+
+        # Construct command
+        fullcmd = functionName
+
+        cmdLen = len(commandData)
+        if(cmdLen > 0):
+            fullcmd += '['
+            for i in range(len(commandData)):
+                fullcmd += commandData[i]
+            fullcmd += "]"
+
+        cnfLen = len(configData)
+        if(cnfLen > 0):
+            fullcmd += '{'
+            for i in range(len(configData)):
+                fullcmd += configData[i]
+            fullcmd += "}"
+        #######
+
+        print("fullcmd: " + fullcmd)
+
+        self.write(fullcmd)
+        results = self.Read_PrintIfValueUntilNoData()
+        for i in range(len(results)):
+            if "<GPSDATETIME.Start:" in results[i]:
+                self.HandleGPS(results[i:])

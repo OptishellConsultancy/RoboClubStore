@@ -104,43 +104,60 @@ void UpdateGPSDataTest(bool doAPICondensedFormat = false)
   }
 }
 
-void PrintGPS()
+void GPSReadAndResultCache()
 {
-  // read data from the GPS in the 'main loop'
-  char c = GPS.read();
-  // if you want to debug, this is a good time to do it!
-  if (GPSECHO)
-    if (c)
-      Serial.print(c);
-  // if a sentence is received, we can check the checksum, parse it...
-  if (GPS.newNMEAreceived())
-  {
-    // a tricky thing here is if we print the NMEA sentence, or data
-    // we end up not listening and catching other sentences!
-    // so be very wary if using OUTPUT_ALLDATA and trying to print out data
-    Serial.println(GPS.lastNMEA()); // this also sets the newNMEAreceived() flag to false
-    if (!GPS.parse(GPS.lastNMEA())) // this also sets the newNMEAreceived() flag to false
-      return;                       // we can fail to parse a sentence in which case we should just wait for another
-  }
+  GPSHasData = false;
   if (GPS.available())
   {
 
+    char c = GPS.read();
+    // if you want to debug, this is a good time to do it!
+    if (GPSECHO)
+      if (c)
+        Serial.print(c);
+    // if a sentence is received, we can check the checksum, parse it...
+    if (GPS.newNMEAreceived())
+    {
+      // a tricky thing here is if we print the NMEA sentence, or data
+      // we end up not listening and catching other sentences!
+      // so be very wary if using OUTPUT_ALLDATA and trying to print out data
+      Serial.println(GPS.lastNMEA()); // this also sets the newNMEAreceived() flag to false
+      if (!GPS.parse(GPS.lastNMEA())) // this also sets the newNMEAreceived() flag to false
+        return;                       // we can fail to parse a sentence in which case we should just wait for another
+    }
+    if (GPS.fix)
+    {
+      GPSData_DateTime = GPSDateTime();
+      GPSData_LocLat = GPSLocLat();
+      GPSData_LocLon = GPSLocLon();
+      GPSData_Misc = GPSMisc();
+      GPSHasData = true;
+    }
+  }
+}
+
+void ProcessGPSData()
+{
+
+  if (GPSHasData)
+  {
+
     Serial.print("<GPSDATETIME.Start: \n");
-    Serial.println(GPSDateTime());
+    Serial.println(GPSData_DateTime);
     Serial.print("<GPSDATETIME.End> \n");
     //
     Serial.print("<GPSLoc.Start> \n");
     if (GPS.fix)
     {
-      Serial.println(GPSLocLat());
-      Serial.println(GPSLocLon());
-      Serial.println(GPSMisc());
+      Serial.println(GPSData_LocLat);
+      Serial.println(GPSData_LocLon);
+      Serial.println(GPSData_Misc);
 
       if (GPSPrintOLED)
       {
         OLEDTxt = true;
         //
-        String oledCommand = ("<In>OLEDTXT[" + GPSDateTime() + "\n" + GPSLocLat() + "\n" + GPSLocLon() + "\n" + GPSMisc() + "]{X:0,Y:0.S:1}");
+        String oledCommand = ("<In>OLEDTXT[" + GPSData_DateTime + "\n" + GPSData_LocLat + "\n" + GPSData_LocLon + "\n" + GPSData_Misc + "]{X:0,Y:0.S:1}");
         PassOLEDTxt(oledCommand);
       }
       DoGPS = false;
@@ -150,8 +167,8 @@ void PrintGPS()
       Serial.print(" ERROR: FIX NOT ACQUIRED \n");
 
       OLEDTxt = true;
-      String gpsTimeStr = GPSDateTime();
-      String oledCommand = "<In>OLEDTXT[" + GPSDateTime() + "\n" + GPSLocLat() + "\n" + GPSLocLon() + "\n" + GPSMisc() + "\nERR:FIX NOT ACQUIRED]{X:0,Y:0.S:1}";
+
+      String oledCommand = "<In>OLEDTXT[" + GPSData_DateTime + "\n" + GPSData_LocLat + "\n" + GPSData_LocLon + "\n" + GPSData_Misc + "\nERR:FIX NOT ACQUIRED]{X:0,Y:0.S:1}";
       PassOLEDTxt(oledCommand);
     }
     Serial.print("<GPSLoc.End> \n");

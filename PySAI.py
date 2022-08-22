@@ -18,7 +18,7 @@ class InputThread(threading.Thread):
             self.input_cbk(input()) 
 #########################
 arduino = serial.Serial(port='/dev/ttyACM0', baudrate=9600, timeout=.5)
-def write_read(x):
+def write(x):
     arduino.write(bytes(x, 'utf-8'))
 
 def Read_PrintIfValue():
@@ -26,6 +26,6 @@ def Read_PrintIfValue():
     if(len(value) > 0):
         print(value)
 
-inputThread = InputThread(write_read)        
+inputThread = InputThread(write)        
 while True:
     Read_PrintIfValue()

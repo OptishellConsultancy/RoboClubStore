@@ -132,14 +132,19 @@ bool OLEDTXT_VALIDCONFIG = false;
 // GPS meta data
 int GPSSampleCount = 1;
 bool GPSPrintOLED = false;
+String GPSData_DateTime;
+String GPSData_LocLat;
+String GPSData_LocLon;
+String GPSData_Misc;
+bool GPSHasData = false;
 
 // AccMag meta data
 int AccMagSampleCount = 1;
-bool AccMagPrintOLED  = false;
+bool AccMagPrintOLED = false;
 //
-//Ultrasonic meta data
+// Ultrasonic meta data
 int UltraSoncSampleCount = 1;
-bool UltraSoncPrintOLED  = false;
+bool UltraSoncPrintOLED = false;
 //------
 typedef enum
 {

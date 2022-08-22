@@ -19,13 +19,12 @@ from datetime import datetime
 
 from mapEntity import MapEntity
 
-doGPSOLEDPrint = True
-gpsSampleRate = 10
+doGPSOLEDPrint = False
 
 if sys.version_info[0] < 3:
     raise Exception("Python 3 or a more recent version is required.")
 
-functionHandler = FunctionHandler()
+fhnd = FunctionHandler()
 app = Flask(__name__)
 #vc = cv2.VideoCapture(0)
 
@@ -61,39 +60,81 @@ def ExecuteFunctions():
 def AddToFunctionList():
     functionName = request.args.get('functionName')  
     shellESpeak("Added function: "+ functionName)
-    functionHandler.AddToFunctionList(functionName, ["Some function data"]) 
+    fhnd.AddToFunctionList(functionName, ["Some function data"]) 
     return redirect("/") 
 
 #Toggle doGPSOLEDPrint from GUI
-@app.route("/ToggledoGPSOLEDPrint/", methods=['POST'])
+@app.route("/ToggledoGPSOLEDDisplay", methods=['POST'])
 def ToggledoGPSOLEDPrint():
-    doGPSOLEDPrint != doGPSOLEDPrint
-    return redirect("/")
-
+    global doGPSOLEDPrint #Use global scope
+    doGPSOLEDPrint = not doGPSOLEDPrint
+    print("doGPSOLEDPrint is" +  str(doGPSOLEDPrint))    
+    return ""
 
 # See mapApp.js -> DoMapUpdate
 @app.route("/mapinjectapi", methods=['POST'])
 def MapApi():
-    infornation_dic = {}
-    infornation_list = []
-    db_data = []
+    infoDict = {}
+    info_list = []
 
-    db_data.append(MapEntity('My location', '0.1276', '51.5072', datetime.now().strftime('%m/%d/%Y %H:%M:%S') )) #Test
+    global doGPSOLEDPrint #Use global scope
 
-    gpsResponse = functionHandler.DoFunctionNow("<Out>GPS[{sampleRate}]".format(sampleRate = gpsSampleRate), (['OLEDPRNT'] if doGPSOLEDPrint else []))
+    #db_data.append(MapEntity('My location', '0.1276', '51.5072', datetime.now().strftime('%m/%d/%Y %H:%M:%S') )) #Test
 
-    for data in db_data:
+    fhnd.DoFunctionNow("<Out>GPS",[], (['OLEDPRNT'] if doGPSOLEDPrint else []))
 
-        infornation_dic['data'] = []
-        infornation_dic['Name'] = data.Name
-        infornation_dic['Longitude'] = data.Longitude
-        infornation_dic['Latitude'] = data.Latitude
-        infornation_dic['DataTime'] = data.DataTime
+    fhnd.GPSTime
+    fhnd.GPSDate
+    fhnd.GPSLatNorth
+    fhnd.GPSLonEast
+    fhnd.GPSSpeed
+    fhnd.GPSAltAndSats
+    if("<GPSDATETIME.End>" not in fhnd.GPSDate):
 
-        infornation_list.append(infornation_dic)
-        infornation_dic = {}
-    print("MapApi requested..")
-    return json.dumps(infornation_list)    
+        mapEntity =  MapEntity(
+                ('My location' + ' ' + fhnd.GPSAltAndSats + ' ' + fhnd.GPSSpeed),
+                fhnd.GPSLonEast,
+                fhnd.GPSLatNorth,
+                (fhnd.GPSDate + ' ' + fhnd.GPSTime) )
+
+        infoDict['Name'] = mapEntity.Name
+        infoDict['Longitude'] = mapEntity.Longitude
+        infoDict['Latitude'] = mapEntity.Latitude
+        infoDict['DataTime'] = mapEntity.DataTime
+
+        info_list.append(infoDict)
+        infoDict = {}
+        print("MapApi requested..")
+        return json.dumps(info_list)  
+    return json.dumps(info_list)   
+
+#Simple text speach write
+@app.route('/textToSpeach', methods=['POST', 'GET'])
+def textToSpeach():
+    if request.method == 'POST':
+        #version 1:
+        opt1 = request.form.to_dict()
+        for key in opt1:
+            if key == "string":
+                string = opt1[key]
+                print(string)
+                shellESpeak(string)
+    return redirect("/")
+
+#Do OLED command TODO: CONFIG Data input
+@app.route('/writeOLEDText', methods=['POST', 'GET'])
+def writeOLEDText():
+    shellESpeak("OLED Text recieved")
+    if request.method == 'POST':
+        #version 1:
+        opt1 = request.form.to_dict()
+        for key in opt1:
+            if key == "string":
+                string = opt1[key]
+                fhnd.DoFunctionNow("<In>OLEDTXT", [string], [])
+                #<In>OLEDTXT[Good Afternoon]{}
+    return redirect("/")
+
 
 def execv(command, path):
     if(len(path) > 0):

@@ -1,14 +1,29 @@
-var coll = document.getElementsByClassName("toggleCam");
-var i;
 
-for (i = 0; i < coll.length; i++) {
-  coll[i].addEventListener("click", function() {
-    this.classList.toggle("active");
-    var content = this.nextElementSibling;
-    if (content.style.display === "block") {
-      content.style.display = "none";
-    } else {
-      content.style.display = "block";
+var spotifyPlayerToggled = false;
+
+function hndlToggle(chkBox, togChkId, cacheVarName) {
+  console.log("hndlToggle()");
+  this[cacheVarName] = chkBox.checked;
+  elementFromId = document.getElementById(togChkId);
+  if (this[cacheVarName] === true) {
+    elementFromId.style.display = "block";
+  } else {
+    elementFromId.style.display = "none";
+  }
+}
+
+function auto_height(elem) {  /* javascript */
+  elem.style.height = "30px";
+  elem.style.height = (elem.scrollHeight) + "px";
+}
+
+function toggleGPSOLEDDisplay() {
+  $.ajax({
+    url: '/ToggledoGPSOLEDDisplay',
+    type: 'POST',
+    dataType: "json",
+    success: function () {
+      console.log("toggleGPSOLEDDisplay");
     }
   });
 }

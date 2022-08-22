@@ -1,6 +1,9 @@
-body {background-color: rgb(0, 0, 0);}
+body {
+  background-color: rgb(0, 0, 0);
+}
+
 :root {
-  --yellow-color: #fcee09; 
+  --yellow-color: #fcee09;
   --red-color: #ff003c;
   --black-color: #050a0e;
   --blue-color: #00f0ff;
@@ -10,29 +13,127 @@ body {background-color: rgb(0, 0, 0);}
   background-color: #fcee09;
 }
 
-
 :checked {
   background-position: 14px;
 }
 
-.toggleCam {
-  display:flex;
-  flex-direction:column;
+.mainToggles {
+  display: flex;
+  flex-direction: row;
 }
 
-.toggleCam .label{
-    text-align: left;
-    padding-left: 10px;
-    color: aqua;
+.subTaskToggles{
+  display: flex;
+  flex-direction: row;
 }
 
+/* toggle */
+.toggle {
+  display: flex;
+  flex-direction: column;
+}
+
+.toggle .label {
+  text-align: center;
+  padding-left: 2px;
+  color: #fcee09;
+}
+
+
+/* toggleSub */
+.toggleSub {
+  display: flex;
+  flex-direction: column;
+}
+
+.toggleSub .label {
+  text-align: center;
+  padding-left: 2px;
+  color: rgb(30, 201, 95);
+  font-size: 10;
+}
+
+/* camContent */
+
+#camContent {
+  width: 520px;
+  height: 390px;
+  display: block;
+}
+
+
+/* textToSpeach */
+
+#textToSpeach {
+  padding-top: 10px;
+  width: 300px;
+  display: block;
+}
+
+#textToSpeach #textToSpeachForm {
+  background-color: aliceblue;
+}
+
+#textToSpeach #textToSpeachForm #fname {
+  color: #ff003c;
+}
+
+#textToSpeach #textToSpeachForm #ftextField{
+  width: 100%;
+  align-content: left;
+}
+
+/* oLEDDisplayTxt */
+
+#oLEDDisplayTxt {
+  padding-top: 10px;
+  width: 300px;
+  display: block;
+}
+#oLEDDisplayTxt #oledDisplayTextForm {
+  background-color: aliceblue;
+}
+
+#oLEDDisplayTxt #oledDisplayTextForm #fname {
+  color: #ff003c;
+}
+
+#oLEDDisplayTxt #oledDisplayTextForm #ftextField{
+  width: 100%;
+  align-content: left;
+}
+
+/* spotifyInfo */
+
+#spotifyInfo {
+  background-color: rgb(2, 17, 31);
+  width: 550px;
+  height: 380px;
+  padding: 5PX;
+  border-radius: 3px;
+  border-style: solid;
+  border-color: #fcee09;
+  color: #fcee09;
+  display: none;
+}
+
+#spotifyInfo #imgSelectDeviceHelp{ 
+  border-color: greenyellow;  
+  border-radius: 3px;
+  border-style: solid;
+  left: 50px;
+  position : absolute;
+}
+
+/* controls  */
 .controls {
-  padding-left: 300px;
+  padding-left: 0px;
 }
+
 .controls .functionsContainer {
   background-color: aliceblue;
   grid-template-areas: "b1 b2 b3"
-                        "b4 b5 b5";
+    "b4 b5 b5";
   display: grid;
   width: 500px;
   grid-gap: 5px;
@@ -42,7 +143,6 @@ body {background-color: rgb(0, 0, 0);}
   padding-left: 160px;
 }
 
-.controls .btnForm{
+.controls .btnForm {
   padding: 5px;
 }
-

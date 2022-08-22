@@ -51,7 +51,7 @@ Or chain:
 
 --------------------------------------------------
 Screen
-<In>OLEDIMG[BITMAPDATA]{CONFIG} //TOO FINISH
+<In>OLEDIMG[BITMAPDATA]{CONFIG} //TODO: FINISH
 <In>OLEDTXT['TEXT STRING']{CONFIG}
 
 Examples:
@@ -64,8 +64,8 @@ Examples:
 Get GPS
 [n] = the number of times to try and sample the GPS (It will take AT LEAST a few minutes to acheive a lock on first boot)
 {OLEDPRNT} = Optional arg for printing these coords to the display
-<Out>GPS[10]{OLEDPRNT} //Print to terminal + oled screen
-<Out>GPS[10]{} pr <Out>GPS[10]//Print to terminal only
+<Out>GPS{OLEDPRNT} //Print to terminal + oled screen, Sample 2 times
+<Out>GPS{} pr <Out>GPS//Print to terminal only
 <Out>GPS //Terminal only, one sample
 
 --------------------------------------------------
