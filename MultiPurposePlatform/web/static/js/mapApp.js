@@ -31,7 +31,7 @@ var controlSearch = new L.Control.Search({
 });
 
 DoMapUpdate(); //Initial call so we don't have to wait 5 seconds, then timer:
-var DoMapUpdateTimer = self.setInterval(DoMapUpdate, 5000);
+var DoMapUpdateTimer = self.setInterval(DoMapUpdate, 10000);
 //window.clearInterval(DoMapUpdateTimer) //To clear if needed later ..
 
 function DoMapUpdate() {

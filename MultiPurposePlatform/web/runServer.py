@@ -1,6 +1,6 @@
 from flask import Flask, render_template, make_response, redirect, Response, request
 import numpy
-#import numpy.core.multiarray
+# import numpy.core.multiarray
 # import cv2 #Potential future method for image recog, e.g :https://realpython.com/face-detection-in-python-using-a-webcam/
 # For now, we use rpi_cam feed in the index.html for basic vid feed
 import socket
@@ -26,8 +26,9 @@ if sys.version_info[0] < 3:
 
 fhnd = FunctionHandler()
 app = Flask(__name__)
-#vc = cv2.VideoCapture(0)
+# vc = cv2.VideoCapture(0)
 
+fhnd.DoFunctionNow("<In>OLEDTXT", ["Booting up"], [], 'ARD')
 
 def shellESpeak(text):
     os.popen('espeak "' + text + '" --stdout | aplay 2> /dev/null').read()
@@ -42,6 +43,8 @@ def index():
     return resp
 
 # Disable caching
+
+
 @app.after_request
 def add_header(r):
     r.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
@@ -51,37 +54,36 @@ def add_header(r):
     return r
 
 
-@app.route("/ExecuteFunctions/", methods=['POST'])
-def ExecuteFunctions():
-    shellESpeak("Executing functions")
-    return redirect("/")
-
 @app.route("/AddToFunctionList/", methods=['POST'])
 def AddToFunctionList():
-    functionName = request.args.get('functionName')  
-    shellESpeak("Added function: "+ functionName)
-    fhnd.AddToFunctionList(functionName, ["Some function data"]) 
-    return redirect("/") 
+    functionName = request.args.get('functionName')
+    shellESpeak("Added function: " + functionName)
+    fhnd.AddToFunctionList(functionName, ["Some function data"])
+    return redirect("/")
 
-#Toggle doGPSOLEDPrint from GUI
+# Toggle doGPSOLEDPrint from GUI
+
+
 @app.route("/ToggledoGPSOLEDDisplay", methods=['POST'])
 def ToggledoGPSOLEDPrint():
-    global doGPSOLEDPrint #Use global scope
+    global doGPSOLEDPrint  # Use global scope
     doGPSOLEDPrint = not doGPSOLEDPrint
-    print("doGPSOLEDPrint is" +  str(doGPSOLEDPrint))    
-    return ""
+    print("doGPSOLEDPrint is" + str(doGPSOLEDPrint))
+    return redirect("/")
 
 # See mapApp.js -> DoMapUpdate
+
+
 @app.route("/mapinjectapi", methods=['POST'])
 def MapApi():
     infoDict = {}
     info_list = []
 
-    global doGPSOLEDPrint #Use global scope
+    global doGPSOLEDPrint  # Use global scope
 
-    #db_data.append(MapEntity('My location', '0.1276', '51.5072', datetime.now().strftime('%m/%d/%Y %H:%M:%S') )) #Test
+    # db_data.append(MapEntity('My location', '0.1276', '51.5072', datetime.now().strftime('%m/%d/%Y %H:%M:%S') )) #Test
 
-    fhnd.DoFunctionNow("<Out>GPS",[], (['OLEDPRNT'] if doGPSOLEDPrint else []))
+    fhnd.DoFunctionNow("<Out>GPS", [], (['OLEDPRNT'] if doGPSOLEDPrint else []), 'ARD')
 
     fhnd.GPSTime
     fhnd.GPSDate
@@ -91,11 +93,11 @@ def MapApi():
     fhnd.GPSAltAndSats
     if("<GPSDATETIME.End>" not in fhnd.GPSDate):
 
-        mapEntity =  MapEntity(
-                ('My location' + ' ' + fhnd.GPSAltAndSats + ' ' + fhnd.GPSSpeed),
-                fhnd.GPSLonEast,
-                fhnd.GPSLatNorth,
-                (fhnd.GPSDate + ' ' + fhnd.GPSTime) )
+        mapEntity = MapEntity(
+            ('My location' + ' ' + fhnd.GPSAltAndSats + ' ' + fhnd.GPSSpeed),
+            fhnd.GPSLonEast,
+            fhnd.GPSLatNorth,
+            (fhnd.GPSDate + ' ' + fhnd.GPSTime))
 
         infoDict['Name'] = mapEntity.Name
         infoDict['Longitude'] = mapEntity.Longitude
@@ -105,14 +107,16 @@ def MapApi():
         info_list.append(infoDict)
         infoDict = {}
         print("MapApi requested..")
-        return json.dumps(info_list)  
-    return json.dumps(info_list)   
+        return json.dumps(info_list)
+    return json.dumps(info_list)
 
-#Simple text speach write
-@app.route('/textToSpeach', methods=['POST', 'GET'])
+# Simple text speach write
+
+
+@app.route('/textToSpeach', methods=['POST'])
 def textToSpeach():
     if request.method == 'POST':
-        #version 1:
+        # version 1:
         opt1 = request.form.to_dict()
         for key in opt1:
             if key == "string":
@@ -121,36 +125,60 @@ def textToSpeach():
                 shellESpeak(string)
     return redirect("/")
 
-#Do OLED command TODO: CONFIG Data input
-@app.route('/writeOLEDText', methods=['POST', 'GET'])
+# Do OLED command TODO: CONFIG Data input
+
+
+@app.route('/writeOLEDText', methods=['POST'])
 def writeOLEDText():
-    shellESpeak("OLED Text recieved")
     if request.method == 'POST':
-        #version 1:
+        # version 1:
         opt1 = request.form.to_dict()
         for key in opt1:
             if key == "string":
-                string = opt1[key]
-                fhnd.DoFunctionNow("<In>OLEDTXT", [string], [])
-                #<In>OLEDTXT[Good Afternoon]{}
+                string = opt1[key].strip()
+                fhnd.DoFunctionNow("<In>OLEDTXT", [string], [], 'ARD')
+                # <In>OLEDTXT[Good Afternoon]{}
+                shellESpeak("OLED Text recieved")
+    return redirect("/")
+
+
+@app.route('/doPanTilt', methods=['POST'])
+def doPanTilCamera():
+    if request.method == 'POST':
+        print("request.form:" + str(request.form))
+        pan = 0.0
+        tilt = 0.0
+        if(len(request.form['pan']) != 0):
+            pan = float(request.form['pan'])
+        if(len(request.form['tilt']) != 0):
+            tilt = float(request.form['tilt'])
+        print("pan:" + str(pan))
+        print("tilt:" + str(tilt))
+        if pan != None and tilt != None:
+            fhnd.DoFunctionNow('panTilt', [], [pan, tilt], 'RPI')
+
     return redirect("/")
 
 
 def execv(command, path):
     if(len(path) > 0):
         command = '%s%s' % (path, command)
-    result = subprocess.run(['/bin/bash', '-c', command],  stdout=subprocess.PIPE, encoding='UTF-8')
+    result = subprocess.run(['/bin/bash', '-c', command],
+                            stdout=subprocess.PIPE, encoding='UTF-8')
     print(result.stdout)
 
 
 app.config.update(
     PERMANENT_SESSION_LIFETIME=600
+
+
 )
 
 if __name__ == '__main__':
-    #shellESpeak("Web server starting")
+    # shellESpeak("Web server starting")
     execv('start.sh', '/home/pi/Desktop/RPi_Cam_Web_Interface/')
-    execv('killWebServer.sh 2223', '/home/pi/Desktop/RoboClubStore/MultiPurposePlatform/web/')
+    execv('killWebServer.sh 2223',
+          '/home/pi/Desktop/RoboClubStore/MultiPurposePlatform/web/')
     app.config.update(
         SESSION_COOKIE_SECURE=True,
         SESSION_COOKIE_HTTPONLY=True,

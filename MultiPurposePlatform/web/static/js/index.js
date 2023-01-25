@@ -27,3 +27,7 @@ function toggleGPSOLEDDisplay() {
     }
   });
 }
+
+function onValueRangeChange(value, labelId, prefix, affix) {
+  document.querySelector(labelId).innerHTML = (prefix + value + affix);
+}

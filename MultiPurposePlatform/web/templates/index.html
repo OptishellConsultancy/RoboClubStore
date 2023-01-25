@@ -55,8 +55,8 @@
         </span>
         <span class="toggle">
             <label class="label">OLED Text</label>
-            <input checked="oLEDDisplayToggled" type="checkbox" class="collapsible" 
-            onclick='hndlToggle(this,"textToSpeach","oLEDTxtToggled")'></input>
+            <input checked="oLEDDisplayToggled" type="checkbox" class="collapsible"
+                onclick='hndlToggle(this,"textToSpeach","oLEDTxtToggled")'></input>
         </span>
     </div>
 
@@ -90,6 +90,27 @@
         <iframe src="http://optishell.duckdns.org:8000/picamFeed/cam_pic_new.php" title="RPI Cam control ifr!ame"
             width="100%" height="100%"></iframe>
     </div>
+
+    <div id="doPanTilt">
+        <form id="doPanTiltForm" action="doPanTilt" method="POST">
+            <label id="fname">Camera Pan/Tilt input (±90.0)</label><br>
+            <div id='panContainer'>
+                <label id="panLabel" for="pan">Pan(0)</label>
+                <input type="range" step="1.0" min="-90" max="90" id="pan" name="pan" value="0"
+                    onChange="onValueRangeChange(this.value,'#doPanTilt #doPanTiltForm #panContainer #panLabel', 'Pan (', ')')"
+                    >
+            </div>
+            <div id='tiltContainer'>
+                <label id="tiltLabel" for="tilt">Tilt(0)</label>
+                <input type="range" step="1.0" min="-90" max="90" name="tilt" value="0"
+                onChange="onValueRangeChange(this.value,'#doPanTilt #doPanTiltForm #tiltContainer #tiltLabel', 'Tilt (', ')')">
+               
+            </div>
+            </textarea>
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+
     <!--Map-->
     <div id="map">
     </div>
@@ -117,10 +138,13 @@
     </div>
 
 
+
     <!-- Controls -->
     <div class='controls'>
         <!-- All functions -->
+      
         <div class="functionsContainer">
+            TODO:
             <form class="btnForm" action="/AddToFunctionList/?functionName=4WD" method="post">
                 <button class='btn btn-default' submit="submit">4WD Move</button>
             </form>
@@ -136,18 +160,10 @@
             <form class="btnForm" action="/AddToFunctionList/?functionName=GetUltrasonicDistance" method="post">
                 <button class='btn btn-default' submit="submit">Get ultrasonic distance</button>
             </form>
-            <form class="btnForm" action="/AddToFunctionList/?functionName=MoveCamera" method="post">
-                <button class='btn btn-default' submit="submit">MoveCamera</button>
-            </form>
             <form class="btnForm" action="/AddToFunctionList/?functionName=RecordAudio" method="post">
                 <button class='btn btn-default' submit="submit">Record Audio</button>
             </form>
         </div>
-        <!-- Execute functions -->
-        <form class="executeFunctions" action="/ExecuteFunctions/" method="post">
-            <button class='btnCyb btn-default'>Execute Functions</button>
-        </form>
-
     </div>
 
 

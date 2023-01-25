@@ -62,6 +62,18 @@ body {
 }
 
 
+#doPanTilt {
+  padding-top: 10px;
+  width: 300px;
+  display: block;
+}
+#doPanTilt #doPanTiltForm {
+    background-color: aliceblue;
+}
+#doPanTilt #doPanTiltForm #fname {
+      color: #ff003c;
+}
+
 /* textToSpeach */
 
 #textToSpeach {

@@ -3,6 +3,7 @@ import serial
 import time
 import threading
 import re
+import pantilthat
 
 
 class FunctionHandler():
@@ -15,7 +16,7 @@ class FunctionHandler():
     GPSAltAndSats = ''
 
     def __init__(self):
-        print("HandlePySAIWebRequest Invoke..")
+        print("HandlePySerialArdunioIF.pyWebRequest Invoke..")
         self.arduino = serial.Serial(
             port='/dev/ttyACM0', baudrate=9600, timeout=.5)
 
@@ -50,34 +51,56 @@ class FunctionHandler():
         self.GPSSpeed = resultsConcat[8].replace("\n", "")
         self.GPSAltAndSats = resultsConcat[9].replace("\n", "")
 
-    def DoFunctionNow(self, functionName, commandData=[], configData=[]):
+    def PanOrTilt(self, panAngle, tiltAngle):
+        panAngle = float(panAngle)
+        tiltAngle = float(tiltAngle)
+        if panAngle < -90.0 or panAngle > 90.0 or tiltAngle < -90.0 or tiltAngle > 90.0:
+            print("PanOrTilt-> Bad angle!")
+            return
 
-        # Encase not in F7. API Mode..
-        self.Read_PrintIfValueUntilNoData()
-        self.write("F7.")
+        incPan = panAngle/20.0
+        incTilt = tiltAngle/20.0
 
-        # Construct command
-        fullcmd = functionName
+        for i in range(10):
+            pantilthat.pan(float(i*incPan))
+            pantilthat.tilt(float(i*incTilt))
+            time.sleep(0.005)
 
-        cmdLen = len(commandData)
-        if(cmdLen > 0):
-            fullcmd += '['
-            for i in range(len(commandData)):
-                fullcmd += commandData[i]
-            fullcmd += "]"
+    def DoFunctionNow(self, functionName, commandData=[], configData=[], type='ARD'):
 
-        cnfLen = len(configData)
-        if(cnfLen > 0):
-            fullcmd += '{'
-            for i in range(len(configData)):
-                fullcmd += configData[i]
-            fullcmd += "}"
-        #######
+        if(type == 'RPI'):
+            if(functionName == 'panTilt'):
+                print(commandData)
+                print(configData)
+                self.PanOrTilt(configData[0], configData[1])
 
-        print("fullcmd: " + fullcmd)
+        if(type == 'ARD'):
+            # Encase not in F7. API Mode..
+            self.Read_PrintIfValueUntilNoData()
+            self.write("F7.")
 
-        self.write(fullcmd)
-        results = self.Read_PrintIfValueUntilNoData()
-        for i in range(len(results)):
-            if "<GPSDATETIME.Start:" in results[i]:
-                self.HandleGPS(results[i:])
+            # Construct command
+            fullcmd = functionName
+
+            cmdLen = len(commandData)
+            if(cmdLen > 0):
+                fullcmd += '['
+                for i in range(len(commandData)):
+                    fullcmd += commandData[i]
+                fullcmd += "]"
+
+            cnfLen = len(configData)
+            if(cnfLen > 0):
+                fullcmd += '{'
+                for i in range(len(configData)):
+                    fullcmd += configData[i]
+                fullcmd += "}"
+            #######
+            print("fullcmd: " + fullcmd)
+
+            self.write(fullcmd)
+            results = self.Read_PrintIfValueUntilNoData()
+
+            for i in range(len(results)):
+                if "<GPSDATETIME.Start:" in results[i]:
+                    self.HandleGPS(results[i:])
