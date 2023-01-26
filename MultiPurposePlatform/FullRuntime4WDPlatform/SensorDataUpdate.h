@@ -157,7 +157,7 @@ void ProcessGPSData()
       {
         OLEDTxt = true;
         //
-        String oledCommand = ("<In>OLEDTXT[" + GPSData_DateTime + "\n" + GPSData_LocLat + "\n" + GPSData_LocLon + "\n" + GPSData_Misc + "]{X:0,Y:0.S:1}");
+        String oledCommand = ("<In>OLEDTXT[" + GPSData_DateTime + "\n" + GPSData_LocLat + "\n" + GPSData_LocLon + "\n" + GPSData_Misc + "]{X:0,Y:0,S:1}");
         PassOLEDTxt(oledCommand);
       }
       DoGPS = false;
@@ -165,10 +165,8 @@ void ProcessGPSData()
     else
     {
       Serial.print(" ERROR: FIX NOT ACQUIRED \n");
-
       OLEDTxt = true;
-
-      String oledCommand = "<In>OLEDTXT[" + GPSData_DateTime + "\n" + GPSData_LocLat + "\n" + GPSData_LocLon + "\n" + GPSData_Misc + "\nERR:FIX NOT ACQUIRED]{X:0,Y:0.S:1}";
+      String oledCommand = "<In>OLEDTXT[" + GPSData_DateTime + "\n" + GPSData_LocLat + "\n" + GPSData_LocLon + "\n" + GPSData_Misc + "\nERR:FIX NOT ACQUIRED]{X:0,Y:0,S:1}";
       PassOLEDTxt(oledCommand);
     }
     Serial.print("<GPSLoc.End> \n");
@@ -176,11 +174,11 @@ void ProcessGPSData()
   else
   {
     Serial.print("ERROR: GPS NOT AVAILABLE \n");
-
     OLEDTxt = true;
     String gpsTimeStr = GPSDateTime();
     Serial.print(" GPS NOT AVAILABLE \n ");
-    String oledCommand = "<In>OLEDTXT[" + GPSDateTime() + "\n" + GPSLocLat() + "\n" + GPSLocLon() + "\n" + GPSMisc() + "\nERR:GPS NOT AVAILABLE]{X:0,Y:0.S:1}";
+    String oledCommand = "<In>OLEDTXT[ERR:GPS FIX AVAILABLE]{X:0,Y:0,S:1}";
+    PassOLEDTxt(oledCommand);
     Serial.print(oledCommand);
   }
 }

@@ -72,8 +72,7 @@ def MapApi():
 
     # db_data.append(MapEntity('My location', '0.1276', '51.5072', datetime.now().strftime('%m/%d/%Y %H:%M:%S') )) #Test
 
-    fhnd.DoFunctionNow("<Out>GPS", [], (['OLEDPRNT']
-                       if doGPSOLEDPrint else []), 'ARD')
+    fhnd.DoFunctionNow("<Out>GPS", [], (['OLEDPRNT'] if doGPSOLEDPrint else []), 'ARD')
 
     fhnd.GPSTime
     fhnd.GPSDate

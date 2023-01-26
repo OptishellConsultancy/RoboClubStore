@@ -33,7 +33,7 @@ sudo python3 MultiPurposePlatform/PySerialArdunioIF.py
 
 
 To recompile level API:
-bash ./compileAndUpload.sh
+bash ./MultiPurposePlatform/compileAndUpload.sh
 
 To run server manually:
 sudo python3 MultiPurposePlatform/web/runServer.py

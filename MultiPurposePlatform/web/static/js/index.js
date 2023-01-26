@@ -50,7 +50,7 @@ $(document).ready(function () {
 
 //textToSpeech
 $(document).ready(function () {
-  $("#textToSpeech #textToSpeechForm #submitBtn").click(function (e) {
+  $("#textToSpeech #textToSpeechForm").submit(function (e) {
     e.preventDefault(); // avoid page refresh
 
     $.ajax({
