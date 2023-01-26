@@ -19,6 +19,7 @@ sudo nano /etc/profile
 
 
 Backup startup profile script commands:
+sudo bash    /home/pi/Desktop/RoboClubStore/MultiPurposePlatform/web/killWebServer.sh 2223
 sudo python3 /home/pi/Desktop/RoboClubStore/MultiPurposePlatform/PlatformStartupAndGPIORuntimes.py &
 sudo python3 /home/pi/Desktop/RoboClubStore/MultiPurposePlatform/web/runServer.py runServer.py &
 bash ./home/pi/Desktop/RPi_Cam_Web_Interface/start.sh &

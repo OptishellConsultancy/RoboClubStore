@@ -31,3 +31,49 @@ function toggleGPSOLEDDisplay() {
 function onValueRangeChange(value, labelId, prefix, affix) {
   document.querySelector(labelId).innerHTML = (prefix + value + affix);
 }
+
+
+//doPanTilt
+$(document).ready(function () {
+  $("#doPanTilt #doPanTiltForm").click(function (e) {
+    e.preventDefault(); // avoid page refresh
+
+    $.ajax({
+      type: "POST",
+      url: '/doPanTilt',
+      data: $(this).serialize()
+    });
+
+  });
+});
+
+
+//textToSpeech
+$(document).ready(function () {
+  $("#textToSpeech #textToSpeechForm #submitBtn").click(function (e) {
+    e.preventDefault(); // avoid page refresh
+
+    $.ajax({
+      type: "POST",
+      url: '/textToSpeech',
+      data: $(this).serialize()
+    });
+
+  });
+});
+
+
+//oLEDDisplayTxt
+$(document).ready(function () {
+  $("#oLEDDisplayTxt #oledDisplayTextForm").click(function (e) {
+    e.preventDefault(); // avoid page refresh
+
+    $.ajax({
+      type: "POST",
+      url: '/writeOLEDText',
+      data: $(this).serialize()
+    });
+
+  });
+});
+

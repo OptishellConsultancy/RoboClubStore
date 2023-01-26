@@ -74,23 +74,23 @@ body {
       color: #ff003c;
 }
 
-/* textToSpeach */
+/* textToSpeech */
 
-#textToSpeach {
+#textToSpeech {
   padding-top: 10px;
   width: 300px;
   display: block;
 }
 
-#textToSpeach #textToSpeachForm {
+#textToSpeech #textToSpeechForm {
   background-color: aliceblue;
 }
 
-#textToSpeach #textToSpeachForm #fname {
+#textToSpeech #textToSpeechForm #fname {
   color: #ff003c;
 }
 
-#textToSpeach #textToSpeachForm #ftextField{
+#textToSpeech #textToSpeechForm #ftextField{
   width: 100%;
   align-content: left;
 }

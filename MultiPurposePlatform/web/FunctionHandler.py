@@ -24,22 +24,23 @@ class FunctionHandler():
         self.arduino.write(bytes(x, 'utf-8'))
 
     def Read_PrintIfValueUntilNoData(self, results=[]):
-        value = self.arduino.readline().decode("windows-1252")
-        if(len(value) > 0):
-            print(value)
-            results.append(value)
-            if(len(results) > 0):
-                self.Read_PrintIfValueUntilNoData(results)
-        return results
+        try:
+            value = self.arduino.readline().decode("windows-1252")
+            if(len(value) > 0):
+                print(value)
+                results.append(value)
+                if(len(results) > 0):
+                    self.Read_PrintIfValueUntilNoData(results)
+            return results
+        except:
+            return ''
+
 
     def InvokeSerialComm(self):
         self.arduino = serial.Serial(
             port='/dev/ttyACM0', baudrate=9600, timeout=.5)
         while True:
             self.Read_PrintIfValueUntilNoData()
-
-    def AddToFunctionList(self, functionName, commandData):
-        print("AddToFunctionList: " + functionName)
 
     def HandleGPS(self, resultsConcat):
         idx = 0

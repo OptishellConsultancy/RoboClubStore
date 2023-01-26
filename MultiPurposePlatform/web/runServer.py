@@ -28,8 +28,6 @@ fhnd = FunctionHandler()
 app = Flask(__name__)
 # vc = cv2.VideoCapture(0)
 
-fhnd.DoFunctionNow("<In>OLEDTXT", ["Booting up"], [], 'ARD')
-
 def shellESpeak(text):
     os.popen('espeak "' + text + '" --stdout | aplay 2> /dev/null').read()
 
@@ -54,15 +52,6 @@ def add_header(r):
     return r
 
 
-@app.route("/AddToFunctionList/", methods=['POST'])
-def AddToFunctionList():
-    functionName = request.args.get('functionName')
-    shellESpeak("Added function: " + functionName)
-    fhnd.AddToFunctionList(functionName, ["Some function data"])
-    return redirect("/")
-
-# Toggle doGPSOLEDPrint from GUI
-
 
 @app.route("/ToggledoGPSOLEDDisplay", methods=['POST'])
 def ToggledoGPSOLEDPrint():
@@ -83,7 +72,8 @@ def MapApi():
 
     # db_data.append(MapEntity('My location', '0.1276', '51.5072', datetime.now().strftime('%m/%d/%Y %H:%M:%S') )) #Test
 
-    fhnd.DoFunctionNow("<Out>GPS", [], (['OLEDPRNT'] if doGPSOLEDPrint else []), 'ARD')
+    fhnd.DoFunctionNow("<Out>GPS", [], (['OLEDPRNT']
+                       if doGPSOLEDPrint else []), 'ARD')
 
     fhnd.GPSTime
     fhnd.GPSDate
@@ -110,11 +100,11 @@ def MapApi():
         return json.dumps(info_list)
     return json.dumps(info_list)
 
-# Simple text speach write
+# Simple text speech write
 
 
-@app.route('/textToSpeach', methods=['POST'])
-def textToSpeach():
+@app.route('/textToSpeech', methods=['POST'])
+def textToSpeech():
     if request.method == 'POST':
         # version 1:
         opt1 = request.form.to_dict()
@@ -123,7 +113,7 @@ def textToSpeach():
                 string = opt1[key]
                 print(string)
                 shellESpeak(string)
-    return redirect("/")
+    return ''
 
 # Do OLED command TODO: CONFIG Data input
 
@@ -131,14 +121,29 @@ def textToSpeach():
 @app.route('/writeOLEDText', methods=['POST'])
 def writeOLEDText():
     if request.method == 'POST':
-        # version 1:
-        opt1 = request.form.to_dict()
-        for key in opt1:
+
+        opt = request.form.to_dict()
+        print("opt:" + str(opt))
+        string = ''
+        x = ''
+        y = ''
+        s = ''
+        for key in opt:
             if key == "string":
-                string = opt1[key].strip()
-                fhnd.DoFunctionNow("<In>OLEDTXT", [string], [], 'ARD')
-                # <In>OLEDTXT[Good Afternoon]{}
-                shellESpeak("OLED Text recieved")
+                string = opt[key].strip()
+            if key == "x":
+                x = 'X:'+opt[key]
+            if key == "y":
+                y = 'Y:'+opt[key]
+            if key == "s":
+                s = 'S:'+opt[key]
+
+        print('x:' + x)
+        print('y:' + x)
+        print('z:' + x)
+
+        fhnd.DoFunctionNow("<In>OLEDTXT", [string], [x, y, s], 'ARD')
+        shellESpeak("OLED Text recieved")
     return redirect("/")
 
 
@@ -152,8 +157,6 @@ def doPanTilCamera():
             pan = float(request.form['pan'])
         if(len(request.form['tilt']) != 0):
             tilt = float(request.form['tilt'])
-        print("pan:" + str(pan))
-        print("tilt:" + str(tilt))
         if pan != None and tilt != None:
             fhnd.DoFunctionNow('panTilt', [], [pan, tilt], 'RPI')
 

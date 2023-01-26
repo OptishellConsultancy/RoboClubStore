@@ -1,6 +1,7 @@
 <html>
 
 <head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="{{url_for('static', filename='js/index.js')}}"></script>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/index.css') }}">
     <!-- https://dev.to/leandroruel/how-to-make-a-cyberpunk-2077-button-with-css-c9m-->
@@ -46,7 +47,7 @@
         <span class="toggle">
             <label class="label">Text to Speech</label>
             <input checked="textToSpeechToggled" type="checkbox" class="collapsible"
-                onclick='hndlToggle(this,"textToSpeach","textToSpeechToggled")'></input>
+                onclick='hndlToggle(this,"textToSpeech","textToSpeechToggled")'></input>
         </span>
         <span class="toggle">
             <label class="label">Spotify info</label>
@@ -56,7 +57,7 @@
         <span class="toggle">
             <label class="label">OLED Text</label>
             <input checked="oLEDDisplayToggled" type="checkbox" class="collapsible"
-                onclick='hndlToggle(this,"textToSpeach","oLEDTxtToggled")'></input>
+                onclick='hndlToggle(this,"oLEDDisplayTxt","oLEDDisplayToggled")'></input>
         </span>
     </div>
 
@@ -92,22 +93,18 @@
     </div>
 
     <div id="doPanTilt">
-        <form id="doPanTiltForm" action="doPanTilt" method="POST">
-            <label id="fname">Camera Pan/Tilt input (±90.0)</label><br>
+        <form id="doPanTiltForm" <label id="fname">Camera Pan/Tilt input (±90.0)</label><br>
             <div id='panContainer'>
+                <input type="range" step="1.0" min="-90.0" max="90.0" id="pan" name="pan" value="0"
+                    onChange="onValueRangeChange(this.value,'#doPanTilt #doPanTiltForm #panContainer #panLabel', 'Pan (', ')')">
                 <label id="panLabel" for="pan">Pan(0)</label>
-                <input type="range" step="1.0" min="-90" max="90" id="pan" name="pan" value="0"
-                    onChange="onValueRangeChange(this.value,'#doPanTilt #doPanTiltForm #panContainer #panLabel', 'Pan (', ')')"
-                    >
             </div>
             <div id='tiltContainer'>
+                <input type="range" step="1.0" min="-90.0" max="90.0" name="tilt" value="0"
+                    onChange="onValueRangeChange(this.value,'#doPanTilt #doPanTiltForm #tiltContainer #tiltLabel', 'Tilt (', ')')">
                 <label id="tiltLabel" for="tilt">Tilt(0)</label>
-                <input type="range" step="1.0" min="-90" max="90" name="tilt" value="0"
-                onChange="onValueRangeChange(this.value,'#doPanTilt #doPanTiltForm #tiltContainer #tiltLabel', 'Tilt (', ')')">
-               
             </div>
             </textarea>
-            <button type="submit">Submit</button>
         </form>
     </div>
 
@@ -116,24 +113,38 @@
     </div>
     <script src="static/js/mapApp.js"></script>
 
-    <!--text to speach-->
-    <div id="textToSpeach">
-        <form id="textToSpeachForm" action="textToSpeach" method="POST">
-            <label id="fname">Text input for speach:</label><br>
-            <textarea id="ftextField" name="string" rows="1" oninput="auto_height(this)">You talk'n to me?. Huh, punk?
-            </textarea>
-            <button type="submit">Submit</button>
+    <!--text to speech-->
+    <div id="textToSpeech">
+        <form id="textToSpeechForm">
+            <label id="fname">Text input for speech:</label><br>
+            <textarea id="ftextField" name="string" rows="1"
+                oninput="auto_height(this)">You talk'n to me?. Huh, punk?</textarea>
+            <button id="submitBtn" type="submit">Submit</button>
         </form>
     </div>
 
 
     <!--oLEDTxt write-->
     <div id="oLEDDisplayTxt">
-        <form id="oledDisplayTextForm" action="writeOLEDText" method="POST">
-            <label id="fname">Text input for OLED Display:</label><br>
-            <textarea id="ftextField" name="string" rows="1" oninput="auto_height(this)">Can you read this, human?
-            </textarea>
-            <button type="submit">Submit</button>
+        <form id="oledDisplayTextForm" <label id="fname">Text input for OLED Display:</label><br>
+            <textarea id="ftextField" name="string" rows="1"
+                oninput="auto_height(this)">Can you read this, human?</textarea>
+            <div id='xContainer'>
+                <input type="range" step="1" min="0" max="128" id="x" name="x" value="20"
+                    onChange="onValueRangeChange(this.value,'#oLEDDisplayTxt #oledDisplayTextForm #xContainer #xLabel', 'X: (', ')')">
+                <label id="xLabel" for="X">X:(20)</label>
+            </div>
+            <div id='yContainer'>
+                <input type="range" step="1" min="0" max="64" name="y" value="32"
+                    onChange="onValueRangeChange(this.value,'#oLEDDisplayTxt #oledDisplayTextForm #yContainer #yLabel', 'Y: (', ')')">
+                <label id="yLabel" for="Y">Y:(32)</label>
+            </div>
+            <div id='fSizeContainer'>
+                <input type="range" step="1" min="1" max="5" name="s" value="1"
+                    onChange="onValueRangeChange(this.value,'#oLEDDisplayTxt #oledDisplayTextForm #fSizeContainer #fSizeLabel', 'Font Size: (', ')')">
+                <label id="fSizeLabel" for="fSize">Font Size:(1)</label>
+            </div>
+            <button id="submitBtn" type="submit">Submit</button>
         </form>
     </div>
 
@@ -142,7 +153,7 @@
     <!-- Controls -->
     <div class='controls'>
         <!-- All functions -->
-      
+
         <div class="functionsContainer">
             TODO:
             <form class="btnForm" action="/AddToFunctionList/?functionName=4WD" method="post">
@@ -152,7 +163,7 @@
                 <button class='btn btn-default' submit="submit">6Axis Arm</button>
             </form>
             <form class="btnForm" action="/AddToFunctionList/?functionName=OLEDScreen" method="post">
-                <button class='btn btn-default' submit="submit">OLED Screen</button>
+                <button class='btn btn-default' submit="submit">OLED Image</button>
             </form>
             <form class="btnForm" action="/AddToFunctionList/?functionName=GetCompassheading" method="post">
                 <button class='btn btn-default' submit="submit">Get Compass heading</button>
