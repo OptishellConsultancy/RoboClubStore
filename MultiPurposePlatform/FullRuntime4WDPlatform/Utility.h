@@ -378,7 +378,7 @@ void ParseUltSoncCommand(String str)
     UltraSoncSampleCount = str.substring(start + 1, end) == 'OLEDPRNT';
   }
 
-  Serial.println("UltraSoncSampleCount: " + UltraSoncSampleCount);
+  Serial.println("UltraSoncSampleCount:" + UltraSoncSampleCount);
 }
 
 void SetupGPS()

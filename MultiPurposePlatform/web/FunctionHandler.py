@@ -14,6 +14,10 @@ class FunctionHandler():
     GPSLonEast = ''
     GPSSpeed = ''
     GPSAltAndSats = ''
+    LastCachedResultsRaw = ''
+    UltraSonicDistance = ''
+    UltraSonicTemp = ''
+    GPSHasFixLiveData = ''
 
     def __init__(self):
         print("HandlePySerialArdunioIF.pyWebRequest Invoke..")
@@ -45,12 +49,43 @@ class FunctionHandler():
     def HandleGPS(self, resultsConcat):
         idx = 0
         foundGPSCoords = False
-        self.GPSTime = resultsConcat[1].replace("\n", "")
-        self.GPSDate = resultsConcat[2].replace("\n", "")
-        self.GPSLatNorth = resultsConcat[6].replace('N', '').replace("\n", "")
-        self.GPSLonEast = resultsConcat[7].replace('E', '').replace("\n", "")
-        self.GPSSpeed = resultsConcat[8].replace("\n", "")
-        self.GPSAltAndSats = resultsConcat[9].replace("\n", "")
+        validData = True
+        for i in range(len(resultsConcat)):
+            if('FIX NOT ACQUIRED' in resultsConcat[i]):
+                validData = False
+        if(validData == True):
+            self.GPSTime = resultsConcat[1].replace("\n", "")
+            self.GPSDate = resultsConcat[2].replace("\n", "")
+            self.GPSLatNorth = resultsConcat[6].replace('N', '').replace("\n", "")
+            self.GPSLonEast = resultsConcat[7].replace('E', '').replace("\n", "")
+            self.GPSSpeed = resultsConcat[8].replace("\n", "")
+            self.GPSAltAndSats = resultsConcat[9].replace("\n", "")
+            self.GPSHasFixLiveData = resultsConcat[10].replace("\n", "")
+
+            print("All GPSresultsConcat:" + str(resultsConcat))
+            print("GPSTime:" + self.GPSTime)
+            print("GPSDate:" + self.GPSDate)
+            print("GPSLatNorth:" + self.GPSLatNorth)
+            print("GPSLonEast:" + self.GPSLonEast)
+            print("GPSSpeed:" + self.GPSSpeed)
+            print("GPSAltAndSats:" + self.GPSAltAndSats)
+            print("GPSHasFixLiveData:" + self.GPSHasFixLiveData)
+        else:
+            print("Invalid GPS data detected")
+            self.GPSTime = ''
+            self.GPSDate = ''
+            self.GPSLatNorth = ''
+            self.GPSLonEast = ''
+            self.GPSSpeed = ''
+            self.GPSAltAndSats = ''
+            self.GPSHasFixLiveData = ''
+
+    def HandleUltraSonic(self, resultsConcat):
+        self.LastCachedResultsRaw = resultsConcat
+        self.UltraSonicDistance = resultsConcat[1].replace("\n", "")
+        self.UltraSonicTemp = resultsConcat[2].replace("\n", "")
+
+
 
     def PanOrTilt(self, panAngle, tiltAngle):
         panAngle = float(panAngle)
@@ -101,6 +136,10 @@ class FunctionHandler():
 
             self.write(fullcmd)
             results = self.Read_PrintIfValueUntilNoData()
+
+            for i in range(len(results)):
+                if "<UltraSonic.Start:" in results[i]:
+                    self.HandleUltraSonic(results[i:])
 
             for i in range(len(results)):
                 if "<GPSDATETIME.Start:" in results[i]:

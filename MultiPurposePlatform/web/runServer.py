@@ -20,6 +20,7 @@ from datetime import datetime
 from mapEntity import MapEntity
 
 doGPSOLEDPrint = False
+doUltraSonicOLEDPrint = False
 
 if sys.version_info[0] < 3:
     raise Exception("Python 3 or a more recent version is required.")
@@ -53,16 +54,35 @@ def add_header(r):
 
 
 
-@app.route("/ToggledoGPSOLEDDisplay", methods=['POST'])
+@app.route("/toggledoGPSOLEDDisplay", methods=['POST'])
 def ToggledoGPSOLEDPrint():
     global doGPSOLEDPrint  # Use global scope
     doGPSOLEDPrint = not doGPSOLEDPrint
     print("doGPSOLEDPrint is" + str(doGPSOLEDPrint))
     return redirect("/")
 
+@app.route("/toggleOLEDUltraSonicDisplay", methods=['POST'])
+def ToggledoUltraSonicOLEDPrint():
+    global doUltraSonicOLEDPrint  # Use global scope
+    doUltraSonicOLEDPrint = not doUltraSonicOLEDPrint
+    print("doUltraSonicOLEDPrint is" + str(doUltraSonicOLEDPrint))
+    return redirect("/")
+#
+@app.route("/UltraSonicRequest", methods=['POST'])
+def DoUltraSonicRequest():
+    infoDict = {}
+    info_list = []
+    sampleCount = '1'
+    fhnd.DoFunctionNow("<Out>UltSonc", [sampleCount], (['OLEDPRNT'] if doGPSOLEDPrint else []), 'ARD')
+    print('UltraSonicDistance:' + str(fhnd.UltraSonicDistance))
+    print('UltraSonicTemp:' + str(fhnd.UltraSonicTemp))
+
+    infoDict['UltraSonicDistance'] = fhnd.UltraSonicDistance
+    infoDict['UltraSonicTemp'] = fhnd.UltraSonicTemp
+    info_list.append(infoDict)
+    return json.dumps(info_list)
+    
 # See mapApp.js -> DoMapUpdate
-
-
 @app.route("/mapinjectapi", methods=['POST'])
 def MapApi():
     infoDict = {}
@@ -92,9 +112,10 @@ def MapApi():
         infoDict['Longitude'] = mapEntity.Longitude
         infoDict['Latitude'] = mapEntity.Latitude
         infoDict['DataTime'] = mapEntity.DataTime
+        # Extra info
+        infoDict['GPSHasFixLiveData'] = fhnd.GPSHasFixLiveData
 
         info_list.append(infoDict)
-        infoDict = {}
         print("MapApi requested..")
         return json.dumps(info_list)
     return json.dumps(info_list)

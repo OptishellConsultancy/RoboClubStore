@@ -115,6 +115,23 @@ body {
   align-content: left;
 }
 
+
+/* ultraSonicReading */
+
+#ultraSonicReading {
+  padding-top: 10px;
+  width: 300px;
+  display: block;
+}
+#ultraSonicReading #ultraSonicReadingForm {
+  background-color: aliceblue;
+}
+
+#ultraSonicReading #ultraSonicReadingForm #ftextField{
+  width: 100%;
+  align-content: left;
+}
+
 /* spotifyInfo */
 
 #spotifyInfo {

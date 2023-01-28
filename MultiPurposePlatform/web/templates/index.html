@@ -140,14 +140,25 @@
                 <label id="yLabel" for="Y">Y:(32)</label>
             </div>
             <div id='fSizeContainer'>
-                <input type="range" step="1" min="1" max="5" name="s" value="1"
+                <input type="range" step="1" min="1" max="5" id="s" name="s" value="1"
                     onChange="onValueRangeChange(this.value,'#oLEDDisplayTxt #oledDisplayTextForm #fSizeContainer #fSizeLabel', 'Font Size: (', ')')">
-                <label id="fSizeLabel" for="fSize">Font Size:(1)</label>
+                <label id="fSizeLabel" for="s">Font Size:(1)</label>
             </div>
             <button id="submitBtn" type="submit">Submit</button>
         </form>
     </div>
 
+    <!--Get Ultrasonic reading-->
+    <div id="ultraSonicReading">
+        <form id="ultraSonicReadingForm" <label id="fname">Ultrasonic reading</label><br>
+            <div id='distanceContainer'>
+            <textarea id="ftextFieldDistance" name="string" rows="1" readonly ></textarea>
+            <label id="fSizeLabel" for="ftextFieldDistance">Distance:(1)</label>
+        </div>
+            <input checked="ultraSonicToggled" type="checkbox" class="collapsible" onclick="toggleOLEDUltraSonicDisplay()">OLED Print eneabled</input>
+            <button id="submitBtn" type="submit">Do Read</button>
+        </form>
+    </div>
 
 
     <!-- Controls -->

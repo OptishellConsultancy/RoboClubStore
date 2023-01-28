@@ -136,6 +136,7 @@ String GPSData_DateTime;
 String GPSData_LocLat;
 String GPSData_LocLon;
 String GPSData_Misc;
+String GPSData_HasFixLiveData;
 bool GPSHasData = false;
 
 // AccMag meta data

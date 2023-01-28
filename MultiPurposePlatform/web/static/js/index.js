@@ -12,6 +12,7 @@ function hndlToggle(chkBox, togChkId, cacheVarName) {
   }
 }
 
+
 function auto_height(elem) {  /* javascript */
   elem.style.height = "30px";
   elem.style.height = (elem.scrollHeight) + "px";
@@ -19,7 +20,7 @@ function auto_height(elem) {  /* javascript */
 
 function toggleGPSOLEDDisplay() {
   $.ajax({
-    url: '/ToggledoGPSOLEDDisplay',
+    url: '/toggledoGPSOLEDDisplay',
     type: 'POST',
     dataType: "json",
     success: function () {
@@ -65,7 +66,7 @@ $(document).ready(function () {
 
 //oLEDDisplayTxt
 $(document).ready(function () {
-  $("#oLEDDisplayTxt #oledDisplayTextForm").click(function (e) {
+  $("#oLEDDisplayTxt #oledDisplayTextForm").submit(function (e) {
     e.preventDefault(); // avoid page refresh
 
     $.ajax({
@@ -77,3 +78,34 @@ $(document).ready(function () {
   });
 });
 
+
+
+
+//ultraSonicReading
+$(document).ready(function () {
+  $("#ultraSonicReading #ultraSonicReadingForm").submit(function (e) {
+    e.preventDefault(); // avoid page refresh
+
+    $.ajax({
+      type: "POST",
+      url: '/UltraSonicRequest',
+      dataType: "json",
+      success: function (ultrasonic_data) {
+        if (ultrasonic_data.length > 0) {
+          console.log("ultrasonic_data" + JSON.stringify(ultrasonic_data));
+          document.getElementById('#ultraSonicReading #ultraSonicReadingForm #distanceContainer #ftextFieldDistance').value = 'UltraSonic done';
+        }
+      }
+    });
+
+  });
+});
+
+function toggleOLEDUltraSonicDisplay() {
+  $.ajax({
+    url: '/toggleOLEDUltraSonicDisplay',
+    type: 'POST',
+    dataType: "json",
+  });
+  console.log("toggleOLEDUltraSonicDisplay")
+}
