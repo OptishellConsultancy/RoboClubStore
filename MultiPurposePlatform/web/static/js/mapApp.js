@@ -41,7 +41,7 @@ function DoMapUpdate() {
         type: 'POST',
         dataType: "json",
         success: function (map_data) {
-            console.log("map_data" + JSON.stringify(map_data));
+            // console.log("map_data" + JSON.stringify(map_data));
 
 
             if (map_data.length > 0) {

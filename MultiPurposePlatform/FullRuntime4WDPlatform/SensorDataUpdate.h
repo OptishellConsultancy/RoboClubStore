@@ -163,7 +163,7 @@ void ProcessGPSData()
     Serial.println(GPSData_HasFixLiveData);
     if (GPS.fix)
     {
-      if (GPSPrintOLED)
+      if (GPSPrintOLED == true)
       {
         OLEDTxt = true;
         //
@@ -173,11 +173,12 @@ void ProcessGPSData()
       DoGPS = false;
     }
     else
-    {      
-      OLEDTxt = true;
-      String oledCommand = "<In>OLEDTXT[" + " ERROR: FIX NOT ACQUIRED \n" + GPSData_DateTime + "\n" + GPSData_LocLat + "\n" + GPSData_LocLon + "\n" + GPSData_Misc + "]{X:0,Y:0,S:1}";
-      PassOLEDTxt(oledCommand);
-    }
+    //Debug only
+    // {      
+    //   OLEDTxt = true;
+    //   String oledCommand = "<In>OLEDTXT[" + " ERROR: FIX NOT ACQUIRED \n" + GPSData_DateTime + "\n" + GPSData_LocLat + "\n" + GPSData_LocLon + "\n" + GPSData_Misc + "]{X:0,Y:0,S:1}";
+    //   PassOLEDTxt(oledCommand);
+    // }
     Serial.print("<GPSLoc.End> \n");
     if(!GPS.fix) {
       Serial.print(" ERROR: FIX NOT ACQUIRED \n");
@@ -215,9 +216,11 @@ PrintDoAccMag()
   int headingInt = (int)lsm303D.heading();
   String heading = String(headingInt, DEC) + "Deg/" + String(Deg2Dir(headingInt));
 
+  Serial.print("<AccMag.Start: \n");
   Serial.println(LSM30D3ReportBuffer_AccRaw);
   Serial.println(LSM30D3ReportBuffer_MagRaw);
   Serial.println(heading);
+  Serial.print("<AccMag.End> \n");
 
   if (AccMagPrintOLED)
   {

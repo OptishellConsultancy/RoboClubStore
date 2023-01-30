@@ -18,6 +18,9 @@ class FunctionHandler():
     UltraSonicDistance = ''
     UltraSonicTemp = ''
     GPSHasFixLiveData = ''
+    AccMagAccRaw = ''
+    AccMagMagRaw = ''
+    AccMagHeading = ''
 
     def __init__(self):
         print("HandlePySerialArdunioIF.pyWebRequest Invoke..")
@@ -60,6 +63,7 @@ class FunctionHandler():
             self.GPSLonEast = resultsConcat[7].replace('E', '').replace("\n", "")
             self.GPSSpeed = resultsConcat[8].replace("\n", "")
             self.GPSAltAndSats = resultsConcat[9].replace("\n", "")
+            validData = 'Sats' in  self.GPSAltAndSats # Additional validation
             self.GPSHasFixLiveData = resultsConcat[10].replace("\n", "")
 
             print("All GPSresultsConcat:" + str(resultsConcat))
@@ -79,13 +83,19 @@ class FunctionHandler():
             self.GPSSpeed = ''
             self.GPSAltAndSats = ''
             self.GPSHasFixLiveData = ''
+            return
 
     def HandleUltraSonic(self, resultsConcat):
         self.LastCachedResultsRaw = resultsConcat
         self.UltraSonicDistance = resultsConcat[1].replace("\n", "")
         self.UltraSonicTemp = resultsConcat[2].replace("\n", "")
 
-
+    def HandleAccMag(self, resultsConcat):
+        self.LastCachedResultsRaw = resultsConcat
+        print("HandleAccMag -> " +  str(resultsConcat))
+        self.AccMagAccRaw = resultsConcat[1].replace("\n", "")
+        self.AccMagMagRaw = resultsConcat[2].replace("\n", "")
+        self.AccMagHeading = resultsConcat[3].replace("\n", "")
 
     def PanOrTilt(self, panAngle, tiltAngle):
         panAngle = float(panAngle)
@@ -140,6 +150,10 @@ class FunctionHandler():
             for i in range(len(results)):
                 if "<UltraSonic.Start:" in results[i]:
                     self.HandleUltraSonic(results[i:])
+
+            for i in range(len(results)):
+                if "<AccMag.Start:" in results[i]:
+                    self.HandleAccMag(results[i:])
 
             for i in range(len(results)):
                 if "<GPSDATETIME.Start:" in results[i]:

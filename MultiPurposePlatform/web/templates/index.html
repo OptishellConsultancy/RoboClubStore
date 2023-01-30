@@ -31,7 +31,7 @@
 
 <body>
     <h1 class="cyberpunk glitched title">
-        4 wheel Drive, 6 axis arm, Multi-sensor platform
+        SAMUEL (Six Axis, 4WD Multi pUrposE pLatform)
     </h1>
     <div class="mainToggles">
         <span class="toggle">
@@ -61,10 +61,10 @@
         </span>
     </div>
 
-    <div class="subTaskToggles">
-        <span class="toggleSub" action="/ToggledoGPSOLEDPrint/" method="post">
+    <div id="subTaskToggles">
+        <span id="toggleSub">
             <label class="label">OLED GPS Display</label>
-            <input type="checkbox" class="collapsible" onclick="toggleGPSOLEDDisplay()"></input>
+            <input id="GPSOLEDPRNTToggle" type="checkbox" class="collapsible" onclick="toggleGPSOLEDDisplay()"></input>
         </span>
     </div>
 
@@ -118,7 +118,7 @@
         <form id="textToSpeechForm">
             <label id="fname">Text input for speech:</label><br>
             <textarea id="ftextField" name="string" rows="1"
-                oninput="auto_height(this)">You talk'n to me?. Huh, punk?</textarea>
+                oninput="auto_height(this)">Hello, I'm SAMUEL, You talk'n to me?</textarea>
             <button id="submitBtn" type="submit">Submit</button>
         </form>
     </div>
@@ -150,15 +150,37 @@
 
     <!--Get Ultrasonic reading-->
     <div id="ultraSonicReading">
-        <form id="ultraSonicReadingForm" <label id="fname">Ultrasonic reading</label><br>
-            <div id='distanceContainer'>
-            <textarea id="ftextFieldDistance" name="string" rows="1" readonly ></textarea>
-            <label id="fSizeLabel" for="ftextFieldDistance">Distance:(1)</label>
-        </div>
-            <input checked="ultraSonicToggled" type="checkbox" class="collapsible" onclick="toggleOLEDUltraSonicDisplay()">OLED Print eneabled</input>
+        <form id="ultraSonicReadingForm" <label id="fname">Ultrasonic reading</label><br>  
+
+            <textarea id="ftextDistance" name="string" rows="1" readonly>cm</textarea>
+            <label id="fSizeLabel" for="ftextDistance">Distance(cm)</label>    
+
+            
+            <textarea id="ftextTemp" name="string" rows="1" readonly>°C</textarea>
+            <label id="fSizeLabel" for="ftextTemp">Temp(°C)</label>
+
+            <input checked="ultraSonicToggled" type="checkbox" class="collapsible" onclick="toggleOLEDUltraSonicDisplay()">OLED Print enabled</input>
             <button id="submitBtn" type="submit">Do Read</button>
         </form>
     </div>
+
+        <!--Get Ultrasonic reading-->
+        <div id="accMagReading">
+            <form id="accMagReadingForm" <label id="fname">Accelero/Magneto(meter) & compass Reading</label><br>  
+    
+                <textarea id="ftextAccel" name="string" rows="1" readonly>M/s</textarea>
+                <label id="fSizeLabel" for="ftextAccel">Vector(X,Y,Z)</label>    
+    
+                <textarea id="ftextMag" name="string" rows="1" readonly>Φ</textarea>
+                <label id="fSizeLabel" for="ftextMag">Vector(X,Y,Z)</label>
+
+                <textarea id="ftextHeading" name="string" rows="1" readonly>°</textarea>
+                <label id="fSizeLabel" for="ftextMag">Deg(°)</label>
+    
+                <input checked="ftextMagToggled" type="checkbox" class="collapsible" onclick="toggleOLEDftextMagDisplay()">OLED Print enabled</input>
+                <button id="submitBtn" type="submit">Do Read</button>
+            </form>
+        </div>
 
 
     <!-- Controls -->
@@ -174,13 +196,7 @@
                 <button class='btn btn-default' submit="submit">6Axis Arm</button>
             </form>
             <form class="btnForm" action="/AddToFunctionList/?functionName=OLEDScreen" method="post">
-                <button class='btn btn-default' submit="submit">OLED Image</button>
-            </form>
-            <form class="btnForm" action="/AddToFunctionList/?functionName=GetCompassheading" method="post">
-                <button class='btn btn-default' submit="submit">Get Compass heading</button>
-            </form>
-            <form class="btnForm" action="/AddToFunctionList/?functionName=GetUltrasonicDistance" method="post">
-                <button class='btn btn-default' submit="submit">Get ultrasonic distance</button>
+                <button class='btn btn-default' submit="submit">OLED Image stream / Shapes /Anim etc</button>
             </form>
             <form class="btnForm" action="/AddToFunctionList/?functionName=RecordAudio" method="post">
                 <button class='btn btn-default' submit="submit">Record Audio</button>

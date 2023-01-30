@@ -22,7 +22,7 @@ body {
   flex-direction: row;
 }
 
-.subTaskToggles{
+#subTaskToggles{
   display: flex;
   flex-direction: row;
 }
@@ -41,12 +41,12 @@ body {
 
 
 /* toggleSub */
-.toggleSub {
+#toggleSub {
   display: flex;
   flex-direction: column;
 }
 
-.toggleSub .label {
+#toggleSub .label {
   text-align: center;
   padding-left: 2px;
   color: rgb(30, 201, 95);
@@ -125,12 +125,50 @@ body {
 }
 #ultraSonicReading #ultraSonicReadingForm {
   background-color: aliceblue;
-}
-
-#ultraSonicReading #ultraSonicReadingForm #ftextField{
   width: 100%;
   align-content: left;
 }
+
+
+#ultraSonicReading #ultraSonicReadingForm #ftextDistance{
+  resize: none;
+  overflow:hidden
+}
+
+#ultraSonicReading #ultraSonicReadingForm #ftextTemp{
+  resize: none;
+  overflow:hidden
+}
+
+/* AccMag */
+
+#accMagReading {
+  padding-top: 10px;
+  width: 300px;
+  display: block;
+}
+#accMagReading #accMagReadingForm {
+  background-color: aliceblue;
+  width: 100%;
+  align-content: left;
+}
+
+
+#accMagReading #accMagReadingForm #ftextAccel{
+  resize: none;
+  overflow:hidden
+}
+
+#accMagReading #accMagReadingForm #ftextMag{
+  resize: none;
+  overflow:hidden
+}
+
+#accMagReading #accMagReadingForm #ftextHeading{
+  resize: none;
+  overflow:hidden
+}
+
 
 /* spotifyInfo */
 

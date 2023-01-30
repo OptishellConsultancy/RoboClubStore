@@ -22,6 +22,9 @@ from mapEntity import MapEntity
 doGPSOLEDPrint = False
 doUltraSonicOLEDPrint = False
 
+currentPan = 0
+currentTilt = 0
+
 if sys.version_info[0] < 3:
     raise Exception("Python 3 or a more recent version is required.")
 
@@ -51,15 +54,26 @@ def add_header(r):
     r.headers["Expires"] = "0"
     r.headers['Cache-Control'] = 'public, max-age=0'
     return r
-
-
-
-@app.route("/toggledoGPSOLEDDisplay", methods=['POST'])
+    
+@app.route("/toggleGPSOLEDDisplay", methods=['POST'])
 def ToggledoGPSOLEDPrint():
     global doGPSOLEDPrint  # Use global scope
     doGPSOLEDPrint = not doGPSOLEDPrint
     print("doGPSOLEDPrint is" + str(doGPSOLEDPrint))
-    return redirect("/")
+    infoDict = {}
+    info_list = []
+    infoDict['nowState'] = doGPSOLEDPrint
+    info_list.append(infoDict)
+    return json.dumps(info_list)
+
+@app.route("/getGPSOLEDDisplay", methods=['GET'])
+def GetGPSOLEDDisplay():
+    global doGPSOLEDPrint  # Use global scope
+    infoDict = {}
+    info_list = []
+    infoDict['nowState'] = doGPSOLEDPrint
+    info_list.append(infoDict)
+    return json.dumps(info_list)
 
 @app.route("/toggleOLEDUltraSonicDisplay", methods=['POST'])
 def ToggledoUltraSonicOLEDPrint():
@@ -68,15 +82,16 @@ def ToggledoUltraSonicOLEDPrint():
     print("doUltraSonicOLEDPrint is" + str(doUltraSonicOLEDPrint))
     return redirect("/")
 #
-@app.route("/UltraSonicRequest", methods=['POST'])
-def DoUltraSonicRequest():
-    infoDict = {}
-    info_list = []
+@app.route("/ultraSonicRequest", methods=['POST'])
+def DoultraSonicRequest():
+
     sampleCount = '1'
-    fhnd.DoFunctionNow("<Out>UltSonc", [sampleCount], (['OLEDPRNT'] if doGPSOLEDPrint else []), 'ARD')
+    fhnd.DoFunctionNow("<Out>UltSonc", [sampleCount], (['OLEDPRNT'] if doUltraSonicOLEDPrint == True else []), 'ARD')
     print('UltraSonicDistance:' + str(fhnd.UltraSonicDistance))
     print('UltraSonicTemp:' + str(fhnd.UltraSonicTemp))
 
+    infoDict = {}
+    info_list = []
     infoDict['UltraSonicDistance'] = fhnd.UltraSonicDistance
     infoDict['UltraSonicTemp'] = fhnd.UltraSonicTemp
     info_list.append(infoDict)
@@ -89,10 +104,9 @@ def MapApi():
     info_list = []
 
     global doGPSOLEDPrint  # Use global scope
-
-    # db_data.append(MapEntity('My location', '0.1276', '51.5072', datetime.now().strftime('%m/%d/%Y %H:%M:%S') )) #Test
-
-    fhnd.DoFunctionNow("<Out>GPS", [], (['OLEDPRNT'] if doGPSOLEDPrint else []), 'ARD')
+    print('mapinjectapi->doGPSOLEDPrint:' + str(doGPSOLEDPrint))
+    addCmd = ['OLEDPRNT'] if doGPSOLEDPrint == True else []
+    fhnd.DoFunctionNow("<Out>GPS", [], addCmd, 'ARD')
 
     fhnd.GPSTime
     fhnd.GPSDate
@@ -169,18 +183,42 @@ def writeOLEDText():
 
 @app.route('/doPanTilt', methods=['POST'])
 def doPanTilCamera():
+    global currentPan, currentTilt
     if request.method == 'POST':
         print("request.form:" + str(request.form))
-        pan = 0.0
-        tilt = 0.0
+        currentPan = 0.0
+        currentTilt = 0.0
         if(len(request.form['pan']) != 0):
-            pan = float(request.form['pan'])
+            currentPan = float(request.form['pan'])
         if(len(request.form['tilt']) != 0):
-            tilt = float(request.form['tilt'])
-        if pan != None and tilt != None:
-            fhnd.DoFunctionNow('panTilt', [], [pan, tilt], 'RPI')
+            currentTilt = float(request.form['tilt'])
+        if currentPan != None and currentTilt != None:
+            fhnd.DoFunctionNow('panTilt', [], [currentPan, currentTilt], 'RPI')
 
-    return redirect("/")
+    infoDict = {}
+    info_list = []
+    infoDict['CurrentPan'] = currentPan
+    infoDict['CurrentTilt'] = currentTilt
+    info_list.append(infoDict)
+    return json.dumps(info_list)
+
+@app.route('/getCurrentPan', methods=['GET'])
+def getCurrentPan():
+    global currentPan
+    infoDict = {}
+    info_list = []
+    infoDict['CurrentPan'] = currentPan
+    info_list.append(infoDict)
+    return json.dumps(info_list)
+
+@app.route('/getCurrentTilt', methods=['GET'])
+def getCurrentTilt():
+    global currentTilt
+    infoDict = {}
+    info_list = []
+    infoDict['currentTilt'] = currentTilt
+    info_list.append(infoDict)
+    return json.dumps(info_list)
 
 
 def execv(command, path):

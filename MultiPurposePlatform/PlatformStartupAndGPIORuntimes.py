@@ -24,7 +24,7 @@ def shellESpeak(text):
     os.popen('espeak "' + text + '" --stdout | aplay 2> /dev/null').read()
 
 def StartupConvo():
-    shellESpeak("Welcome to the mutlipurpose platform.")
+    shellESpeak("Hello, I'm SAMUEL")
 
     # time.sleep(0.2)
     # shellESpeak("READ 'APIExamples.txt' for API documentation")

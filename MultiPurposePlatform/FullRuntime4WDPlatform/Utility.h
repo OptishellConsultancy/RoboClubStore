@@ -450,11 +450,6 @@ bool ParseAndExecuteAPICommand(String str)
     }
     if (OLEDTxt)
     {
-      Serial.print("Received OLEDTxt Command \r\n");
-      if (!GPSPrintOLED)
-      {
-        GPSPrintOLED = false;
-      }
       return PassOLEDTxt(str);
     }
   }
