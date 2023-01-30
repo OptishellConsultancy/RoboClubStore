@@ -21,6 +21,7 @@ from mapEntity import MapEntity
 
 doGPSOLEDPrint = False
 doUltraSonicOLEDPrint = False
+doAccMagOLEDPrint = False
 
 currentPan = 0
 currentTilt = 0
@@ -80,22 +81,46 @@ def ToggledoUltraSonicOLEDPrint():
     global doUltraSonicOLEDPrint  # Use global scope
     doUltraSonicOLEDPrint = not doUltraSonicOLEDPrint
     print("doUltraSonicOLEDPrint is" + str(doUltraSonicOLEDPrint))
-    return redirect("/")
-#
+    infoDict = {}
+    info_list = []
+    infoDict['nowState'] = doUltraSonicOLEDPrint
+    info_list.append(infoDict)
+    return json.dumps(info_list)
+
 @app.route("/ultraSonicRequest", methods=['POST'])
 def DoultraSonicRequest():
-
     sampleCount = '1'
     fhnd.DoFunctionNow("<Out>UltSonc", [sampleCount], (['OLEDPRNT'] if doUltraSonicOLEDPrint == True else []), 'ARD')
-    print('UltraSonicDistance:' + str(fhnd.UltraSonicDistance))
-    print('UltraSonicTemp:' + str(fhnd.UltraSonicTemp))
-
     infoDict = {}
     info_list = []
     infoDict['UltraSonicDistance'] = fhnd.UltraSonicDistance
     infoDict['UltraSonicTemp'] = fhnd.UltraSonicTemp
     info_list.append(infoDict)
     return json.dumps(info_list)
+
+@app.route("/toggleOLEDAccMagDisplay", methods=['POST'])
+def ToggleOLEDaccMagDisplay():
+    global doAccMagOLEDPrint  # Use global scope
+    doAccMagOLEDPrint = not doAccMagOLEDPrint
+    print("doAccMagOLEDPrint is" + str(doAccMagOLEDPrint))
+    infoDict = {}
+    info_list = []
+    infoDict['nowState'] = doAccMagOLEDPrint
+    info_list.append(infoDict)
+    return json.dumps(info_list)
+
+@app.route("/accMagRequest", methods=['POST'])
+def DoAccMagRequest():
+    sampleCount = '1'
+    fhnd.DoFunctionNow("<Out>AccMag", [sampleCount], (['OLEDPRNT'] if doAccMagOLEDPrint == True else []), 'ARD')
+    infoDict = {}
+    info_list = []
+    infoDict['AccMagAcc'] = fhnd.AccMagAccRaw
+    infoDict['AccMagMag'] = fhnd.AccMagMagRaw
+    infoDict['AccMagHeading'] = fhnd.AccMagHeading
+    info_list.append(infoDict)
+    return json.dumps(info_list)
+
     
 # See mapApp.js -> DoMapUpdate
 @app.route("/mapinjectapi", methods=['POST'])
@@ -229,11 +254,7 @@ def execv(command, path):
     print(result.stdout)
 
 
-app.config.update(
-    PERMANENT_SESSION_LIFETIME=600
-
-
-)
+app.config.update(PERMANENT_SESSION_LIFETIME=600)
 
 if __name__ == '__main__':
     # shellESpeak("Web server starting")

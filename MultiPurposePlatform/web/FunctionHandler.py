@@ -54,8 +54,10 @@ class FunctionHandler():
         foundGPSCoords = False
         validData = True
         for i in range(len(resultsConcat)):
-            if('FIX NOT ACQUIRED' in resultsConcat[i]):
-                validData = False
+            if(validData == True):
+                if('FIX NOT ACQUIRED' in resultsConcat[i]):
+                    validData = False
+
         if(validData == True):
             self.GPSTime = resultsConcat[1].replace("\n", "")
             self.GPSDate = resultsConcat[2].replace("\n", "")
@@ -150,11 +152,14 @@ class FunctionHandler():
             for i in range(len(results)):
                 if "<UltraSonic.Start:" in results[i]:
                     self.HandleUltraSonic(results[i:])
+                    return 
 
             for i in range(len(results)):
                 if "<AccMag.Start:" in results[i]:
                     self.HandleAccMag(results[i:])
+                    return        
 
             for i in range(len(results)):
                 if "<GPSDATETIME.Start:" in results[i]:
                     self.HandleGPS(results[i:])
+                    return 

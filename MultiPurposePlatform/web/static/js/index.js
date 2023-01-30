@@ -198,16 +198,20 @@ $(document).ready(function () {
       url: '/accMagRequest',
       dataType: "json",
       success: function (accMag_data) {
-        if (ultrasonic_data.length > 0) {
+        if (accMag_data.length > 0) {
           console.log("accMag_data" + JSON.stringify(accMag_data));
           //
 
-          acc = ultrasonic_data[0]["AccMagAcc"].replace("/r", "");
-          mag = ultrasonic_data[0]["AccMagMag"].replace("/r", "");
-          heading = ultrasonic_data[0]["AccMagHeading"].replace("/r", "");
+          acc = accMag_data[0]["AccMagAcc"].replace("/r", "");
+          mag = accMag_data[0]["AccMagMag"].replace("/r", "");
+          heading = accMag_data[0]["AccMagHeading"].replace("/r", "");
+
+          console.log("acc:" + acc)
+          console.log("mag:" + mag)
+          console.log("heading:" + heading)
           $("#accMagReading #accMagReadingForm #ftextAccel").val(acc);
-          $("#ultraSonicReading #ultraSonicReadingForm #ftextTemp").val(mag);
-          $("#ultraSonicReading #ultraSonicReadingForm #ftextHeading").val(heading);
+          $("#accMagReading #accMagReadingForm #ftextMag").val(mag);
+          $("#accMagReading #accMagReadingForm #ftextHeading").val(heading);
         }
       }
     });
@@ -215,11 +219,13 @@ $(document).ready(function () {
   });
 });
 
-function toggleOLEDUltraSonicDisplay() {
+function toggleOLEDAccMagDisplay() {
   $.ajax({
-    url: '/toggleOLEDUltraSonicDisplay',
+    url: '/toggleOLEDAccMagDisplay',
     type: 'POST',
     dataType: "json",
   });
-  console.log("toggleOLEDUltraSonicDisplay")
+  console.log("toggleOLEDAccMagDisplay")
 }
+
+//----------------------------------------------------------------
