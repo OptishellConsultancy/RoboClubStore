@@ -63,8 +63,11 @@ function onValueRangeChange(value, labelId, prefix, affix) {
 //----------------------------------------------------------------
 
 //doPanTilt----------------------------------------------------------------
+
+
 $(document).ready(function () {
-  $("#doPanTilt #doPanTiltForm").click(function (e) {
+  
+    $("#doPanTilt #doPanTiltForm").bind('click touchend', function(e){
     e.preventDefault(); // avoid page refresh
 
     $.ajax({
