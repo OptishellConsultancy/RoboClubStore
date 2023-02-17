@@ -132,12 +132,12 @@
             <div id='xContainer'>
                 <input type="range" step="1" min="0" max="128" id="x" name="x" value="20"
                     onChange="onValueRangeChange(this.value,'#oLEDDisplayTxt #oledDisplayTextForm #xContainer #xLabel', 'X: (', ')')">
-                <label id="xLabel" for="X">X:(20)</label>
+                <label id="xLabel" for="x">X:(20)</label>
             </div>
             <div id='yContainer'>
                 <input type="range" step="1" min="0" max="64" name="y" value="32"
                     onChange="onValueRangeChange(this.value,'#oLEDDisplayTxt #oledDisplayTextForm #yContainer #yLabel', 'Y: (', ')')">
-                <label id="yLabel" for="Y">Y:(32)</label>
+                <label id="yLabel" for="y">Y:(32)</label>
             </div>
             <div id='fSizeContainer'>
                 <input type="range" step="1" min="1" max="5" id="s" name="s" value="1"
@@ -150,51 +150,150 @@
 
     <!--Get Ultrasonic reading-->
     <div id="ultraSonicReading">
-        <form id="ultraSonicReadingForm" <label id="fname">Ultrasonic reading</label><br>  
+        <form id="ultraSonicReadingForm" <label id="fname">Ultrasonic reading</label><br>
 
             <textarea id="ftextDistance" name="string" rows="1" readonly>cm</textarea>
-            <label id="fSizeLabel" for="ftextDistance">Distance(cm)</label>    
+            <label id="fSizeLabel" for="ftextDistance">Distance(cm)</label>
 
-            
+
             <textarea id="ftextTemp" name="string" rows="1" readonly>°C</textarea>
             <label id="fSizeLabel" for="ftextTemp">Temp(°C)</label>
 
-            <input checked="ultraSonicToggled" type="checkbox" class="collapsible" onclick="toggleOLEDUltraSonicDisplay()">OLED Print enabled</input>
+            <input checked="ultraSonicToggled" type="checkbox" class="collapsible"
+                onclick="toggleOLEDUltraSonicDisplay()">OLED Print enabled</input>
             <button id="submitBtn" type="submit">Do Read</button>
         </form>
     </div>
 
-        <!--Get Ultrasonic reading-->
-        <div id="accMagReading">
-            <form id="accMagReadingForm" <label id="fname">Accelero/Magneto(meter) & compass Reading</label><br>  
-    
-                <textarea id="ftextAccel" name="string" rows="1" readonly>M/s</textarea>
-                <label id="fSizeLabel" for="ftextAccel">Vector(X,Y,Z)</label>    
-    
-                <textarea id="ftextMag" name="string" rows="1" readonly>Φ</textarea>
-                <label id="fSizeLabel" for="ftextMag">Vector(X,Y,Z)</label>
+    <!--Get Ultrasonic reading-->
+    <div id="accMagReading">
+        <form id="accMagReadingForm" <label id="fname">Accelero/Magneto(meter) & compass Reading</label><br>
 
-                <textarea id="ftextHeading" name="string" rows="1" readonly>°</textarea>
-                <label id="fSizeLabel" for="ftextMag">Deg(°)</label>
+            <textarea id="ftextAccel" name="string" rows="1" readonly>M/s</textarea>
+            <label id="fSizeLabel" for="ftextAccel">Vector(X,Y,Z)</label>
+
+            <textarea id="ftextMag" name="string" rows="1" readonly>Φ</textarea>
+            <label id="fSizeLabel" for="ftextMag">Vector(X,Y,Z)</label>
+
+            <textarea id="ftextHeading" name="string" rows="1" readonly>°</textarea>
+            <label id="fSizeLabel" for="ftextMag">Deg(°)</label>
+
+            <input checked="ftextMagToggled" type="checkbox" class="collapsible"
+                onclick="toggleOLEDAccMagDisplay()">OLED Print enabled</input>
+            <button id="submitBtn" type="submit">Do Read</button>
+        </form>
+    </div>
+
+
+    <!--Four wheeled drive control-->
+    <div id="FourWDControl">
+        <form id="FourWDControlForm" <label id="fname">Four wheel drive control</label><br>
+            <p>
+                <li>.Toggle each motor to be forward or back, or select from 'preset' movemenets</li>
+                <li>.Finally, select speed and duration(ms) for the maneuvre and execute</li>
+            </p>
+            <div id="FRAorFRB">
+                <input id="FRAToggle" type="checkbox" onclick="toggleFRA()">FRA</input>
+                <input id="FRBToggle" type="checkbox" onclick="toggleFRB()">FRB</input>
+                <i> Front right motor </i>
+            </div>
+
+            <div id="FLAorFLB">
+                <input id="FLAToggle" type="checkbox" onclick="toggleFLA()">FLA</input>
+                <input id="FLBToggle" type="checkbox" onclick="toggleFLB()">FLB</input>
+                <i>Front left motor</i>
+            </div>
+            <div id="BRAorBRB">
+                <input id="BRAToggle" type="checkbox" onclick="toggleBRA()">BRA</input>
+                <input id="BRBToggle" type="checkbox" onclick="toggleBRB()">BRB</input>
+                <i> Back right motor</i>
+            </div>
+            <div id="BLAorBLB">
+                <input id="BLAToggle" type="checkbox" onclick="toggleBLA()">BLA</input>
+                <input id="BLBToggle" type="checkbox" onclick="toggleBLB()">BLB</input>
+                <i> Back left motor</i>
+            </div>
+            <b>Presets</b>
+            <div>
+                <li><input id="PresetForward" type="button" onclick="Forwards()"> Forward</input></li>
+                <li><input id="PresetBackwards" type="button" onclick="Backwards()"> Backward</input></li>
+                <li><input id="PresetRotLeft" type="button" onclick="RotLeft()"> RotateLeft</input></li>
+                <li><input id="PresetRotRight" type="button" onclick="RotRight()"> RotateRight</input></li>
+                <li><input id="PresetForward" type="button" onclick="ResetAll()"> <b>RESET</b></input></li>
+            </div>
+            <div id="duratationContainer">
+                <input type="range" step="1.0" min="100" max="10000" name="duration" value="500"
+                    onChange="onValueRangeChange(this.value,'#FourWDControl #FourWDControlForm #duratationContainer #durationLabel', 'Duration (', ')ms')">
+                <label id="durationLabel" for="duration">Duration(500)ms</label>
+            </div>
+            <div id="speedContainer">
+                <input type="range" step="1.0" min="1" max="255" name="duration" value="100"
+                    onChange="onValueRangeChange(this.value,'#FourWDControl #FourWDControlForm #speedContainer #speedLabel', 'Speed (', ')')">
+                <label id="speedLabel" for="speed">Speed(100)</label>
+            </div>
+            <button id="submitBtn" type="submit">Do current Manoeuvre</button>
+        </form>
+    </div>
+
+    <!--Four wheeled drive control-->
+    <div id="DOF6ArmControl">
+        <form id="DOF6ArmControlForm" <label id="fname">6 DOF (Degrees of freedom) robotic arm control </label><br>
+            <p>
+                <li>Use the checkbox to toggle and sliders to set degree per motor accordingly</li>
+                <li>.Finally, press submit to execute</li>
+            </p>
+            <div id="BaseContainer">
+                <input id="BaseToggle" type="checkbox" onclick="toggleBase()">Base</input>
+                <input type="range" step="1.0" min="0" max="180" id="base" name="base" value="90"
+                    onChange="onValueRangeChange(this.value,'#DOF6ArmControl #DOF6ArmControlForm #BaseContainer #baseLabel', 'Angle (', ')')">
+                    <label id="baseLabel" for="base">Angle(90)</label>              
+                <i>Base</i>
+            </div>
+            <div id="BaseTiltContainer">
+                <input id="BaseTileToggle" type="checkbox" onclick="toggleBaseTilt()">Toggle Base Tilt</input>
+                <input type="range" step="1.0" min="0" max="180" id="baseTilt" name="baseTilt" value="90"
+                    onChange="onValueRangeChange(this.value,'#DOF6ArmControl #DOF6ArmControlForm #BaseTiltContainer #baseTiltLabel', 'Angle (', ')')">
+                    <label id="baseTiltLabel" for="baseTilt">Angle(90)</label>              
+                <i>Base Tilt</i>
+            </div>
+            <div id="ElbowContainer">
+                <input id="ElbowAngToggle" type="checkbox" onclick="toggleElbow()">Toggle Elbow </input>
+                <input type="range" step="1.0" min="0" max="180" id="elbow" name="elbow" value="90"
+                    onChange="onValueRangeChange(this.value,'#DOF6ArmControl #DOF6ArmControlForm #ElbowContainer #elbowLabel', 'Angle (', ')')">
+                    <label id="elbowLabel" for="elbow">Angle(90)</label>              
+                <i>Elbow</i>
+            </div>
+            <div id="WristElevateContainer">
+                <input id="WristElevateToggle" type="checkbox" onclick="toggleWristElevate()">Toggle Wrist</input>
+                <input type="range" step="1.0" min="0" max="180" id="toggleWristElevate" name="toggleWristElevate"  value="90"
+                    onChange="onValueRangeChange(this.value,'#DOF6ArmControl #DOF6ArmControlForm #WristElevateContainer #toggleWristElevateLabel', 'Angle (', ')')">
+                    <label id="wristElevateLabel" for="toggleWristElevate">Angle(90)</label>              
+                <i>Wrist Elevate</i>
+            </div>
+            <div id="WristRotateContainer">
+                <input id="WristRotateToggle" type="checkbox" onclick="toggleWristRotate()">Toggle Wrist</input>
+                <input type="range" step="1.0" min="0" max="180" id="toggleRotateElevate" name="toggleRotateElevate"  value="90"
+                    onChange="onValueRangeChange(this.value,'#DOF6ArmControl #DOF6ArmControlForm #WristRotateContainer #wristRotateLabel', 'Angle (', ')')">
+                    <label id="wristRotateLabel" for="toggleRotate">Angle(90)</label>              
+                <i>Wrist Rotate</i>
+            </div>
+            <div id="ClawContainer">
+                <input id="clawToggle" type="checkbox" onclick="toggleClaw()">Claw</input>
+                <input type="range" step="1.0" min="0" max="180" id="claw" name="claw"  value="90"
+                    onChange="onValueRangeChange(this.value,'#DOF6ArmControl #DOF6ArmControlForm #ClawContainer #clawLabel', 'Angle (', ')')">
+                    <label id="clawLabel" for="claw">Angle(90)</label>              
+                <i>Wrist Rotate</i>
+            </div>
     
-                <input checked="ftextMagToggled" type="checkbox" class="collapsible" onclick="toggleOLEDftextMagDisplay()">OLED Print enabled</input>
-                <button id="submitBtn" type="submit">Do Read</button>
-            </form>
-        </div>
-
-
+            <button id="submitBtn" type="submit">Do Arm Action</button>
+        </form>
+    </div>
     <!-- Controls -->
     <div class='controls'>
         <!-- All functions -->
 
         <div class="functionsContainer">
             TODO:
-            <form class="btnForm" action="/AddToFunctionList/?functionName=4WD" method="post">
-                <button class='btn btn-default' submit="submit">4WD Move</button>
-            </form>
-            <form class="btnForm" action="/AddToFunctionList/?functionName=6AxisArm" method="post">
-                <button class='btn btn-default' submit="submit">6Axis Arm</button>
-            </form>
             <form class="btnForm" action="/AddToFunctionList/?functionName=OLEDScreen" method="post">
                 <button class='btn btn-default' submit="submit">OLED Image stream / Shapes /Anim etc</button>
             </form>
@@ -203,10 +302,6 @@
             </form>
         </div>
     </div>
-
-
-
-
 
 
 </body>

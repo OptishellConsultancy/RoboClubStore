@@ -76,50 +76,7 @@ def GetGPSOLEDDisplay():
     info_list.append(infoDict)
     return json.dumps(info_list)
 
-@app.route("/toggleOLEDUltraSonicDisplay", methods=['POST'])
-def ToggledoUltraSonicOLEDPrint():
-    global doUltraSonicOLEDPrint  # Use global scope
-    doUltraSonicOLEDPrint = not doUltraSonicOLEDPrint
-    print("doUltraSonicOLEDPrint is" + str(doUltraSonicOLEDPrint))
-    infoDict = {}
-    info_list = []
-    infoDict['nowState'] = doUltraSonicOLEDPrint
-    info_list.append(infoDict)
-    return json.dumps(info_list)
 
-@app.route("/ultraSonicRequest", methods=['POST'])
-def DoultraSonicRequest():
-    sampleCount = '1'
-    fhnd.DoFunctionNow("<Out>UltSonc", [sampleCount], (['OLEDPRNT'] if doUltraSonicOLEDPrint == True else []), 'ARD')
-    infoDict = {}
-    info_list = []
-    infoDict['UltraSonicDistance'] = fhnd.UltraSonicDistance
-    infoDict['UltraSonicTemp'] = fhnd.UltraSonicTemp
-    info_list.append(infoDict)
-    return json.dumps(info_list)
-
-@app.route("/toggleOLEDAccMagDisplay", methods=['POST'])
-def ToggleOLEDaccMagDisplay():
-    global doAccMagOLEDPrint  # Use global scope
-    doAccMagOLEDPrint = not doAccMagOLEDPrint
-    print("doAccMagOLEDPrint is" + str(doAccMagOLEDPrint))
-    infoDict = {}
-    info_list = []
-    infoDict['nowState'] = doAccMagOLEDPrint
-    info_list.append(infoDict)
-    return json.dumps(info_list)
-
-@app.route("/accMagRequest", methods=['POST'])
-def DoAccMagRequest():
-    sampleCount = '1'
-    fhnd.DoFunctionNow("<Out>AccMag", [sampleCount], (['OLEDPRNT'] if doAccMagOLEDPrint == True else []), 'ARD')
-    infoDict = {}
-    info_list = []
-    infoDict['AccMagAcc'] = fhnd.AccMagAccRaw
-    infoDict['AccMagMag'] = fhnd.AccMagMagRaw
-    infoDict['AccMagHeading'] = fhnd.AccMagHeading
-    info_list.append(infoDict)
-    return json.dumps(info_list)
 
     
 # See mapApp.js -> DoMapUpdate
@@ -159,9 +116,52 @@ def MapApi():
         return json.dumps(info_list)
     return json.dumps(info_list)
 
-# Simple text speech write
+
+#PanTilt
+@app.route('/doPanTilt', methods=['POST'])
+def doPanTilCamera():
+    global currentPan, currentTilt
+    if request.method == 'POST':
+        print("request.form:" + str(request.form))
+        currentPan = 0.0
+        currentTilt = 0.0
+        if(len(request.form['pan']) != 0):
+            currentPan = float(request.form['pan'])
+        if(len(request.form['tilt']) != 0):
+            currentTilt = float(request.form['tilt'])
+        if currentPan != None and currentTilt != None:
+            fhnd.DoFunctionNow('panTilt', [], [currentPan, currentTilt], 'RPI')
+
+    infoDict = {}
+    info_list = []
+    infoDict['CurrentPan'] = currentPan
+    infoDict['CurrentTilt'] = currentTilt
+    info_list.append(infoDict)
+    return json.dumps(info_list)
 
 
+#doPanTilt
+@app.route('/getCurrentPan', methods=['GET'])
+def getCurrentPan():
+    global currentPan
+    infoDict = {}
+    info_list = []
+    infoDict['CurrentPan'] = currentPan
+    info_list.append(infoDict)
+    return json.dumps(info_list)
+
+@app.route('/getCurrentTilt', methods=['GET'])
+def getCurrentTilt():
+    global currentTilt
+    infoDict = {}
+    info_list = []
+    infoDict['currentTilt'] = currentTilt
+    info_list.append(infoDict)
+    return json.dumps(info_list)
+
+
+
+#textToSpeech
 @app.route('/textToSpeech', methods=['POST'])
 def textToSpeech():
     if request.method == 'POST':
@@ -174,9 +174,7 @@ def textToSpeech():
                 shellESpeak(string)
     return ''
 
-# Do OLED command TODO: CONFIG Data input
-
-
+#oLEDDisplayTxt
 @app.route('/writeOLEDText', methods=['POST'])
 def writeOLEDText():
     if request.method == 'POST':
@@ -203,49 +201,78 @@ def writeOLEDText():
 
         fhnd.DoFunctionNow("<In>OLEDTXT", [string], [x, y, s], 'ARD')
         shellESpeak("OLED Text recieved")
-    return redirect("/")
+    return ''
 
 
-@app.route('/doPanTilt', methods=['POST'])
-def doPanTilCamera():
-    global currentPan, currentTilt
+#ultraSonicReading
+@app.route("/ultraSonicRequest", methods=['POST'])
+def DoultraSonicRequest():
+    sampleCount = '1'
+    fhnd.DoFunctionNow("<Out>UltSonc", [sampleCount], (['OLEDPRNT'] if doUltraSonicOLEDPrint == True else []), 'ARD')
+    infoDict = {}
+    info_list = []
+    infoDict['UltraSonicDistance'] = fhnd.UltraSonicDistance
+    infoDict['UltraSonicTemp'] = fhnd.UltraSonicTemp
+    info_list.append(infoDict)
+    return json.dumps(info_list)
+
+@app.route("/toggleOLEDUltraSonicDisplay", methods=['POST'])
+def ToggledoUltraSonicOLEDPrint():
+    global doUltraSonicOLEDPrint  # Use global scope
+    doUltraSonicOLEDPrint = not doUltraSonicOLEDPrint
+    print("doUltraSonicOLEDPrint is" + str(doUltraSonicOLEDPrint))
+    infoDict = {}
+    info_list = []
+    infoDict['nowState'] = doUltraSonicOLEDPrint
+    info_list.append(infoDict)
+    return json.dumps(info_list)
+
+#AccMagReading
+@app.route("/toggleOLEDAccMagDisplay", methods=['POST'])
+def ToggleOLEDaccMagDisplay():
+    global doAccMagOLEDPrint  # Use global scope
+    doAccMagOLEDPrint = not doAccMagOLEDPrint
+    print("doAccMagOLEDPrint is" + str(doAccMagOLEDPrint))
+    infoDict = {}
+    info_list = []
+    infoDict['nowState'] = doAccMagOLEDPrint
+    info_list.append(infoDict)
+    return json.dumps(info_list)
+
+@app.route("/accMagRequest", methods=['POST'])
+def DoAccMagRequest():
+    sampleCount = '1'
+    fhnd.DoFunctionNow("<Out>AccMag", [sampleCount], (['OLEDPRNT'] if doAccMagOLEDPrint == True else []), 'ARD')
+    infoDict = {}
+    info_list = []
+    infoDict['AccMagAcc'] = fhnd.AccMagAccRaw
+    infoDict['AccMagMag'] = fhnd.AccMagMagRaw
+    infoDict['AccMagHeading'] = fhnd.AccMagHeading
+    info_list.append(infoDict)
+    return json.dumps(info_list)
+
+
+#4WD control
+@app.route("/FourWheeledDriveRequest", methods=['POST'])
+def DoWheeledDriveRequest():
     if request.method == 'POST':
-        print("request.form:" + str(request.form))
-        currentPan = 0.0
-        currentTilt = 0.0
-        if(len(request.form['pan']) != 0):
-            currentPan = float(request.form['pan'])
-        if(len(request.form['tilt']) != 0):
-            currentTilt = float(request.form['tilt'])
-        if currentPan != None and currentTilt != None:
-            fhnd.DoFunctionNow('panTilt', [], [currentPan, currentTilt], 'RPI')
+        data = request.get_json()
+        speed = data['speed']
+        duration = data['duration']
+        motors = data['motors']
+        print("4WD.speed:" + str(speed))
+        print("4WD.duration:" + str(duration))
+        print("4WD.motors:" + str(motors))
 
-    infoDict = {}
-    info_list = []
-    infoDict['CurrentPan'] = currentPan
-    infoDict['CurrentTilt'] = currentTilt
-    info_list.append(infoDict)
-    return json.dumps(info_list)
+        #TODO
+        # Make command structure e.g.
+        #  <In>4WD[100]FRA{1000}Y
+        
+    return ''
 
-@app.route('/getCurrentPan', methods=['GET'])
-def getCurrentPan():
-    global currentPan
-    infoDict = {}
-    info_list = []
-    infoDict['CurrentPan'] = currentPan
-    info_list.append(infoDict)
-    return json.dumps(info_list)
+#DOF Control
 
-@app.route('/getCurrentTilt', methods=['GET'])
-def getCurrentTilt():
-    global currentTilt
-    infoDict = {}
-    info_list = []
-    infoDict['currentTilt'] = currentTilt
-    info_list.append(infoDict)
-    return json.dumps(info_list)
-
-
+#Runtime
 def execv(command, path):
     if(len(path) > 0):
         command = '%s%s' % (path, command)

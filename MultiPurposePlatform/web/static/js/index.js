@@ -3,6 +3,7 @@ $(document).ready(function () {
   $("#subTaskToggles #toggleSub #GPSOLEDPRNTToggle").checked = getGPSOLEDDisplay();
   $("#doPanTilt #doPanTiltForm #panContainer #pan").value = getCurrentPan();
   $("#doPanTilt #doPanTiltForm #tiltContainer #tilt").value = getCurrentTilt();
+
 });
 
 function hndlToggle(chkBox, togChkId, cacheVarName) {
@@ -64,10 +65,9 @@ function onValueRangeChange(value, labelId, prefix, affix) {
 
 //doPanTilt----------------------------------------------------------------
 
-
 $(document).ready(function () {
-  
-    $("#doPanTilt #doPanTiltForm").bind('click touchend', function(e){
+
+  $("#doPanTilt #doPanTiltForm").bind('click touchend', function (e) {
     e.preventDefault(); // avoid page refresh
 
     $.ajax({
@@ -155,7 +155,6 @@ $(document).ready(function () {
 
 //----------------------------------------------------------------
 
-
 //ultraSonicReading----------------------------------------------------------------
 $(document).ready(function () {
   $("#ultraSonicReading #ultraSonicReadingForm").submit(function (e) {
@@ -192,6 +191,17 @@ function toggleOLEDUltraSonicDisplay() {
 
 //----------------------------------------------------------------
 //AccMagReading----------------------------------------------------------------
+
+function toggleOLEDAccMagDisplay() {
+  $.ajax({
+    url: '/toggleOLEDAccMagDisplay',
+    type: 'POST',
+    dataType: "json",
+  });
+  con;sole.log("toggleOLEDAccMagDisplay")
+}
+
+
 $(document).ready(function () {
   $("#accMagReading #accMagReadingForm").submit(function (e) {
     e.preventDefault(); // avoid page refresh
@@ -222,13 +232,127 @@ $(document).ready(function () {
   });
 });
 
-function toggleOLEDAccMagDisplay() {
-  $.ajax({
-    url: '/toggleOLEDAccMagDisplay',
-    type: 'POST',
-    dataType: "json",
-  });
-  console.log("toggleOLEDAccMagDisplay")
+//----------------------------------------------------------------
+//4WD control
+//FRAorFRB
+function toggleFRA() {
+  $("#FourWDControl #FourWDControlForm #FRAorFRB #FRBToggle").removeAttr('checked');
+};
+function toggleFRB() {
+  $("#FourWDControl #FourWDControlForm #FRAorFRB #FRAToggle").removeAttr('checked');
+};
+//FLAorFLB
+function toggleFLA() {
+  $("#FourWDControl #FourWDControlForm #FLAorFLB #FLBToggle").removeAttr('checked');
+};
+function toggleFLB() {
+  $("#FourWDControl #FourWDControlForm #FLAorFLB #FLAToggle").removeAttr('checked');
+};
+//BRAorBRB
+function toggleBRA() {
+  $("#FourWDControl #FourWDControlForm #BRAorBRB #BRBToggle").removeAttr('checked');
+};
+function toggleBRB() {
+  $("#FourWDControl #FourWDControlForm #BRAorBRB #BRAToggle").removeAttr('checked');
+};
+//BLAorBLB
+function toggleBLA() {
+  $("#FourWDControl #FourWDControlForm #BLAorBLB #BLBToggle").removeAttr('checked');
+};
+function toggleBLB() {
+  $("#FourWDControl #FourWDControlForm #BLAorBLB #BLAToggle").removeAttr('checked');
+};
+function ResetAll() {
+  $("#FourWDControl #FourWDControlForm #FRAorFRB #FRBToggle").removeAttr('checked');
+  $("#FourWDControl #FourWDControlForm #FRAorFRB #FRAToggle").removeAttr('checked');
+  $("#FourWDControl #FourWDControlForm #FLAorFLB #FLBToggle").removeAttr('checked');
+  $("#FourWDControl #FourWDControlForm #FLAorFLB #FLAToggle").removeAttr('checked');
+  $("#FourWDControl #FourWDControlForm #BRAorBRB #BRBToggle").removeAttr('checked');
+  $("#FourWDControl #FourWDControlForm #BRAorBRB #BRAToggle").removeAttr('checked');
+  $("#FourWDControl #FourWDControlForm #BLAorBLB #BLBToggle").removeAttr('checked');
+  $("#FourWDControl #FourWDControlForm #BLAorBLB #BLAToggle").removeAttr('checked');
+};
+
+function Forwards() {
+  ResetAll();
+  $("#FourWDControl #FourWDControlForm #FRAorFRB #FRAToggle").prop("checked", true);
+  $("#FourWDControl #FourWDControlForm #FLAorFLB #FLAToggle").prop("checked", true);
+  $("#FourWDControl #FourWDControlForm #BRAorBRB #BRAToggle").prop("checked", true);
+  $("#FourWDControl #FourWDControlForm #BLAorBLB #BLAToggle").prop("checked", true);
+};
+
+function Backwards() {
+  ResetAll();
+   $("#FourWDControl #FourWDControlForm #FRAorFRB #FRBToggle").prop("checked", true);
+   $("#FourWDControl #FourWDControlForm #FLAorFLB #FLBToggle").prop("checked", true);
+   $("#FourWDControl #FourWDControlForm #BRAorBRB #BRBToggle").prop("checked", true);
+   $("#FourWDControl #FourWDControlForm #BLAorBLB #BLBToggle").prop("checked", true);
+};
+
+function RotLeft() {
+  ResetAll();
+  $("#FourWDControl #FourWDControlForm #FRAorFRB #FRBToggle").prop("checked", true);
+  $("#FourWDControl #FourWDControlForm #FLAorFLB #FLAToggle").prop("checked", true);
+  $("#FourWDControl #FourWDControlForm #BRAorBRB #BRBToggle").prop("checked", true);
+  $("#FourWDControl #FourWDControlForm #BLAorBLB #BLAToggle").prop("checked", true);
+};
+
+function RotRight() {
+  ResetAll();
+  $("#FourWDControl #FourWDControlForm #FRAorFRB #FRAToggle").prop("checked", true);
+  $("#FourWDControl #FourWDControlForm #FLAorFLB #FLBToggle").prop("checked", true);
+  $("#FourWDControl #FourWDControlForm #BRAorBRB #BRAToggle").prop("checked", true);
+  $("#FourWDControl #FourWDControlForm #BLAorBLB #BLBToggle").prop("checked", true);
+};
+
+//TODO Override this data
+var currentCommandstring = {
+  speed: 0,
+  duration: 0,
+  motors: ['1','2']
 }
 
+$(document).ready(function () {
+  $("#FourWDControl #FourWDControlForm").submit(function (e) {
+    e.preventDefault(); // avoid page refresh
+
+    $.ajax({
+      type: "POST",
+      url: '/FourWheeledDriveRequest',
+      contentType: "application/json; charset=utf-8",
+      data:  JSON.stringify(currentCommandstring)
+    });
+
+  });
+})
+
 //----------------------------------------------------------------
+//6 Degreees of freedom ARM
+function toggleBase() {
+  //TODO
+  console.log("toggleBase");
+}
+function toggleBaseTilt() {
+  //TODO
+  console.log("toggleBaseTilt");
+}
+function toggleElbow() {
+  //TODO
+  console.log("toggleElbow");
+}
+function toggleWristElevate() {
+  //TODO
+  console.log("toggleWristElevate");
+}
+function toggleWristRotate() {
+  //TODO
+  console.log("toggleWristRotate");
+}
+function toggleClaw() {
+  //TODO
+  console.log("toggleClaw");
+}
+
+//TODO Submit and python command do
+//----------------------------------------------------------------
+

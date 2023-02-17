@@ -7,8 +7,9 @@ run python3 PySerialArdunioIF.py.py the press F7. to begin API runtime.
 
 See APIExamples.txt  
 
-http://jamiespi:2222/ - web interface to the API
+http://jamiespi:2223/ - web interface to the API
 
+http://optishell.duckdns.org:2223/
 
 Access dedicate webcam interface:
 http://jamiespi:8000/html/
