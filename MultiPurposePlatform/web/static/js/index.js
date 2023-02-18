@@ -198,7 +198,7 @@ function toggleOLEDAccMagDisplay() {
     type: 'POST',
     dataType: "json",
   });
-  con;sole.log("toggleOLEDAccMagDisplay")
+  con; sole.log("toggleOLEDAccMagDisplay")
 }
 
 
@@ -283,10 +283,10 @@ function Forwards() {
 
 function Backwards() {
   ResetAll();
-   $("#FourWDControl #FourWDControlForm #FRAorFRB #FRBToggle").prop("checked", true);
-   $("#FourWDControl #FourWDControlForm #FLAorFLB #FLBToggle").prop("checked", true);
-   $("#FourWDControl #FourWDControlForm #BRAorBRB #BRBToggle").prop("checked", true);
-   $("#FourWDControl #FourWDControlForm #BLAorBLB #BLBToggle").prop("checked", true);
+  $("#FourWDControl #FourWDControlForm #FRAorFRB #FRBToggle").prop("checked", true);
+  $("#FourWDControl #FourWDControlForm #FLAorFLB #FLBToggle").prop("checked", true);
+  $("#FourWDControl #FourWDControlForm #BRAorBRB #BRBToggle").prop("checked", true);
+  $("#FourWDControl #FourWDControlForm #BLAorBLB #BLBToggle").prop("checked", true);
 };
 
 function RotLeft() {
@@ -306,10 +306,10 @@ function RotRight() {
 };
 
 //TODO Override this data
-var currentCommandstring = {
+var cmdStr = {
   speed: 0,
   duration: 0,
-  motors: ['1','2']
+  motors: ['1', '2']
 }
 
 $(document).ready(function () {
@@ -320,7 +320,7 @@ $(document).ready(function () {
       type: "POST",
       url: '/FourWheeledDriveRequest',
       contentType: "application/json; charset=utf-8",
-      data:  JSON.stringify(currentCommandstring)
+      data: JSON.stringify(cmdStr)
     });
 
   });
@@ -328,31 +328,59 @@ $(document).ready(function () {
 
 //----------------------------------------------------------------
 //6 Degreees of freedom ARM
-function toggleBase() {
-  //TODO
-  console.log("toggleBase");
-}
-function toggleBaseTilt() {
-  //TODO
-  console.log("toggleBaseTilt");
-}
-function toggleElbow() {
-  //TODO
-  console.log("toggleElbow");
-}
-function toggleWristElevate() {
-  //TODO
-  console.log("toggleWristElevate");
-}
-function toggleWristRotate() {
-  //TODO
-  console.log("toggleWristRotate");
-}
-function toggleClaw() {
-  //TODO
-  console.log("toggleClaw");
+function toggleBase(e) {
+  localStorage.setItem('baseEnabled', e.checked);
+  console.log("toggleBase " + localStorage.getItem('baseEnabled'));
+};
+
+function toggleBaseTilt(e) {
+  localStorage.setItem('baseTiltEnabled', e.checked);
+  console.log("toggleBaseTilt " + localStorage.getItem('baseTiltEnabled'));
+};
+
+function toggleElbow(e) {
+  localStorage.setItem('elbowEnabled', e.checked);
+  console.log("toggleElbow " + localStorage.getItem('elbowEnabled'));
+};
+
+function toggleElevateWrist(e) {
+  localStorage.setItem('ElevateWristEnabled', e.checked);
+  console.log("ToggleElevateWrist " + localStorage.getItem('ElevateWristEnabled'));
+};
+
+function toggleWristRotate(e) {
+  localStorage.setItem('WristRotateEnabled', e.checked);
+  console.log("WristRotateEnabled " + localStorage.getItem('WristRotateEnabled'));
+};
+
+function toggleClaw(e) {
+  localStorage.setItem('clawEnabled', e.checked);
+  console.log("toggleClaw " + localStorage.getItem('clawEnabled'));
 }
 
-//TODO Submit and python command do
+$(document).ready(function () {
+
+  $("#DOF6ArmControl #DOF6ArmControlForm #submitBtn").bind('click touchend', function (e) {
+    e.preventDefault(); // avoid page refresh
+
+    commandStr = {
+      base:{
+        enabled: localStorage.getItem('baseEnabled'),
+        angle: $("#DOF6ArmControl #DOF6ArmControlForm #BaseContainer #base").val() 
+      }
+
+    }
+    console.log(commandStr);
+
+    // $.ajax({
+    //   type: "POST",
+    //   url: '/do6DOFCmd',
+    //   contentType: "application/json; charset=utf-8",
+    //   data: JSON.stringify(commandStr)
+    // });
+
+  });
+});
+
 //----------------------------------------------------------------
 

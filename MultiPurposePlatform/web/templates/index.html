@@ -242,47 +242,41 @@
                 <li>Use the checkbox to toggle and sliders to set degree per motor accordingly</li>
                 <li>.Finally, press submit to execute</li>
             </p>
-            <div id="BaseContainer">
-                <input id="BaseToggle" type="checkbox" onclick="toggleBase()">Base</input>
+            <div id="BaseContainer">             
                 <input type="range" step="1.0" min="0" max="180" id="base" name="base" value="90"
                     onChange="onValueRangeChange(this.value,'#DOF6ArmControl #DOF6ArmControlForm #BaseContainer #baseLabel', 'Angle (', ')')">
-                    <label id="baseLabel" for="base">Angle(90)</label>              
-                <i>Base</i>
+                    <label id="baseLabel" for="base">Angle(90)</label>   
+                <input id="BaseToggle" type="checkbox" onclick="toggleBase(this)">Base</input>           
             </div>
             <div id="BaseTiltContainer">
-                <input id="BaseTileToggle" type="checkbox" onclick="toggleBaseTilt()">Toggle Base Tilt</input>
                 <input type="range" step="1.0" min="0" max="180" id="baseTilt" name="baseTilt" value="90"
                     onChange="onValueRangeChange(this.value,'#DOF6ArmControl #DOF6ArmControlForm #BaseTiltContainer #baseTiltLabel', 'Angle (', ')')">
-                    <label id="baseTiltLabel" for="baseTilt">Angle(90)</label>              
-                <i>Base Tilt</i>
+                    <label id="baseTiltLabel" for="baseTilt">Angle(90)</label>     
+                <input id="BaseTileToggle" type="checkbox" onclick="toggleBaseTilt(this)">Toggle Base Tilt</input>         
             </div>
             <div id="ElbowContainer">
-                <input id="ElbowAngToggle" type="checkbox" onclick="toggleElbow()">Toggle Elbow </input>
                 <input type="range" step="1.0" min="0" max="180" id="elbow" name="elbow" value="90"
                     onChange="onValueRangeChange(this.value,'#DOF6ArmControl #DOF6ArmControlForm #ElbowContainer #elbowLabel', 'Angle (', ')')">
-                    <label id="elbowLabel" for="elbow">Angle(90)</label>              
-                <i>Elbow</i>
+                    <label id="elbowLabel" for="elbow">Angle(90)</label>    
+                <input id="ElbowAngToggle" type="checkbox" onclick="toggleElbow(this)">Toggle Elbow </input>          
             </div>
             <div id="WristElevateContainer">
-                <input id="WristElevateToggle" type="checkbox" onclick="toggleWristElevate()">Toggle Wrist</input>
-                <input type="range" step="1.0" min="0" max="180" id="toggleWristElevate" name="toggleWristElevate"  value="90"
-                    onChange="onValueRangeChange(this.value,'#DOF6ArmControl #DOF6ArmControlForm #WristElevateContainer #toggleWristElevateLabel', 'Angle (', ')')">
-                    <label id="wristElevateLabel" for="toggleWristElevate">Angle(90)</label>              
-                <i>Wrist Elevate</i>
+                <input type="range" step="1.0" min="0" max="180" id="toggleWristElevate" name="toggleWristElavate" value="90"
+                    onChange="onValueRangeChange(this.value,'#DOF6ArmControl #DOF6ArmControlForm #WristElevateContainer #wristElevateLabel', 'Angle (', ')')">
+                    <label id="wristElevateLabel" for="toggleWristElevate">Angle(90)</label> 
+                    <input id="WristElavateToggle" type="checkbox" onclick="toggleElevateWrist(this)">Toggle Wrist Elevate</input>             
             </div>
             <div id="WristRotateContainer">
-                <input id="WristRotateToggle" type="checkbox" onclick="toggleWristRotate()">Toggle Wrist</input>
-                <input type="range" step="1.0" min="0" max="180" id="toggleRotateElevate" name="toggleRotateElevate"  value="90"
+                <input type="range" step="1.0" min="0" max="180" id="toggleWristElevate" name="toggleWristElevate" value="90"
                     onChange="onValueRangeChange(this.value,'#DOF6ArmControl #DOF6ArmControlForm #WristRotateContainer #wristRotateLabel', 'Angle (', ')')">
-                    <label id="wristRotateLabel" for="toggleRotate">Angle(90)</label>              
-                <i>Wrist Rotate</i>
+                    <label id="wristRotateLabel" for="toggleWristElevate">Angle(90)</label> 
+                    <input id="WristRotateToggle" type="checkbox" onclick="toggleWristRotate(this)">Toggle Wrist Rotate</input>             
             </div>
             <div id="ClawContainer">
-                <input id="clawToggle" type="checkbox" onclick="toggleClaw()">Claw</input>
-                <input type="range" step="1.0" min="0" max="180" id="claw" name="claw"  value="90"
+                <input type="range" step="1.0" min="0" max="180" id="claw" name="claw" value="90"
                     onChange="onValueRangeChange(this.value,'#DOF6ArmControl #DOF6ArmControlForm #ClawContainer #clawLabel', 'Angle (', ')')">
-                    <label id="clawLabel" for="claw">Angle(90)</label>              
-                <i>Wrist Rotate</i>
+                    <label id="clawLabel" for="claw">Angle(90)</label>  
+                <input id="clawToggle" type="checkbox" onclick="toggleClaw(this)">Claw</input>            
             </div>
     
             <button id="submitBtn" type="submit">Do Arm Action</button>
