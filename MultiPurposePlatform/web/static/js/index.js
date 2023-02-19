@@ -4,6 +4,21 @@ $(document).ready(function () {
   $("#doPanTilt #doPanTiltForm #panContainer #pan").value = getCurrentPan();
   $("#doPanTilt #doPanTiltForm #tiltContainer #tilt").value = getCurrentTilt();
 
+
+  let baseEnabled = localStorage.getItem('baseEnabled');
+  let baseTiltEnabled = localStorage.getItem('baseTiltEnabled');
+  let elbowEnabled = localStorage.getItem('elbowEnabled');
+  let elevateWristEnabled = localStorage.getItem('elevateWristEnabled');
+  let wristRotateEnabled = localStorage.getItem('wristRotateEnabled');
+  let clawEnabled = localStorage.getItem('clawEnabled');
+  $("#DOF6ArmControl #DOF6ArmControlForm #BaseContainer #BaseToggle").prop("checked", baseEnabled !== null ? baseEnabled : false);
+  $("#DOF6ArmControl #DOF6ArmControlForm #BaseContainer #BaseTiltToggle").prop("checked", baseTiltEnabled !== null ? baseTiltEnabled : false);
+  $("#DOF6ArmControl #DOF6ArmControlForm #BaseContainer #BaseToggle").prop("checked", elbowEnabled !== null ? elbowEnabled : false);
+  $("#DOF6ArmControl #DOF6ArmControlForm #BaseContainer #BaseToggle").prop("checked", elevateWristEnabled !== null ? elevateWristEnabled : false);
+  $("#DOF6ArmControl #DOF6ArmControlForm #BaseContainer #BaseToggle").prop("checked", wristRotateEnabled !== null ? wristRotateEnabled : false);
+  $("#DOF6ArmControl #DOF6ArmControlForm #BaseContainer #BaseToggle").prop("checked", clawEnabled !== null ? clawEnabled : false);
+
+
 });
 
 function hndlToggle(chkBox, togChkId, cacheVarName) {
@@ -327,7 +342,7 @@ $(document).ready(function () {
 })
 
 //----------------------------------------------------------------
-//6 Degreees of freedom ARM
+//6 Degreees of freedom Arm
 function toggleBase(e) {
   localStorage.setItem('baseEnabled', e.checked);
   console.log("toggleBase " + localStorage.getItem('baseEnabled'));
@@ -344,13 +359,13 @@ function toggleElbow(e) {
 };
 
 function toggleElevateWrist(e) {
-  localStorage.setItem('ElevateWristEnabled', e.checked);
-  console.log("ToggleElevateWrist " + localStorage.getItem('ElevateWristEnabled'));
+  localStorage.setItem('elevateWristEnabled', e.checked);
+  console.log("ToggleElevateWrist " + localStorage.getItem('elevateWristEnabled'));
 };
 
 function toggleWristRotate(e) {
-  localStorage.setItem('WristRotateEnabled', e.checked);
-  console.log("WristRotateEnabled " + localStorage.getItem('WristRotateEnabled'));
+  localStorage.setItem('wristRotateEnabled', e.checked);
+  console.log("wristRotateEnabled " + localStorage.getItem('wristRotateEnabled'));
 };
 
 function toggleClaw(e) {
@@ -362,11 +377,38 @@ $(document).ready(function () {
 
   $("#DOF6ArmControl #DOF6ArmControlForm #submitBtn").bind('click touchend', function (e) {
     e.preventDefault(); // avoid page refresh
-
+    //
+    let baseEnabled = localStorage.getItem('baseEnabled');
+    let baseTiltEnabled = localStorage.getItem('baseTiltEnabled');
+    let elbowEnabled = localStorage.getItem('elbowEnabled');
+    let elevateWristEnabled = localStorage.getItem('elevateWristEnabled');
+    let wristRotateEnabled = localStorage.getItem('wristRotateEnabled');
+    let clawEnabled = localStorage.getItem('clawEnabled');
+    //
     commandStr = {
-      base:{
-        enabled: localStorage.getItem('baseEnabled'),
-        angle: $("#DOF6ArmControl #DOF6ArmControlForm #BaseContainer #base").val() 
+      base: {
+        enabled: baseEnabled,
+        angle: $("#DOF6ArmControl #DOF6ArmControlForm #BaseContainer #base").val()
+      },
+      baseTilt: {
+        enabled: baseTiltEnabled,
+        angle: $("#DOF6ArmControl #DOF6ArmControlForm #BaseTiltContainer #baseTilt").val()
+      },
+      elbow: {
+        enabled: elbowEnabled,
+        angle: $("#DOF6ArmControl #DOF6ArmControlForm #ElbowContainer #elbow").val()
+      },
+      wristElavate: {
+        enabled: elevateWristEnabled,
+        angle: $("#DOF6ArmControl #DOF6ArmControlForm #WristElevateContainer #wristElavate").val()
+      },
+      wristRotate: {
+        enabled: wristRotateEnabled,
+        angle: $("#DOF6ArmControl #DOF6ArmControlForm #WristRotateContainer #wristRotate").val()
+      },
+      claw: {
+        enabled: clawEnabled,
+        angle: $("#DOF6ArmControl #DOF6ArmControlForm #ClawContainer #claw").val()
       }
 
     }
