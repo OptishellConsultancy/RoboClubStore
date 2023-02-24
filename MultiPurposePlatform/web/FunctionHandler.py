@@ -89,6 +89,7 @@ class FunctionHandler():
 
     def HandleUltraSonic(self, resultsConcat):
         self.LastCachedResultsRaw = resultsConcat
+        print("HandleUltraSonic -> " +  str(resultsConcat))
         self.UltraSonicDistance = resultsConcat[1].replace("\n", "")
         self.UltraSonicTemp = resultsConcat[2].replace("\n", "")
 

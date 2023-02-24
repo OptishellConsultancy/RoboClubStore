@@ -22,14 +22,9 @@ $(document).ready(function () {
 });
 
 function hndlToggle(chkBox, togChkId, cacheVarName) {
-  console.log("hndlToggle()");
-  localStorage.setItem(cacheVarName) = chkBox.checked;
-  elementFromId = $(togChkId);
-  if (localStorage.getItem(cacheVarName) === true) {
-    elementFromId.style.display = "block";
-  } else {
-    elementFromId.style.display = "none";
-  }
+  console.log("hndlToggle -> chkBox.checked: " + chkBox.checked);
+  elementFromId = document.getElementById(togChkId);
+  elementFromId.style.display = (chkBox.checked === true)? "block" : "none";
 }
 
 

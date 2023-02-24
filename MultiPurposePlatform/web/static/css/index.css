@@ -17,6 +17,21 @@ body {
   background-position: 14px;
 }
 
+
+.grid-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content:space-between;
+  background-color: #050a0e;
+  padding: 3px;
+  grid-gap: 1px;
+  column-gap: 1px;
+}
+
+.grid-container > div {
+  outline: 2px #fcee09 solid;
+}
+
 .mainToggles {
   display: flex;
   flex-direction: row;
@@ -68,6 +83,7 @@ body {
   display: block;
 }
 #doPanTilt #doPanTiltForm {
+  display: inline-block;
     background-color: aliceblue;
 }
 #doPanTilt #doPanTiltForm #fname {
@@ -83,6 +99,7 @@ body {
 }
 
 #textToSpeech #textToSpeechForm {
+  display: inline-block;
   background-color: aliceblue;
 }
 
@@ -103,6 +120,7 @@ body {
   display: block;
 }
 #oLEDDisplayTxt #oledDisplayTextForm {
+  display: inline-block;
   background-color: aliceblue;
 }
 
@@ -124,6 +142,7 @@ body {
   display: block;
 }
 #ultraSonicReading #ultraSonicReadingForm {
+  display: inline-block;
   background-color: aliceblue;
   width: 100%;
   align-content: left;
@@ -148,8 +167,8 @@ body {
   display: block;
 }
 #accMagReading #accMagReadingForm {
+  display: inline-block;
   background-color: aliceblue;
-  width: 100%;
   align-content: left;
 }
 
@@ -177,8 +196,8 @@ body {
 }
 
 #FourWDControl #FourWDControlForm {
+  display: inline-block;
   background-color: aliceblue;
-  width: 100%;
   align-content: left;
 }
 
@@ -190,6 +209,7 @@ body {
 }
 
 #DOF6ArmControl #DOF6ArmControlForm {
+  display: inline-block;
   background-color: aliceblue;
   width: 100%;
   align-content: left;
@@ -230,12 +250,4 @@ body {
   display: grid;
   width: 500px;
   grid-gap: 5px;
-}
-
-.controls .executeFunctions {
-  padding-left: 160px;
-}
-
-.controls .btnForm {
-  padding: 5px;
 }
