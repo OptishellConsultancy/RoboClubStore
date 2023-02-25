@@ -34,10 +34,9 @@ class FunctionHandler():
         try:
             value = self.arduino.readline().decode("windows-1252")
             if(len(value) > 0):
-                print(value)
                 results.append(value)
                 if(len(results) > 0):
-                    self.Read_PrintIfValueUntilNoData(results)
+                    self.Read_PrintIfValueUntilNoData(results)            
             return results
         except:
             return ''
@@ -58,6 +57,7 @@ class FunctionHandler():
                 if('FIX NOT ACQUIRED' in resultsConcat[i]):
                     validData = False
 
+        print("HandllingGPS from: " + "-----" + str(resultsConcat) + "-----")
         if(validData == True):
             self.GPSTime = resultsConcat[1].replace("\n", "")
             self.GPSDate = resultsConcat[2].replace("\n", "")
@@ -77,7 +77,7 @@ class FunctionHandler():
             print("GPSAltAndSats:" + self.GPSAltAndSats)
             print("GPSHasFixLiveData:" + self.GPSHasFixLiveData)
         else:
-            print("Invalid GPS data detected")
+            print("Invalid GPS data detected from: " + "-----" + str(resultsConcat) + "-----")
             self.GPSTime = ''
             self.GPSDate = ''
             self.GPSLatNorth = ''
@@ -151,19 +151,22 @@ class FunctionHandler():
             print("fullcmd: " + fullcmd)
 
             self.write(fullcmd)
-            results = self.Read_PrintIfValueUntilNoData()
+            resp = ''
+            resp = self.Read_PrintIfValueUntilNoData()
+            print("resp:" + str(resp));
+            
 
-            for i in range(len(results)):
-                if "<UltraSonic.Start:" in results[i]:
-                    self.HandleUltraSonic(results[i:])
+            for i in range(len(resp)):
+                if "<UltraSonic.Start:" in resp[i]:
+                    self.HandleUltraSonic(resp[i:])
                     return 
 
-            for i in range(len(results)):
-                if "<AccMag.Start:" in results[i]:
-                    self.HandleAccMag(results[i:])
+            for i in range(len(resp)):
+                if "<AccMag.Start:" in resp[i]:
+                    self.HandleAccMag(resp[i:])
                     return        
 
-            for i in range(len(results)):
-                if "<GPSDATETIME.Start:" in results[i]:
-                    self.HandleGPS(results[i:])
+            for i in range(len(resp)):
+                if "<GPSDATETIME.Start:" in resp[i]:
+                    self.HandleGPS(resp[i:])
                     return 

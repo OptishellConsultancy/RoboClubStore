@@ -125,16 +125,8 @@ void GPSReadAndResultCache()
       // so be very wary if using OUTPUT_ALLDATA and trying to print out data
       //Serial.print("lastNMEA:");
       char *nmeaSentence = GPS.lastNMEA();
-      //Serial.println(nmeaSentence); // this also sets the newNMEAreceived() flag to false
-      if (!GPS.parse(nmeaSentence)) // this also sets the newNMEAreceived() flag to false
-      {
-        GPSHasData = false;
-        return; // we can fail to parse a sentence in which case we should just wait for another
-      }
-      else
-      {
-        GPSHasData = true;
-      }
+      //Serial.println(nmeaSentence); 
+      GPSHasData = GPS.parse(nmeaSentence); // this also sets the newNMEAreceived() flag to false
     }
     if (GPS.fix || GPSHasData)
     {
@@ -149,10 +141,8 @@ void GPSReadAndResultCache()
 
 void ProcessGPSData()
 {
-  return;
   if (GPSHasData)
   {
-
     Serial.print("<GPSDATETIME.Start: \n");
     Serial.println(GPSData_DateTime);
     Serial.print("<GPSDATETIME.End> \n");
