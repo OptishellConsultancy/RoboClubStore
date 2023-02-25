@@ -323,7 +323,7 @@ bool PassOLEDTxt(String str)
 void ParseGPSCommand(String str)
 {
   GPSSampleCount = 1;
-    
+
   int optisStart = str.indexOf("{");
   int optisEnd = str.indexOf("}");
   if (optisStart > 0 && optisEnd > 0)
@@ -342,6 +342,7 @@ void ParseAccMagCommand(String str)
   if (start > 0 && end > 0)
   {
     AccMagSampleCount = str.substring(start + 1, end).toInt();
+    AccMagSampleCount == 0 ? 1 : AccMagSampleCount;
   }
   else
   {
@@ -355,6 +356,9 @@ void ParseAccMagCommand(String str)
   {
     AccMagPrintOLED = str.substring(start + 1, end) == 'OLEDPRNT';
   }
+
+  Serial.println("AccMagSampleCount:");
+  Serial.println(String(AccMagSampleCount));
 }
 
 void ParseUltSoncCommand(String str)
@@ -364,6 +368,7 @@ void ParseUltSoncCommand(String str)
   if (start > 0 && end > 0)
   {
     UltraSoncSampleCount = str.substring(start + 1, end).toInt();
+    UltraSoncSampleCount == 0 ? 1 : UltraSoncSampleCount;
   }
   else
   {
@@ -378,7 +383,8 @@ void ParseUltSoncCommand(String str)
     UltraSoncSampleCount = str.substring(start + 1, end) == 'OLEDPRNT';
   }
 
-  Serial.println("UltraSoncSampleCount:" + UltraSoncSampleCount);
+  Serial.println("UltraSoncSampleCount:");
+  Serial.println(String(UltraSoncSampleCount));
 }
 
 void SetupGPS()
@@ -404,8 +410,7 @@ void SetupGPS()
     delay(1000);
 
     // Ask for firmware version
-    GPS.println(PMTK_Q_RELEASE);    
-
+    GPS.println(PMTK_Q_RELEASE);
 
     GPSSetupRequired = false;
   }

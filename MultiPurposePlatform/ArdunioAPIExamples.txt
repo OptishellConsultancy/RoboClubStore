@@ -74,6 +74,7 @@ Get Accell Mag
 <Out>AccMag[10]{OLEDPRNT}//Print to terminal + oled screen
 <Out>AccMag[10]{OLEDPRNT}//Print to terminal 
 <Out>AccMag //Terminal only, one sample
+<Out>AccMag[]
 
 --------------------------------------------------
 Ultrasonic Range finder

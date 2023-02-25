@@ -17,19 +17,39 @@ body {
   background-position: 14px;
 }
 
+.gridsContainer {
+  display: flex;
+  align-items: center;
+}
 
-.grid-container {
+.grid1-container {
+  flex-direction: row;
   display: flex;
   flex-wrap: wrap;
-  justify-content:space-between;
-  background-color: #050a0e;
+  justify-content: space-between;
   padding: 3px;
   grid-gap: 1px;
   column-gap: 1px;
 }
 
-.grid-container > div {
+.grid1-container>div {
   outline: 2px #fcee09 solid;
+  color: chartreuse;
+}
+
+.grid2-container {
+  flex-direction: row;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  padding: 3px;
+  grid-gap: 1px;
+  column-gap: 1px;
+}
+
+.grid2-container>div {
+  outline: 2px #fcee09 solid;
+  color: chartreuse;
 }
 
 .mainToggles {
@@ -37,7 +57,7 @@ body {
   flex-direction: row;
 }
 
-#subTaskToggles{
+#subTaskToggles {
   display: flex;
   flex-direction: row;
 }
@@ -82,12 +102,15 @@ body {
   width: 300px;
   display: block;
 }
+
 #doPanTilt #doPanTiltForm {
   display: inline-block;
-    background-color: aliceblue;
+  display: inline-block;
+
 }
+
 #doPanTilt #doPanTiltForm #fname {
-      color: #ff003c;
+  color: #ff003c;
 }
 
 /* textToSpeech */
@@ -100,14 +123,14 @@ body {
 
 #textToSpeech #textToSpeechForm {
   display: inline-block;
-  background-color: aliceblue;
+
 }
 
 #textToSpeech #textToSpeechForm #fname {
   color: #ff003c;
 }
 
-#textToSpeech #textToSpeechForm #ftextField{
+#textToSpeech #textToSpeechForm #ftextField {
   width: 100%;
   align-content: left;
 }
@@ -119,16 +142,17 @@ body {
   width: 300px;
   display: block;
 }
+
 #oLEDDisplayTxt #oledDisplayTextForm {
   display: inline-block;
-  background-color: aliceblue;
+
 }
 
 #oLEDDisplayTxt #oledDisplayTextForm #fname {
   color: #ff003c;
 }
 
-#oLEDDisplayTxt #oledDisplayTextForm #ftextField{
+#oLEDDisplayTxt #oledDisplayTextForm #ftextField {
   width: 100%;
   align-content: left;
 }
@@ -141,22 +165,22 @@ body {
   width: 300px;
   display: block;
 }
+
 #ultraSonicReading #ultraSonicReadingForm {
   display: inline-block;
-  background-color: aliceblue;
   width: 100%;
   align-content: left;
 }
 
 
-#ultraSonicReading #ultraSonicReadingForm #ftextDistance{
+#ultraSonicReading #ultraSonicReadingForm #ftextDistance {
   resize: none;
-  overflow:hidden
+  overflow: hidden
 }
 
-#ultraSonicReading #ultraSonicReadingForm #ftextTemp{
+#ultraSonicReading #ultraSonicReadingForm #ftextTemp {
   resize: none;
-  overflow:hidden
+  overflow: hidden
 }
 
 /* AccMag */
@@ -166,54 +190,60 @@ body {
   width: 300px;
   display: block;
 }
+
 #accMagReading #accMagReadingForm {
   display: inline-block;
-  background-color: aliceblue;
+
   align-content: left;
 }
 
-#accMagReading #accMagReadingForm #ftextAccel{
+#accMagReading #accMagReadingForm #ftextAccel {
   resize: none;
-  overflow:hidden
+  overflow: hidden
 }
 
-#accMagReading #accMagReadingForm #ftextMag{
+#accMagReading #accMagReadingForm #ftextMag {
   resize: none;
-  overflow:hidden
+  overflow: hidden
 }
 
-#accMagReading #accMagReadingForm #ftextHeading{
+#accMagReading #accMagReadingForm #ftextHeading {
   resize: none;
-  overflow:hidden
+  overflow: hidden
 }
 
 /* FourWDControl */
 
 #FourWDControl {
   padding-top: 10px;
-  width: 450px;
+  width: 500px;
   display: block;
 }
 
 #FourWDControl #FourWDControlForm {
   display: inline-block;
-  background-color: aliceblue;
+
   align-content: left;
 }
 
 /* DOF6ArmControl */
 #DOF6ArmControl {
   padding-top: 10px;
-  width: 500px;
+  width: 520px;
   display: block;
 }
 
 #DOF6ArmControl #DOF6ArmControlForm {
   display: inline-block;
-  background-color: aliceblue;
+
   width: 100%;
   align-content: left;
 }
+
+#DOF6ArmControl #DOF6ArmControlForm #presets {
+  display: inline-block;
+}
+
 
 
 /* spotifyInfo */
@@ -230,12 +260,12 @@ body {
   display: none;
 }
 
-#spotifyInfo #imgSelectDeviceHelp{ 
-  border-color: greenyellow;  
+#spotifyInfo #imgSelectDeviceHelp {
+  border-color: greenyellow;
   border-radius: 3px;
   border-style: solid;
   left: 50px;
-  position : absolute;
+  position: absolute;
 }
 
 /* controls  */
@@ -244,7 +274,7 @@ body {
 }
 
 .controls .functionsContainer {
-  background-color: aliceblue;
+
   grid-template-areas: "b1 b2 b3"
     "b4 b5 b5";
   display: grid;

@@ -99,6 +99,9 @@ class FunctionHandler():
         self.AccMagAccRaw = resultsConcat[1].replace("\n", "")
         self.AccMagMagRaw = resultsConcat[2].replace("\n", "")
         self.AccMagHeading = resultsConcat[3].replace("\n", "")
+        print(self.AccMagAccRaw)
+        print(self.AccMagMagRaw)
+        print(self.AccMagHeading)
 
     def PanOrTilt(self, panAngle, tiltAngle):
         panAngle = float(panAngle)

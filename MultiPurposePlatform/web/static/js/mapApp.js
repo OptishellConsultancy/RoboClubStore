@@ -31,7 +31,7 @@ var controlSearch = new L.Control.Search({
 });
 
 DoMapUpdate(); //Initial call so we don't have to wait 5 seconds, then timer:
-var DoMapUpdateTimer = self.setInterval(DoMapUpdate, 10000);
+var DoMapUpdateTimer = self.setInterval(DoMapUpdate, 30000);
 //window.clearInterval(DoMapUpdateTimer) //To clear if needed later ..
 
 function DoMapUpdate() {
@@ -92,18 +92,6 @@ function DoMapUpdate() {
                     });
                     map.addControl(controlSearch);
                     map.addLayer(markersClusters);
-                    //mini map
-                    // lc = L.control.locate({
-                    //     position: 'topright',
-                    //     strings: {
-                    //         title: "Show me where I am, yo!",
-                    //         popup: "i am here"
-                    //     },
-                    //     drawCircle: true,
-                    //     showPopup: true
-                    // }).addTo(map);
-
-                    // zoom position
                     L.control.zoom({ position: 'topright' }).addTo(map);
                 }
             }

@@ -103,18 +103,19 @@ void loop()
     {
       ProcessGPSData();
       GPSSampleCount--;
-      DoGPS = !(GPSSampleCount == 0);
+      DoGPS = !(GPSSampleCount <= 0);
     }
     if (DoAccMag)
     {
+      DoAccMag = false; //Test override
       AccMagSampleCount--;
-      DoAccMag = !(AccMagSampleCount == 0);
+      DoAccMag = !(AccMagSampleCount <= 0);
       PrintDoAccMag();
     }
     if (DoUltraSnc)
     {
       UltraSoncSampleCount--;
-      DoUltraSnc = !(UltraSoncSampleCount == 0);
+      DoUltraSnc = !(UltraSoncSampleCount <= 0);
       PrintDoUltSonc();
     }
 
