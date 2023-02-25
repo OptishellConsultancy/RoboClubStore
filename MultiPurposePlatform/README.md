@@ -26,7 +26,7 @@ sudo python3 /home/pi/Desktop/RoboClubStore/MultiPurposePlatform/web/runServer.p
 bash ./home/pi/Desktop/RPi_Cam_Web_Interface/start.sh &
 
 
-To kill server manually run, from web folder:
+To kill server manually run, from root folder:
 sudo bash ./MultiPurposePlatform/web/killWebServer.sh 2223
 
 for low level API
@@ -39,3 +39,11 @@ bash ./MultiPurposePlatform/compileAndUpload.sh
 To run server manually:
 sudo python3 MultiPurposePlatform/web/runServer.py
 
+
+
+
+Port forwarding:
+to check currently exposed ports:
+
+netstat -tnlp
+To open a port, e.g 445: sudo ufw allow 445

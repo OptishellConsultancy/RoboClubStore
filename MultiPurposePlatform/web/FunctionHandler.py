@@ -24,26 +24,31 @@ class FunctionHandler():
 
     def __init__(self):
         print("HandlePySerialArdunioIF.pyWebRequest Invoke..")
-        self.arduino = serial.Serial(
+        self.ardSerial = serial.Serial(
             port='/dev/ttyACM0', baudrate=9600, timeout=.5)
 
     def write(self, x):
-        self.arduino.write(bytes(x, 'utf-8'))
+        self.ardSerial.write(bytes(x, 'utf-8'))
 
-    def Read_PrintIfValueUntilNoData(self, results=[]):
+    def Read_PrintIfValueUntilNoData(self, results=[], rlvlDebug = 0):
+        if rlvlDebug == 0:
+            results=[]
+            self.ardSerial.flush()
+            self.ardSerial.reset_output_buffer()
+            self.ardSerial.read_all()
         try:
-            value = self.arduino.readline().decode("windows-1252")
+            value = self.ardSerial.readline().decode("windows-1252")
             if(len(value) > 0):
                 results.append(value)
                 if(len(results) > 0):
-                    self.Read_PrintIfValueUntilNoData(results)            
-            return results
+                    self.Read_PrintIfValueUntilNoData(results, rlvlDebug +1)                        
+                return results
         except:
-            return ''
+            return []
 
 
     def InvokeSerialComm(self):
-        self.arduino = serial.Serial(
+        self.ardSerial = serial.Serial(
             port='/dev/ttyACM0', baudrate=9600, timeout=.5)
         while True:
             self.Read_PrintIfValueUntilNoData()
@@ -57,7 +62,7 @@ class FunctionHandler():
                 if('FIX NOT ACQUIRED' in resultsConcat[i]):
                     validData = False
 
-        print("HandllingGPS from: " + "-----" + str(resultsConcat) + "-----")
+        # print("HandllingGPS from: " + "-----" + str(resultsConcat) + "-----")
         if(validData == True):
             self.GPSTime = resultsConcat[1].replace("\n", "")
             self.GPSDate = resultsConcat[2].replace("\n", "")
@@ -68,7 +73,7 @@ class FunctionHandler():
             validData = 'Sats' in  self.GPSAltAndSats # Additional validation
             self.GPSHasFixLiveData = resultsConcat[10].replace("\n", "")
 
-            print("All GPSresultsConcat:" + str(resultsConcat))
+            # print("All GPSresultsConcat:" + str(resultsConcat)) DEBUG
             print("GPSTime:" + self.GPSTime)
             print("GPSDate:" + self.GPSDate)
             print("GPSLatNorth:" + self.GPSLatNorth)
@@ -153,8 +158,6 @@ class FunctionHandler():
             self.write(fullcmd)
             resp = ''
             resp = self.Read_PrintIfValueUntilNoData()
-            print("resp:" + str(resp));
-            
 
             for i in range(len(resp)):
                 if "<UltraSonic.Start:" in resp[i]:
