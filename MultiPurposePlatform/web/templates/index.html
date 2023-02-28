@@ -189,6 +189,8 @@
             <!--Four wheeled drive control-->
             <div id="FourWDControl">
                 <form id="FourWDControlForm" <label id="fname">Four wheel drive control</label><br>
+                    <li>XXA: Accelerate</li>
+                    <li>XXB: Back</li>
                     <div id="FRAorFRB">
                         <input id="FRAToggle" type="checkbox" onclick="toggleFRA()">FRA</input>
                         <input id="FRBToggle" type="checkbox" onclick="toggleFRB()">FRB</input>
@@ -219,12 +221,12 @@
                         <input id="PresetRotRight" type="button" onclick="RotRight()"> RotateRight</input>
                     </div>
                     <div id="duratationContainer">
-                        <input type="range" step="1.0" min="100" max="10000" name="duration" value="500"
+                        <input type="range" step="1.0" min="100" max="10000" name="duration" id="duration" value="500"
                             onChange="onValueRangeChange(this.value,'#FourWDControl #FourWDControlForm #duratationContainer #durationLabel', 'Duration (', ')ms')">
                         <label id="durationLabel" for="duration">Duration(500)ms</label>
                     </div>
                     <div id="speedContainer">
-                        <input type="range" step="1.0" min="1" max="255" name="duration" value="100"
+                        <input type="range" step="1.0" min="1" max="255" name="speed" id="speed"  value="100"
                             onChange="onValueRangeChange(this.value,'#FourWDControl #FourWDControlForm #speedContainer #speedLabel', 'Speed (', ')')">
                         <label id="speedLabel" for="speed">Speed(100)</label>
                     </div>

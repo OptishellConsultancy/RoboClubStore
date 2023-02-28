@@ -255,6 +255,7 @@ def DoAccMagRequest():
 def DoWheeledDriveRequest():
     if request.method == 'POST':
         data = request.get_json()
+        print("data:" + str(data))
         speed = data['speed']
         duration = data['duration']
         motors = data['motors']
@@ -262,10 +263,19 @@ def DoWheeledDriveRequest():
         print("4WD.duration:" + str(duration))
         print("4WD.motors:" + str(motors))
 
-        #TODO
-        # Make command structure e.g.
-        #  <In>4WD[100]FRA{1000}Y
+        if len(motors) > 0:
+            constructedCmd = '<In>4WD'
+            for mc in motors:
+                constructedCmd += mc
         
+            constructedCmd += '['+speed+']'+'{'+duration+'}Y'
+
+            print('constructedCmd: ' + constructedCmd)
+            fhnd.DoFunctionNow(constructedCmd)
+            return constructedCmd
+        else:
+            return 'No motors selected'        
+
     return ''
 
 #DOF Control

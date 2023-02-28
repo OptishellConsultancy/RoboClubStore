@@ -64,14 +64,17 @@ class FunctionHandler():
 
         # print("HandllingGPS from: " + "-----" + str(resultsConcat) + "-----")
         if(validData == True):
-            self.GPSTime = resultsConcat[1].replace("\n", "")
-            self.GPSDate = resultsConcat[2].replace("\n", "")
-            self.GPSLatNorth = resultsConcat[6].replace('N', '').replace("\n", "")
-            self.GPSLonEast = resultsConcat[7].replace('E', '').replace("\n", "")
-            self.GPSSpeed = resultsConcat[8].replace("\n", "")
-            self.GPSAltAndSats = resultsConcat[9].replace("\n", "")
-            validData = 'Sats' in  self.GPSAltAndSats # Additional validation
-            self.GPSHasFixLiveData = resultsConcat[10].replace("\n", "")
+            try:
+                self.GPSTime = resultsConcat[1].replace("\n", "")
+                self.GPSDate = resultsConcat[2].replace("\n", "")
+                self.GPSLatNorth = resultsConcat[6].replace('N', '').replace("\n", "")
+                self.GPSLonEast = resultsConcat[7].replace('E', '').replace("\n", "")
+                self.GPSSpeed = resultsConcat[8].replace("\n", "")
+                self.GPSAltAndSats = resultsConcat[9].replace("\n", "")
+                validData = 'Sats' in  self.GPSAltAndSats # Additional validation
+                self.GPSHasFixLiveData = resultsConcat[10].replace("\n", "")
+            except:
+                print('error parsing gps data')
 
             # print("All GPSresultsConcat:" + str(resultsConcat)) DEBUG
             print("GPSTime:" + self.GPSTime)

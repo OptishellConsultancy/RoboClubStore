@@ -24,7 +24,7 @@ $(document).ready(function () {
 function hndlToggle(chkBox, togChkId, cacheVarName) {
   console.log("hndlToggle -> chkBox.checked: " + chkBox.checked);
   elementFromId = document.getElementById(togChkId);
-  elementFromId.style.display = (chkBox.checked === true)? "block" : "none";
+  elementFromId.style.display = (chkBox.checked === true) ? "block" : "none";
 }
 
 
@@ -315,22 +315,68 @@ function RotRight() {
   $("#FourWDControl #FourWDControlForm #BLAorBLB #BLBToggle").prop("checked", true);
 };
 
-//TODO Override this data
-var cmdStr = {
-  speed: 0,
-  duration: 0,
-  motors: ['1', '2']
-}
+
+
 
 $(document).ready(function () {
   $("#FourWDControl #FourWDControlForm").submit(function (e) {
     e.preventDefault(); // avoid page refresh
 
+
+    //
+
+    var fRBToggle = $("#FourWDControl #FourWDControlForm #FRAorFRB #FRBToggle").prop("checked");
+    var fRAToggle = $("#FourWDControl #FourWDControlForm #FRAorFRB #FRAToggle").prop("checked");
+    var fLBToggle = $("#FourWDControl #FourWDControlForm #FLAorFLB #FLBToggle").prop("checked");
+    var fLAToggle = $("#FourWDControl #FourWDControlForm #FLAorFLB #FLAToggle").prop("checked");
+    var bRBToggle = $("#FourWDControl #FourWDControlForm #BRAorBRB #BRBToggle").prop("checked");
+    var bRAToggle = $("#FourWDControl #FourWDControlForm #BRAorBRB #BRAToggle").prop("checked");
+    var bLBToggle = $("#FourWDControl #FourWDControlForm #BLAorBLB #BLBToggle").prop("checked");
+    var bLAToggle = $("#FourWDControl #FourWDControlForm #BLAorBLB #BLAToggle").prop("checked");
+    //
+    var motorArr = [];
+    if ($("#FourWDControl #FourWDControlForm #FRAorFRB #FRBToggle").prop("checked") === true) {
+
+      motorArr.push('FRB')
+    }
+    if ($("#FourWDControl #FourWDControlForm #FRAorFRB #FRAToggle").prop("checked") === true) {
+      motorArr.push('FRA')
+    }
+    if ($("#FourWDControl #FourWDControlForm #FLAorFLB #FLBToggle").prop("checked") === true) {
+      motorArr.push('FLB')
+    }
+    if ($("#FourWDControl #FourWDControlForm #FLAorFLB #FLAToggle").prop("checked") === true) {
+      motorArr.push('FLA')
+    }
+    if ($("#FourWDControl #FourWDControlForm #BRAorBRB #BRBToggle").prop("checked") === true) {
+      motorArr.push('BRB')
+    }
+    if ($("#FourWDControl #FourWDControlForm #BRAorBRB #BRAToggle").prop("checked") === true) {
+      motorArr.push('BRA')
+    }
+    if ($("#FourWDControl #FourWDControlForm #BLAorBLB #BLBToggle").prop("checked") === true) {
+      motorArr.push('BLB')
+    }
+    if ($("#FourWDControl #FourWDControlForm #BLAorBLB #BLAToggle").prop("checked") === true) {
+      motorArr.push('FRB')
+    }
+
+    var cmdStr = {
+      duration: $("#FourWDControl #FourWDControlForm #duratationContainer #duration").val(),
+      speed: $("#FourWDControl #FourWDControlForm #speedContainer #speed").val(),
+      motors: motorArr
+    }
+    var payload = JSON.stringify(cmdStr);
+
+
     $.ajax({
       type: "POST",
       url: '/FourWheeledDriveRequest',
       contentType: "application/json; charset=utf-8",
-      data: JSON.stringify(cmdStr)
+      data: payload,
+      success: function (respBuiltCommand) {
+        console.log("Processed 4WD Command: " + respBuiltCommand)
+      }
     });
 
   });
