@@ -374,7 +374,7 @@ def do6DOFARMCmd():
                 cnstrctdCmd += '<In>6Axis[C.'+str(claw['angle'])+'].'
 
             print('constructedCmd: ' + cnstrctdCmd)
-            # fhnd.DoFunctionNow(cnstrctdCmd)
+            fhnd.DoFunctionNow(cnstrctdCmd)
             return cnstrctdCmd
         else:
             return 'No motors selected'
