@@ -1,3 +1,6 @@
+
+#!/usr/bin/env python3
+
 from flask import Flask, render_template, make_response, redirect, Response, request
 import numpy
 # import numpy.core.multiarray
@@ -16,8 +19,16 @@ import os  # imports OS library for Shutdown control
 from flask.sessions import SecureCookieSessionInterface
 import json
 from datetime import datetime
-
 from mapEntity import MapEntity
+import pyaudio
+import wave
+
+if sys.version_info[0] < 3:
+    raise Exception("Python 3 or a more recent version is required.")
+
+fhnd = FunctionHandler()
+app = Flask(__name__)
+# vc = cv2.VideoCapture(0)
 
 doGPSOLEDPrint = False
 doUltraSonicOLEDPrint = False
@@ -26,12 +37,49 @@ doAccMagOLEDPrint = False
 currentPan = 0
 currentTilt = 0
 
-if sys.version_info[0] < 3:
-    raise Exception("Python 3 or a more recent version is required.")
+lastRecording = 0
 
-fhnd = FunctionHandler()
-app = Flask(__name__)
-# vc = cv2.VideoCapture(0)
+# TODO  test this, make saveto file optional, and all memory playback or send via ajax request to web host
+
+
+def doRecord(duration=10.0, sampleRate=44100):
+    form_1 = pyaudio.paInt16  # 16-bit resolution
+    chans = 1  # 1 channel
+    samp_rate = 44100  # 44.1kHz sampling rate
+    chunk = 4096  # 2^12 samples for buffer
+    record_secs = 3  # seconds to record
+    dev_index = 2  # device index found by p.get_device_info_by_index(ii)
+    wav_output_filename = 'test1.wav'  # name of .wav file
+
+    audio = pyaudio.PyAudio()  # create pyaudio instantiation
+
+    # create pyaudio stream
+    stream = audio.open(format=form_1, rate=samp_rate, channels=chans,
+                        input_device_index=dev_index, input=True,
+                        frames_per_buffer=chunk)
+    print("recording")
+    frames = []
+
+    # loop through stream and append audio chunks to frame array
+    for ii in range(0, int((samp_rate/chunk)*record_secs)):
+        data = stream.read(chunk)
+        frames.append(data)
+
+    print("finished recording")
+
+    # stop the stream, close it, and terminate the pyaudio instantiation
+    stream.stop_stream()
+    stream.close()
+    audio.terminate()
+
+    # save the audio frames as .wav file
+    wavefile = wave.open(wav_output_filename, 'wb')
+    wavefile.setnchannels(chans)
+    wavefile.setsampwidth(audio.get_sample_size(form_1))
+    wavefile.setframerate(samp_rate)
+    wavefile.writeframes(b''.join(frames))
+    wavefile.close()
+
 
 def shellESpeak(text):
     os.popen('espeak "' + text + '" --stdout | aplay 2> /dev/null').read()
@@ -55,7 +103,8 @@ def add_header(r):
     r.headers["Expires"] = "0"
     r.headers['Cache-Control'] = 'public, max-age=0'
     return r
-    
+
+
 @app.route("/toggleGPSOLEDDisplay", methods=['POST'])
 def ToggledoGPSOLEDPrint():
     global doGPSOLEDPrint  # Use global scope
@@ -67,6 +116,7 @@ def ToggledoGPSOLEDPrint():
     info_list.append(infoDict)
     return json.dumps(info_list)
 
+
 @app.route("/getGPSOLEDDisplay", methods=['GET'])
 def GetGPSOLEDDisplay():
     global doGPSOLEDPrint  # Use global scope
@@ -77,6 +127,8 @@ def GetGPSOLEDDisplay():
     return json.dumps(info_list)
 
 # See mapApp.js -> DoMapUpdate
+
+
 @app.route("/mapinjectapi", methods=['POST'])
 def MapApi():
     infoDict = {}
@@ -115,7 +167,7 @@ def MapApi():
     return json.dumps(info_list)
 
 
-#PanTilt
+# PanTilt
 @app.route('/doPanTilt', methods=['POST'])
 def doPanTilCamera():
     global currentPan, currentTilt
@@ -138,7 +190,7 @@ def doPanTilCamera():
     return json.dumps(info_list)
 
 
-#doPanTilt
+# doPanTilt
 @app.route('/getCurrentPan', methods=['GET'])
 def getCurrentPan():
     global currentPan
@@ -147,6 +199,7 @@ def getCurrentPan():
     infoDict['CurrentPan'] = currentPan
     info_list.append(infoDict)
     return json.dumps(info_list)
+
 
 @app.route('/getCurrentTilt', methods=['GET'])
 def getCurrentTilt():
@@ -158,8 +211,7 @@ def getCurrentTilt():
     return json.dumps(info_list)
 
 
-
-#textToSpeech
+# textToSpeech
 @app.route('/textToSpeech', methods=['POST'])
 def textToSpeech():
     if request.method == 'POST':
@@ -172,7 +224,9 @@ def textToSpeech():
                 shellESpeak(string)
     return ''
 
-#oLEDDisplayTxt
+# oLEDDisplayTxt
+
+
 @app.route('/writeOLEDText', methods=['POST'])
 def writeOLEDText():
     if request.method == 'POST':
@@ -202,17 +256,19 @@ def writeOLEDText():
     return ''
 
 
-#ultraSonicReading
+# ultraSonicReading
 @app.route("/ultraSonicRequest", methods=['POST'])
 def DoultraSonicRequest():
     sampleCount = '1'
-    fhnd.DoFunctionNow("<Out>UltSonc", [sampleCount], (['OLEDPRNT'] if doUltraSonicOLEDPrint == True else []), 'ARD')
+    fhnd.DoFunctionNow("<Out>UltSonc", [sampleCount], ([
+                       'OLEDPRNT'] if doUltraSonicOLEDPrint == True else []), 'ARD')
     infoDict = {}
     info_list = []
     infoDict['UltraSonicDistance'] = fhnd.UltraSonicDistance
     infoDict['UltraSonicTemp'] = fhnd.UltraSonicTemp
     info_list.append(infoDict)
     return json.dumps(info_list)
+
 
 @app.route("/toggleOLEDUltraSonicDisplay", methods=['POST'])
 def ToggledoUltraSonicOLEDPrint():
@@ -225,7 +281,9 @@ def ToggledoUltraSonicOLEDPrint():
     info_list.append(infoDict)
     return json.dumps(info_list)
 
-#AccMagReading
+# AccMagReading
+
+
 @app.route("/toggleOLEDAccMagDisplay", methods=['POST'])
 def ToggleOLEDaccMagDisplay():
     global doAccMagOLEDPrint  # Use global scope
@@ -237,10 +295,12 @@ def ToggleOLEDaccMagDisplay():
     info_list.append(infoDict)
     return json.dumps(info_list)
 
+
 @app.route("/accMagRequest", methods=['POST'])
 def DoAccMagRequest():
     sampleCount = '1'
-    fhnd.DoFunctionNow("<Out>AccMag", [sampleCount], (['OLEDPRNT'] if doAccMagOLEDPrint == True else []), 'ARD')
+    fhnd.DoFunctionNow("<Out>AccMag", [sampleCount], ([
+                       'OLEDPRNT'] if doAccMagOLEDPrint == True else []), 'ARD')
     infoDict = {}
     info_list = []
     infoDict['AccMagAcc'] = fhnd.AccMagAccRaw
@@ -250,12 +310,13 @@ def DoAccMagRequest():
     return json.dumps(info_list)
 
 
-#4WD control
+# 4WD control
 @app.route("/FourWheeledDriveRequest", methods=['POST'])
 def DoWheeledDriveRequest():
     if request.method == 'POST':
         data = request.get_json()
         print("data:" + str(data))
+
         speed = data['speed']
         duration = data['duration']
         motors = data['motors']
@@ -267,20 +328,62 @@ def DoWheeledDriveRequest():
             constructedCmd = '<In>4WD'
             for mc in motors:
                 constructedCmd += mc
-        
+
             constructedCmd += '['+speed+']'+'{'+duration+'}Y'
 
             print('constructedCmd: ' + constructedCmd)
             fhnd.DoFunctionNow(constructedCmd)
             return constructedCmd
         else:
-            return 'No motors selected'        
+            return 'No motors selected'
 
     return ''
 
-#DOF Control
+# DOF Control
 
-#Runtime
+
+@app.route("/do6DOFARMCmd", methods=['POST'])
+def do6DOFARMCmd():
+    if request.method == 'POST':
+        data = request.get_json()
+        # print("data:" + str(data))
+
+        base = (data['base'])
+        baseTilt = (data['baseTilt'])
+        elbow = (data['elbow'])
+        wristElavate = (data['wristElavate'])
+        wristRotate = (data['wristRotate'])
+        claw = (data['claw'])
+
+        print("base keys" + str(base.keys()))
+        print("base values" + str(base.values()))
+
+        if (base['enabled'] or baseTilt['enabled']  or elbow['enabled']  or wristElavate['enabled']  or wristRotate['enabled']  or claw['enabled'] ):
+            cnstrctdCmd = ''
+            if(base['enabled']):
+                cnstrctdCmd += '<In>6Axis[B.'+str(base['angle'])+'].'
+            if(baseTilt['enabled']):
+                cnstrctdCmd += '<In>6Axis[BT.'+str(baseTilt['angle'])+'].'
+            if(elbow['enabled']):
+                cnstrctdCmd += '<In>6Axis[E.'+str(elbow['angle'])+'].'
+            if(wristElavate['enabled']):
+                cnstrctdCmd += '<In>6Axis[WE.'+str(wristElavate['angle'])+'].'
+            if(wristRotate['enabled']):
+                cnstrctdCmd += '<In>6Axis[WR.'+str(wristRotate['angle'])+'].'
+            if(claw['enabled']):
+                cnstrctdCmd += '<In>6Axis[C.'+str(claw['angle'])+'].'
+
+            print('constructedCmd: ' + cnstrctdCmd)
+            # fhnd.DoFunctionNow(cnstrctdCmd)
+            return cnstrctdCmd
+        else:
+            return 'No motors selected'
+
+    return ''
+
+# Runtime
+
+
 def execv(command, path):
     if(len(path) > 0):
         command = '%s%s' % (path, command)

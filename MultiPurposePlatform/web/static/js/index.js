@@ -325,14 +325,6 @@ $(document).ready(function () {
 
     //
 
-    var fRBToggle = $("#FourWDControl #FourWDControlForm #FRAorFRB #FRBToggle").prop("checked");
-    var fRAToggle = $("#FourWDControl #FourWDControlForm #FRAorFRB #FRAToggle").prop("checked");
-    var fLBToggle = $("#FourWDControl #FourWDControlForm #FLAorFLB #FLBToggle").prop("checked");
-    var fLAToggle = $("#FourWDControl #FourWDControlForm #FLAorFLB #FLAToggle").prop("checked");
-    var bRBToggle = $("#FourWDControl #FourWDControlForm #BRAorBRB #BRBToggle").prop("checked");
-    var bRAToggle = $("#FourWDControl #FourWDControlForm #BRAorBRB #BRAToggle").prop("checked");
-    var bLBToggle = $("#FourWDControl #FourWDControlForm #BLAorBLB #BLBToggle").prop("checked");
-    var bLAToggle = $("#FourWDControl #FourWDControlForm #BLAorBLB #BLAToggle").prop("checked");
     //
     var motorArr = [];
     if ($("#FourWDControl #FourWDControlForm #FRAorFRB #FRBToggle").prop("checked") === true) {
@@ -366,6 +358,7 @@ $(document).ready(function () {
       speed: $("#FourWDControl #FourWDControlForm #speedContainer #speed").val(),
       motors: motorArr
     }
+    console.log(cmdStr);
     var payload = JSON.stringify(cmdStr);
 
 
@@ -384,36 +377,6 @@ $(document).ready(function () {
 
 //----------------------------------------------------------------
 //6 Degreees of freedom Arm
-function toggleBase(e) {
-  localStorage.setItem('baseEnabled', e.checked);
-  console.log("toggleBase " + localStorage.getItem('baseEnabled'));
-};
-
-function toggleBaseTilt(e) {
-  localStorage.setItem('baseTiltEnabled', e.checked);
-  console.log("toggleBaseTilt " + localStorage.getItem('baseTiltEnabled'));
-};
-
-function toggleElbow(e) {
-  localStorage.setItem('elbowEnabled', e.checked);
-  console.log("toggleElbow " + localStorage.getItem('elbowEnabled'));
-};
-
-function toggleElevateWrist(e) {
-  localStorage.setItem('elevateWristEnabled', e.checked);
-  console.log("ToggleElevateWrist " + localStorage.getItem('elevateWristEnabled'));
-};
-
-function toggleWristRotate(e) {
-  localStorage.setItem('wristRotateEnabled', e.checked);
-  console.log("wristRotateEnabled " + localStorage.getItem('wristRotateEnabled'));
-};
-
-function toggleClaw(e) {
-  localStorage.setItem('clawEnabled', e.checked);
-  console.log("toggleClaw " + localStorage.getItem('clawEnabled'));
-}
-
 $(document).ready(function () {
 
   $("#DOF6ArmControl #DOF6ArmControlForm #submitBtn").bind('click touchend', function (e) {
@@ -426,41 +389,45 @@ $(document).ready(function () {
     let wristRotateEnabled = localStorage.getItem('wristRotateEnabled');
     let clawEnabled = localStorage.getItem('clawEnabled');
     //
-    commandStr = {
+    cmdStr = {
       base: {
-        enabled: baseEnabled,
+        enabled: $("#DOF6ArmControl #DOF6ArmControlForm #BaseContainer #BaseToggle").prop("checked") === true,
         angle: $("#DOF6ArmControl #DOF6ArmControlForm #BaseContainer #base").val()
       },
       baseTilt: {
-        enabled: baseTiltEnabled,
+        enabled: $("#DOF6ArmControl #DOF6ArmControlForm #BaseTiltContainer #BaseTiltToggle").prop("checked") === true,
         angle: $("#DOF6ArmControl #DOF6ArmControlForm #BaseTiltContainer #baseTilt").val()
       },
       elbow: {
-        enabled: elbowEnabled,
+        enabled: $("#DOF6ArmControl #DOF6ArmControlForm #ElbowContainer #ElbowAngToggle").prop("checked")=== true,
         angle: $("#DOF6ArmControl #DOF6ArmControlForm #ElbowContainer #elbow").val()
       },
       wristElavate: {
-        enabled: elevateWristEnabled,
+        enabled: $("#DOF6ArmControl #DOF6ArmControlForm #WristElevateContainer #WristElavateToggle").prop("checked")=== true,
         angle: $("#DOF6ArmControl #DOF6ArmControlForm #WristElevateContainer #wristElavate").val()
       },
       wristRotate: {
-        enabled: wristRotateEnabled,
+        enabled: $("#DOF6ArmControl #DOF6ArmControlForm #WristRotateContainer #WristRotateToggle").prop("checked")=== true,
         angle: $("#DOF6ArmControl #DOF6ArmControlForm #WristRotateContainer #wristRotate").val()
       },
       claw: {
-        enabled: clawEnabled,
+        enabled: $("#DOF6ArmControl #DOF6ArmControlForm #ClawContainer #clawToggle").prop("checked")=== true,
         angle: $("#DOF6ArmControl #DOF6ArmControlForm #ClawContainer #claw").val()
       }
 
     }
-    console.log(commandStr);
+    console.log(cmdStr);
+    var payload = JSON.stringify(cmdStr);
 
-    // $.ajax({
-    //   type: "POST",
-    //   url: '/do6DOFCmd',
-    //   contentType: "application/json; charset=utf-8",
-    //   data: JSON.stringify(commandStr)
-    // });
+    $.ajax({
+      type: "POST",
+      url: '/do6DOFARMCmd',
+      contentType: "application/json; charset=utf-8",
+      data: payload,
+      success: function (respBuiltCommand) {
+        console.log("Processed 6DOFARM Command: " + respBuiltCommand)
+      }
+    });
 
   });
 });

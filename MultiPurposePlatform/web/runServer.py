@@ -1,3 +1,6 @@
+#!/usr/bin/env python3
+
+
 from serverRuntime import app, subprocess
 
 #Runtime

@@ -47,3 +47,9 @@ to check currently exposed ports:
 
 netstat -tnlp
 To open a port, e.g 445: sudo ufw allow 445
+
+Update requirements.txt with:
+pip3 install pipreqs
+
+cd into MultiPurposePlatform/web
+python3 -m  pipreqs.pipreqs .
