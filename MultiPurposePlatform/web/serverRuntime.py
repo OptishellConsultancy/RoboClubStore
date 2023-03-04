@@ -43,42 +43,79 @@ lastRecording = 0
 
 
 def doRecord(duration=10.0, sampleRate=44100):
-    form_1 = pyaudio.paInt16  # 16-bit resolution
-    chans = 1  # 1 channel
-    samp_rate = 44100  # 44.1kHz sampling rate
-    chunk = 4096  # 2^12 samples for buffer
-    record_secs = 3  # seconds to record
-    dev_index = 2  # device index found by p.get_device_info_by_index(ii)
-    wav_output_filename = 'test1.wav'  # name of .wav file
+    p = pyaudio.PyAudio()
+    foundUSBMic = False
+    dev_index = -1
+    for i in range(p.get_device_count()):
+        dev = p.get_device_info_by_index(i)
+        print((i,dev['name'],dev['maxInputChannels']))
+        if dev['name'] == 'USB PnP Sound Device: Audio (hw:1,0)':
+            foundUSBMic = True
+            dev_index = i
 
-    audio = pyaudio.PyAudio()  # create pyaudio instantiation
+    if foundUSBMic == False or dev_index == -1:
+        print("USB MIC NOT FOUND")
+        shellESpeak("USB MIC NOT FOUND")      
+            
+    if foundUSBMic:
+        form_1 = pyaudio.paInt24  # 16-bit resolution
+        chans = 1  # 1 channel
+        samp_rate = 44100  # 44.1kHz sampling rate
+        chunk = 4096  # 2^12 samples for buffer
+        record_secs = duration  # seconds to record
+        wav_output_filename = 'uscMicRec.wav'  # name of .wav file
 
-    # create pyaudio stream
-    stream = audio.open(format=form_1, rate=samp_rate, channels=chans,
-                        input_device_index=dev_index, input=True,
-                        frames_per_buffer=chunk)
-    print("recording")
-    frames = []
 
-    # loop through stream and append audio chunks to frame array
-    for ii in range(0, int((samp_rate/chunk)*record_secs)):
-        data = stream.read(chunk)
-        frames.append(data)
+        # create pyaudio stream
+        stream = p.open(format=form_1, rate=samp_rate, channels=chans,
+                            input_device_index=dev_index, input=True,
+                            frames_per_buffer=chunk)
+        print("recording")
+        frames = []
 
-    print("finished recording")
+        # loop through stream and append audio chunks to frame array
+        for ii in range(0, int((samp_rate/chunk)*record_secs)):
+            data = stream.read(chunk)
+            frames.append(data) 
 
-    # stop the stream, close it, and terminate the pyaudio instantiation
-    stream.stop_stream()
-    stream.close()
-    audio.terminate()
+        # stop the stream, close it, and terminate the pyaudio instantiation
+        stream.stop_stream()
+        stream.close()
+        p.terminate()
 
-    # save the audio frames as .wav file
-    wavefile = wave.open(wav_output_filename, 'wb')
-    wavefile.setnchannels(chans)
-    wavefile.setsampwidth(audio.get_sample_size(form_1))
-    wavefile.setframerate(samp_rate)
-    wavefile.writeframes(b''.join(frames))
-    wavefile.close()
+        print("finished recording")
+        shellESpeak("Finished recording")  
+
+        # save the audio frames as .wav file
+        wavefile = wave.open(wav_output_filename, 'wb')
+        wavefile.setnchannels(chans)
+        wavefile.setsampwidth(p.get_sample_size(form_1))
+        wavefile.setframerate(samp_rate)
+        wavefile.writeframes(b''.join(frames))
+        wavefile.close()
+
+def doLastRecordingPlayback(wav_input_filename,chunk = 1024):
+    # https://stackoverflow.com/questions/6951046/how-to-play-an-audiofile-with-pyaudio
+    wf = wave.open(wav_input_filename, 'rb')
+    p = pyaudio.PyAudio()
+    stream = p.open(format =
+                p.get_format_from_width(wf.getsampwidth()),
+                channels = wf.getnchannels(),
+                rate = wf.getframerate(),
+                output = True)
+
+    # read data (based on the chunk size)
+    data = wf.readframes(chunk)
+
+    # play stream (looping from beginning of file to the end)
+    while data:
+        # writing to the stream is what *actually* plays the sound.
+        stream.write(data)
+        data = wf.readframes(chunk)
+    # cleanup stuff.
+    wf.close()
+    stream.close()    
+    p.terminate()
 
 
 def shellESpeak(text):
@@ -224,9 +261,24 @@ def textToSpeech():
                 shellESpeak(string)
     return ''
 
+# mic
+@app.route('/startRecording', methods=['POST'])
+def startRecording():
+    if request.method == 'POST':
+        opt = request.form.to_dict()
+        print("opt:" + str(opt))
+        seconds = 0
+        for key in opt: 
+            if key == "recsec":
+                seconds = opt[key].strip()
+        seconds = float(seconds)
+        if seconds > 0:
+            shellESpeak("Recording started")
+            doRecord(float(seconds))
+    return ''
+
+
 # oLEDDisplayTxt
-
-
 @app.route('/writeOLEDText', methods=['POST'])
 def writeOLEDText():
     if request.method == 'POST':

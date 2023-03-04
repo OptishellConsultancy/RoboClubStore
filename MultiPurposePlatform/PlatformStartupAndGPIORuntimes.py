@@ -30,14 +30,10 @@ def StartupConvo():
     # shellESpeak("READ 'APIExamples.txt' for API documentation")
     # time.sleep(0.2)
 
-    thisExternIP = get('https://api.ipify.org').text
-    dnsAddr  = 'http://optishell.duckdns.org:2223/'
-    shellESpeak("Access this IP Address " + dnsAddr + " on Port '2223' for Web interface")
-
     # time.sleep(0.1)
     # shellESpeak("Press Button and hold for shutdown.")
 
-    # shellESpeak("I am now completely operational Dave, and all my circuits are functionin perfectly")
+    shellESpeak("I am now completely operational, and all my circuits are functioning perfectly")
     # time.sleep(0.6)
     # shellESpeak("Just Kidding")
 

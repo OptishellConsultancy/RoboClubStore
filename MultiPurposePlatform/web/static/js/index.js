@@ -149,6 +149,23 @@ $(document).ready(function () {
 });
 
 //----------------------------------------------------------------
+//textToSpeech----------------------------------------------------------------
+$(document).ready(function () {
+  $("#micRecAndPlayback #micRecForm").submit(function (e) {
+    e.preventDefault(); // avoid page refresh
+
+    $.ajax({
+      type: "POST",
+      url: '/startRecording',
+      data: $(this).serialize()
+    });
+
+  });
+});
+//----------------------------------------------------------------
+
+
+
 //oLEDDisplayTxt----------------------------------------------------------------
 $(document).ready(function () {
   $("#oLEDDisplayTxt #oledDisplayTextForm").submit(function (e) {

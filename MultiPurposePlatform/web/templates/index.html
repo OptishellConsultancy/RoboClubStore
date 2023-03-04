@@ -41,7 +41,7 @@
         </span>
         <span class="toggle">
             <label class="label">GPS</label>
-            <input checked="gpsToggled" type="checkbox" class="collapsible" 
+            <input checked="gpsToggled" type="checkbox" class="collapsible"
                 onclick='hndlToggle(this,"map","gpsToggled")'></input>
         </span>
         <span class="toggle">
@@ -118,9 +118,20 @@
             <div id="textToSpeech">
                 <form id="textToSpeechForm">
                     <label id="fname">Text input for speech:</label><br>
-                    <textarea id="ftextField" name="string" rows="1"
-                        oninput="auto_height(this)">Hello, I'm SAMUEL, You talk'n to me?</textarea>
+                    <textarea id="ftextField" name="string" rows="1" oninput="auto_height(this)"
+                        placeholder="Hello, I'm SAMUEL, You talk'n to me?"></textarea>
                     <button id="submitBtn" type="submit">Submit</button>
+                </form>
+            </div>
+
+            <!--micRecAndPlayback-->
+            <div id="micRecAndPlayback">
+                <form id="micRecForm" <label id="fname">Mic recording</label><br>
+
+                    <input type="Number" min="0" max="600" value="20" name="recsec" id="recsec">
+                    <label id="recsecLabel" for="recsec">RecordDuration(seconds)</label>
+
+                    <button id="submitBtn" type="submit">Do Record</button>
                 </form>
             </div>
 
@@ -226,7 +237,7 @@
                         <label id="durationLabel" for="duration">Duration(500)ms</label>
                     </div>
                     <div id="speedContainer">
-                        <input type="range" step="1.0" min="1" max="255" name="speed" id="speed"  value="100"
+                        <input type="range" step="1.0" min="1" max="255" name="speed" id="speed" value="100"
                             onChange="onValueRangeChange(this.value,'#FourWDControl #FourWDControlForm #speedContainer #speedLabel', 'Speed (', ')')">
                         <label id="speedLabel" for="speed">Speed(100)</label>
                     </div>
@@ -256,7 +267,7 @@
                         <label id="elbowLabel" for="elbow">Angle(90)</label>
                         <input id="ElbowAngToggle" type="checkbox"">Elbow </input>
                     </div>
-                    <div id="WristElevateContainer">
+                    <div id=" WristElevateContainer">
                         <input type="range" step="1.0" min="0" max="180" id="wristElavate" name="wristElavate"
                             value="90"
                             onChange="onValueRangeChange(this.value,'#DOF6ArmControl #DOF6ArmControlForm #WristElevateContainer #wristElevateLabel', 'Angle (', ')')">
@@ -264,23 +275,26 @@
                         <input id="WristElavateToggle" type="checkbox"">Wrist
                         Elevate</input>
                     </div>
-                    <div id="WristRotateContainer">
+                    <div id=" WristRotateContainer">
                         <input type="range" step="1.0" min="0" max="180" id="wristRotate" name="wristRotate" value="90"
                             onChange="onValueRangeChange(this.value,'#DOF6ArmControl #DOF6ArmControlForm #WristRotateContainer #wristRotateLabel', 'Angle (', ')')">
                         <label id="wristRotateLabel" for="wristRotate">Angle(90)</label>
                         <input id="WristRotateToggle" type="checkbox"">Wrist
                         Rotate</input>
                     </div>
-                    <div id="ClawContainer">
+                    <div id=" ClawContainer">
                         <input type="range" step="1.0" min="0" max="180" id="claw" name="claw" value="90"
                             onChange="onValueRangeChange(this.value,'#DOF6ArmControl #DOF6ArmControlForm #ClawContainer #clawLabel', 'Angle (', ')')">
                         <label id="clawLabel" for="claw">Angle(90)</label>
                         <input id="clawToggle" type="checkbox"">Claw</input>
                     </div>
 
-                    <button id="submitBtn" type="submit">Do Arm Action</button>
+                    <button id=" submitBtn" type="submit">Do Arm Action</button>
                 </form>
             </div>
+
+
+
         </div>
     </div>
 
