@@ -118,8 +118,7 @@
             <div id="textToSpeech">
                 <form id="textToSpeechForm">
                     <label id="fname">Text input for speech:</label><br>
-                    <textarea id="ftextField" name="string" rows="1" oninput="auto_height(this)"
-                        placeholder="Hello, I'm SAMUEL, You talk'n to me?"></textarea>
+                    <textarea id="ftextField" name="string" rows="1" oninput="auto_height(this)"> Hello, I'm SAMUEL.</textarea>
                     <button id="submitBtn" type="submit">Submit</button>
                 </form>
             </div>
@@ -127,11 +126,17 @@
             <!--micRecAndPlayback-->
             <div id="micRecAndPlayback">
                 <form id="micRecForm" <label id="fname">Mic recording</label><br>
-
-                    <input type="Number" min="0" max="600" value="20" name="recsec" id="recsec">
+                    <input type="Number" min="0" max="600" value="5" name="recsec" id="recsec">
                     <label id="recsecLabel" for="recsec">RecordDuration(seconds)</label>
-
                     <button id="submitBtn" type="submit">Do Record</button>
+                </form>
+                <form id="micRecPlaybackLocalForm" <label id="fname">Playback via platform speaker</label><br>
+                    <!-- <button id="doPlayback" type="button" onclick="stoplocalPlayback(event)">Stop</button> -->
+                    <button id="stopPlayback" type="button" onclick="dolocalPlayback(event)">Play</button>
+                </form>
+                <form id="micRecPlaybackOnWebForm" <label id="fname">Playback via platform speaker</label><br>
+                    <audio id="audio" controls="controls"> </audio>
+                    <button id="submitBtn" type="submit">Get File</button>
                 </form>
             </div>
 

@@ -1,7 +1,9 @@
 
 #!/usr/bin/env python3
 
-from flask import Flask, render_template, make_response, redirect, Response, request
+from ast import While
+from tkinter import E
+from flask import Flask, render_template, make_response, redirect, Response, request, send_file
 import numpy
 # import numpy.core.multiarray
 # import cv2 #Potential future method for image recog, e.g :https://realpython.com/face-detection-in-python-using-a-webcam/
@@ -38,85 +40,121 @@ currentPan = 0
 currentTilt = 0
 
 lastRecording = 0
+streamAllowed = True
 
-# TODO  test this, make saveto file optional, and all memory playback or send via ajax request to web host
+import time, os, sys, contextlib
+
+@contextlib.contextmanager
+def ignoreStderr():
+    devnull = os.open(os.devnull, os.O_WRONLY)
+    old_stderr = os.dup(2)
+    sys.stderr.flush()
+    os.dup2(devnull, 2)
+    os.close(devnull)
+    try:
+        yield
+    finally:
+        os.dup2(old_stderr, 2)
+        os.close(old_stderr)
+
+
+def GetThisPath():
+    fn = getattr(sys.modules['__main__'], '__file__')
+    return os.path.abspath(os.path.dirname(fn))
 
 
 def doRecord(duration=10.0, sampleRate=44100):
-    p = pyaudio.PyAudio()
+    pyAud = 0
+    with ignoreStderr():
+        pyAud = pyaudio.PyAudio()
     foundUSBMic = False
     dev_index = -1
-    for i in range(p.get_device_count()):
-        dev = p.get_device_info_by_index(i)
-        print((i,dev['name'],dev['maxInputChannels']))
+    for i in range(pyAud.get_device_count()):
+        dev = pyAud.get_device_info_by_index(i)
+        print((i, dev['name'], dev['maxInputChannels']))
         if dev['name'] == 'USB PnP Sound Device: Audio (hw:1,0)':
             foundUSBMic = True
-            dev_index = i
+            dev_index = i 
 
     if foundUSBMic == False or dev_index == -1:
         print("USB MIC NOT FOUND")
-        shellESpeak("USB MIC NOT FOUND")      
-            
+        shellESpeak("USB MIC NOT FOUND")
+
     if foundUSBMic:
-        form_1 = pyaudio.paInt24  # 16-bit resolution
+        form_1 = pyaudio.paInt16  # 16-bit resolution
         chans = 1  # 1 channel
         samp_rate = 44100  # 44.1kHz sampling rate
         chunk = 4096  # 2^12 samples for buffer
-        record_secs = duration  # seconds to record
-        wav_output_filename = 'uscMicRec.wav'  # name of .wav file
-
+        record_secs = int(duration)  # seconds to record
+        outputWavFileName = GetThisPath()+'/USBMicRec.wav'  # name of .wav file
 
         # create pyaudio stream
-        stream = p.open(format=form_1, rate=samp_rate, channels=chans,
-                            input_device_index=dev_index, input=True,
-                            frames_per_buffer=chunk)
+        stream = pyAud.open(format=form_1, rate=samp_rate, channels=chans,
+                        input_device_index=dev_index, input=True,
+                        frames_per_buffer=chunk)
         print("recording")
         frames = []
 
         # loop through stream and append audio chunks to frame array
         for ii in range(0, int((samp_rate/chunk)*record_secs)):
-            data = stream.read(chunk)
-            frames.append(data) 
+            if stream.is_stopped() == False :
+                data = stream.read(chunk)
+                frames.append(data)
 
         # stop the stream, close it, and terminate the pyaudio instantiation
-        stream.stop_stream()
-        stream.close()
-        p.terminate()
+  
+        while stream.is_stopped() == False :
+            stream.stop_stream()
 
-        print("finished recording")
-        shellESpeak("Finished recording")  
+        stream.close()
+        pyAud.terminate()
 
         # save the audio frames as .wav file
-        wavefile = wave.open(wav_output_filename, 'wb')
+        wavefile = wave.open(outputWavFileName, 'wb')
         wavefile.setnchannels(chans)
-        wavefile.setsampwidth(p.get_sample_size(form_1))
+        wavefile.setsampwidth(pyAud.get_sample_size(form_1))
         wavefile.setframerate(samp_rate)
         wavefile.writeframes(b''.join(frames))
         wavefile.close()
 
-def doLastRecordingPlayback(wav_input_filename,chunk = 1024):
+        frames.clear()
+
+def doLastRecordingPlayback(wav_input_filename, chunk=1024):
+    global streamAllowed
+    streamAllowed = True
+    pyAud = 0
+    with ignoreStderr():
+        pyAud = pyaudio.PyAudio()
     # https://stackoverflow.com/questions/6951046/how-to-play-an-audiofile-with-pyaudio
     wf = wave.open(wav_input_filename, 'rb')
-    p = pyaudio.PyAudio()
-    stream = p.open(format =
-                p.get_format_from_width(wf.getsampwidth()),
-                channels = wf.getnchannels(),
-                rate = wf.getframerate(),
-                output = True)
+    pyAud = pyaudio.PyAudio()
+    stream = pyAud.open(format=pyAud.get_format_from_width(wf.getsampwidth()),
+                    channels=wf.getnchannels(),
+                    rate=wf.getframerate(),
+                    output=True)
 
     # read data (based on the chunk size)
     data = wf.readframes(chunk)
 
-    # play stream (looping from beginning of file to the end)
-    while data:
-        # writing to the stream is what *actually* plays the sound.
-        stream.write(data)
-        data = wf.readframes(chunk)
-    # cleanup stuff.
-    wf.close()
-    stream.close()    
-    p.terminate()
+    try:
+        # play stream (looping from beginning of file to the end)
+        while data and streamAllowed == True:            
+         # writing to the stream is what *actually* plays the sound.
+            stream.write(data)
+            data = wf.readframes(chunk)
+                         
+            # cleanup stuff.
+        wf.close()
+        stream.close()
+        pyAud.terminate()
 
+    except Exception as e: print(e)
+
+# Note Segmentation bug on calling this function, unsure why
+def stopPlayback():
+    global streamAllowed
+    streamAllowed = False
+    
 
 def shellESpeak(text):
     os.popen('espeak "' + text + '" --stdout | aplay 2> /dev/null').read()
@@ -262,13 +300,15 @@ def textToSpeech():
     return ''
 
 # mic
+
+
 @app.route('/startRecording', methods=['POST'])
 def startRecording():
     if request.method == 'POST':
         opt = request.form.to_dict()
         print("opt:" + str(opt))
         seconds = 0
-        for key in opt: 
+        for key in opt:
             if key == "recsec":
                 seconds = opt[key].strip()
         seconds = float(seconds)
@@ -276,6 +316,27 @@ def startRecording():
             shellESpeak("Recording started")
             doRecord(float(seconds))
     return ''
+
+
+
+@app.route('/doLatestPlaybackOnPlatform')
+def doLatestPlaybackOnPlatform():
+    doLastRecordingPlayback((GetThisPath()+'/USBMicRec.wav'), 4096)
+    return ''
+
+@app.route('/stoplocalPlayback')
+def stoplocalPlayback():
+    # stopPlayback() # Note Segmentation bug on calling this function, unsure why
+    return ''
+
+@app.route('/getRecording')
+def getRecording():
+    return send_file((GetThisPath()+'/USBMicRec.wav'),
+                     mimetype="audio/wav",
+                     as_attachment=True,
+                     attachment_filename="USBMicRec.wav")
+
+
 
 
 # oLEDDisplayTxt
@@ -410,7 +471,7 @@ def do6DOFARMCmd():
         print("base keys" + str(base.keys()))
         print("base values" + str(base.values()))
 
-        if (base['enabled'] or baseTilt['enabled']  or elbow['enabled']  or wristElavate['enabled']  or wristRotate['enabled']  or claw['enabled'] ):
+        if (base['enabled'] or baseTilt['enabled'] or elbow['enabled'] or wristElavate['enabled'] or wristRotate['enabled'] or claw['enabled']):
             cnstrctdCmd = ''
             if(base['enabled']):
                 cnstrctdCmd += '<In>6Axis[B.'+str(base['angle'])+'].'

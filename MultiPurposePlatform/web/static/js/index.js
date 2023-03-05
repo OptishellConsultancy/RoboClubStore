@@ -149,7 +149,7 @@ $(document).ready(function () {
 });
 
 //----------------------------------------------------------------
-//textToSpeech----------------------------------------------------------------
+//micRecAndPlayback----------------------------------------------------------------
 $(document).ready(function () {
   $("#micRecAndPlayback #micRecForm").submit(function (e) {
     e.preventDefault(); // avoid page refresh
@@ -159,6 +159,32 @@ $(document).ready(function () {
       url: '/startRecording',
       data: $(this).serialize()
     });
+
+  });
+});
+
+
+function dolocalPlayback(e) {
+  e.preventDefault(); // avoid page refresh
+  $.ajax({
+    url: '/doLatestPlaybackOnPlatform'
+  });
+}
+
+
+function stoplocalPlayback(e) {
+  e.preventDefault(); // avoid page refresh
+  $.ajax({
+    url: '/stoplocalPlayback'
+  });
+}
+
+$(document).ready(function () {
+  $("#micRecAndPlayback #micRecPlaybackOnWebForm").submit(function (e) {
+    e.preventDefault(); // avoid page refresh
+    audio = $("#micRecAndPlayback #micRecPlaybackOnWebForm #audio")
+    audio.attr("src", window.location.origin + '/getRecording');
+
 
   });
 });
@@ -416,19 +442,19 @@ $(document).ready(function () {
         angle: $("#DOF6ArmControl #DOF6ArmControlForm #BaseTiltContainer #baseTilt").val()
       },
       elbow: {
-        enabled: $("#DOF6ArmControl #DOF6ArmControlForm #ElbowContainer #ElbowAngToggle").prop("checked")=== true,
+        enabled: $("#DOF6ArmControl #DOF6ArmControlForm #ElbowContainer #ElbowAngToggle").prop("checked") === true,
         angle: $("#DOF6ArmControl #DOF6ArmControlForm #ElbowContainer #elbow").val()
       },
       wristElavate: {
-        enabled: $("#DOF6ArmControl #DOF6ArmControlForm #WristElevateContainer #WristElavateToggle").prop("checked")=== true,
+        enabled: $("#DOF6ArmControl #DOF6ArmControlForm #WristElevateContainer #WristElavateToggle").prop("checked") === true,
         angle: $("#DOF6ArmControl #DOF6ArmControlForm #WristElevateContainer #wristElavate").val()
       },
       wristRotate: {
-        enabled: $("#DOF6ArmControl #DOF6ArmControlForm #WristRotateContainer #WristRotateToggle").prop("checked")=== true,
+        enabled: $("#DOF6ArmControl #DOF6ArmControlForm #WristRotateContainer #WristRotateToggle").prop("checked") === true,
         angle: $("#DOF6ArmControl #DOF6ArmControlForm #WristRotateContainer #wristRotate").val()
       },
       claw: {
-        enabled: $("#DOF6ArmControl #DOF6ArmControlForm #ClawContainer #clawToggle").prop("checked")=== true,
+        enabled: $("#DOF6ArmControl #DOF6ArmControlForm #ClawContainer #clawToggle").prop("checked") === true,
         angle: $("#DOF6ArmControl #DOF6ArmControlForm #ClawContainer #claw").val()
       }
 

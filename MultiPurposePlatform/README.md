@@ -42,7 +42,8 @@ sudo python3 MultiPurposePlatform/web/runServer.py
 
 
 
-Port forwarding:
+Port forwarding: 
+
 to check currently exposed ports:
 
 netstat -tnlp
@@ -53,3 +54,17 @@ pip3 install pipreqs
 
 cd into MultiPurposePlatform/web
 python3 -m  pipreqs.pipreqs .
+
+
+NOTE: is issues installing soxr or soxr dependencies, run:
+
+sudo python3 -m pip install --upgrade pip
+sudo python3 -m pip install pyparsing==2.1.0
+sudo python3 -m pip install pyparser==1.0
+sudo apt-get install libffi-dev
+sudo apt-get install libzbar-dev
+sudo apt-get install clang -y
+
+python3 -m pip install -U pip
+sudo apt install llvm
+sudo python3 -m pip install soxr
