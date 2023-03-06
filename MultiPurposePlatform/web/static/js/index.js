@@ -153,6 +153,8 @@ $(document).ready(function () {
 $(document).ready(function () {
   $("#micRecAndPlayback #micRecForm").submit(function (e) {
     e.preventDefault(); // avoid page refresh
+    audio = $("#micRecAndPlayback #micRecPlaybackOnWebForm #audio")
+    audio.attr("src", null);
 
     $.ajax({
       type: "POST",
@@ -172,22 +174,18 @@ function dolocalPlayback(e) {
 }
 
 
-function stoplocalPlayback(e) {
+
+function getRecordingDeNoised (e) {
   e.preventDefault(); // avoid page refresh
-  $.ajax({
-    url: '/stoplocalPlayback'
-  });
+  audio = $("#micRecAndPlayback #micRecPlaybackOnWebForm #audio")
+  audio.attr("src", window.location.origin + '/getRecording_denoised');
 }
 
-$(document).ready(function () {
-  $("#micRecAndPlayback #micRecPlaybackOnWebForm").submit(function (e) {
+function getRecordingRaw (e) {
     e.preventDefault(); // avoid page refresh
     audio = $("#micRecAndPlayback #micRecPlaybackOnWebForm #audio")
-    audio.attr("src", window.location.origin + '/getRecording');
-
-
-  });
-});
+    audio.attr("src", window.location.origin + '/getRecording_raw');
+  }
 //----------------------------------------------------------------
 
 

@@ -131,12 +131,14 @@
                     <button id="submitBtn" type="submit">Do Record</button>
                 </form>
                 <form id="micRecPlaybackLocalForm" <label id="fname">Playback via platform speaker</label><br>
-                    <!-- <button id="doPlayback" type="button" onclick="stoplocalPlayback(event)">Stop</button> -->
                     <button id="stopPlayback" type="button" onclick="dolocalPlayback(event)">Play</button>
                 </form>
                 <form id="micRecPlaybackOnWebForm" <label id="fname">Playback via platform speaker</label><br>
-                    <audio id="audio" controls="controls"> </audio>
-                    <button id="submitBtn" type="submit">Get File</button>
+                    <div style="flex-direction: column; display: flex">
+                        <button id="submitBtn" type="button" onclick="getRecordingRaw(event)">load raw audio</button>
+                        <button id="submitBtn" type="button" onclick="getRecordingDeNoised(event)">get cleaned audio</button>
+                        <audio id="audio" controls="controls"> </audio>
+                    </div>
                 </form>
             </div>
 

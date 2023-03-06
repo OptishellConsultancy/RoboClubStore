@@ -4,3 +4,8 @@ pantilthat==0.0.7
 pyserial==3.5
 sounddevice==0.4.4
 Werkzeug==0.14.1
+tqdm
+soundfile
+numpy
+matplotlib
+PyWavelets

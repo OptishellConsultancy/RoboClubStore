@@ -52,19 +52,13 @@ To open a port, e.g 445: sudo ufw allow 445
 Update requirements.txt with:
 pip3 install pipreqs
 
+
+Note: be sure to install:
+sudo apt-get install python3-scipy
+pip3 install scipy --force
+
+pip3 install PyWavelets==1.4.0
+
 cd into MultiPurposePlatform/web
 python3 -m  pipreqs.pipreqs .
 
-
-NOTE: is issues installing soxr or soxr dependencies, run:
-
-sudo python3 -m pip install --upgrade pip
-sudo python3 -m pip install pyparsing==2.1.0
-sudo python3 -m pip install pyparser==1.0
-sudo apt-get install libffi-dev
-sudo apt-get install libzbar-dev
-sudo apt-get install clang -y
-
-python3 -m pip install -U pip
-sudo apt install llvm
-sudo python3 -m pip install soxr

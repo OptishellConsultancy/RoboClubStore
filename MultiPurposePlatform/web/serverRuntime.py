@@ -24,6 +24,13 @@ from datetime import datetime
 from mapEntity import MapEntity
 import pyaudio
 import wave
+from  functInSegfaultWrapper import sigsev_guard
+import numpy as np
+import scipy as sp
+from scipy.io.wavfile import read
+from scipy.io.wavfile import write     # Imported libaries such as numpy, scipy(read, write), matplotlib.pyplot
+from scipy import signal
+import math
 
 if sys.version_info[0] < 3:
     raise Exception("Python 3 or a more recent version is required.")
@@ -62,8 +69,8 @@ def GetThisPath():
     fn = getattr(sys.modules['__main__'], '__file__')
     return os.path.abspath(os.path.dirname(fn))
 
-
-def doRecord(duration=10.0, sampleRate=44100):
+@sigsev_guard(default_value=-1, timeout=600)
+def doRecord(duration=10.0):
     pyAud = 0
     with ignoreStderr():
         pyAud = pyaudio.PyAudio()
@@ -85,8 +92,8 @@ def doRecord(duration=10.0, sampleRate=44100):
         chans = 1  # 1 channel
         samp_rate = 44100  # 44.1kHz sampling rate
         chunk = 4096  # 2^12 samples for buffer
-        record_secs = int(duration)  # seconds to record
-        outputWavFileName = GetThisPath()+'/USBMicRec.wav'  # name of .wav file
+        record_secs = math.ceil(duration)  # seconds to record
+        
 
         # create pyaudio stream
         stream = pyAud.open(format=form_1, rate=samp_rate, channels=chans,
@@ -110,15 +117,38 @@ def doRecord(duration=10.0, sampleRate=44100):
         pyAud.terminate()
 
         # save the audio frames as .wav file
-        wavefile = wave.open(outputWavFileName, 'wb')
+        outputRawWavFileName = GetThisPath()+'/USBMicRecRaw.wav'  # name of .wav file
+        outputDeNoiseWavFilename = GetThisPath()+'/USBMicRecDeNoise.wav'  # name of .wav file
+        wavefile = wave.open(outputRawWavFileName, 'wb')
         wavefile.setnchannels(chans)
         wavefile.setsampwidth(pyAud.get_sample_size(form_1))
         wavefile.setframerate(samp_rate)
         wavefile.writeframes(b''.join(frames))
         wavefile.close()
 
+        doDenoiseOFRecording(outputRawWavFileName,outputDeNoiseWavFilename)
+
         frames.clear()
 
+def doDenoiseOFRecording(fileNameIn, denoisedFilenameOut):
+    # https://github.com/davidpraise45/Audio-Signal-Processing/blob/master/Sound-Filtering.py
+    # https://stackoverflow.com/questions/53726385/noise-reduction-on-multiple-wav-file-in-python
+    (Frequency, samples) = read(fileNameIn) # Reading the sound file. 
+    FourierTransformation = sp.fft(samples) # Calculating the fourier transformation of the signal
+    scale = sp.linspace(0, Frequency, len(samples))
+
+    # Do highpass
+    b,a = signal.butter(5, 2000/(Frequency/2), btype='highpass') # ButterWorth filter 4350
+    filteredSignal = signal.lfilter(b,a,samples)
+    # write(denoisedFilenameOut, Frequency, filteredSignal.astype(np.int16))
+    
+    # Do lowpass
+    c,d = signal.butter(5, 2000/(Frequency/16), btype='lowpass') # ButterWorth low-filter
+    filteredSignal = signal.lfilter(c,d,filteredSignal) # Applying the filter to the signal
+    write(denoisedFilenameOut, Frequency, filteredSignal.astype(np.int16))
+    
+
+@sigsev_guard(default_value=-1, timeout=600)
 def doLastRecordingPlayback(wav_input_filename, chunk=1024):
     global streamAllowed
     streamAllowed = True
@@ -150,12 +180,8 @@ def doLastRecordingPlayback(wav_input_filename, chunk=1024):
 
     except Exception as e: print(e)
 
-# Note Segmentation bug on calling this function, unsure why
-def stopPlayback():
-    global streamAllowed
-    streamAllowed = False
-    
 
+@sigsev_guard(default_value=-1, timeout=600)
 def shellESpeak(text):
     os.popen('espeak "' + text + '" --stdout | aplay 2> /dev/null').read()
 
@@ -315,28 +341,30 @@ def startRecording():
         if seconds > 0:
             shellESpeak("Recording started")
             doRecord(float(seconds))
+            shellESpeak("Recording complete")
     return ''
 
 
 
 @app.route('/doLatestPlaybackOnPlatform')
 def doLatestPlaybackOnPlatform():
-    doLastRecordingPlayback((GetThisPath()+'/USBMicRec.wav'), 4096)
+    doLastRecordingPlayback((GetThisPath()+'/USBMicRecRaw.wav'), 4096)
     return ''
 
-@app.route('/stoplocalPlayback')
-def stoplocalPlayback():
-    # stopPlayback() # Note Segmentation bug on calling this function, unsure why
-    return ''
-
-@app.route('/getRecording')
-def getRecording():
-    return send_file((GetThisPath()+'/USBMicRec.wav'),
+@app.route('/getRecording_denoised')
+def getRecording_denoised():
+    return send_file((GetThisPath()+'/USBMicRecDeNoise.wav'),
                      mimetype="audio/wav",
                      as_attachment=True,
-                     attachment_filename="USBMicRec.wav")
+                     attachment_filename="USBMicRecDeNoise.wav")
+                     
 
-
+@app.route('/getRecording_raw')               
+def getRecording_raw():
+    return send_file((GetThisPath()+'/USBMicRecRaw.wav'),
+                     mimetype="audio/wav",
+                     as_attachment=True,
+                     attachment_filename="USBMicRecRaw.wav")
 
 
 # oLEDDisplayTxt
