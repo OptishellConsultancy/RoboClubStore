@@ -1,5 +1,6 @@
 #include "VarsInit.h"
 #include <stdio.h>
+#define btoa(x) ((x)?"true":"false")
 // Util-----------------------------------
 void DiscoverHubPortDevices()
 {
@@ -193,8 +194,16 @@ bool PassCmd4WD(String str)
   Dur4WD = str.substring(Do4WD_DurS + 1, Do4WD_DurE).toInt();
   CmdRcv4WD = (Speed4WD >= 0);
   // E.g. F7. 100 SPEED, FOR 100MS Front left Forward
-  PrintfOneVar(100, "Speed4WD:", Speed4WD);
-  PrintfOneVar(100, "Dur4WD:", Dur4WD);
+  PrintfOneVar(100, "Speed4WD: %d", Speed4WD);
+  PrintfOneVar(100, "Dur4WD: %d", Dur4WD);
+  PrintfOneVar(100, "Do4WD_FLA: %s", btoa(Do4WD_FLA));
+  PrintfOneVar(100, "Do4WD_FRA: %s", btoa(Do4WD_FRA));
+  PrintfOneVar(100, "Do4WD_BLA: %s", btoa(Do4WD_BLA));
+  PrintfOneVar(100, "Do4WD_BRA: %s", btoa(Do4WD_BRA));
+  PrintfOneVar(100, "Do4WD_FLB: %s", btoa(Do4WD_FLB));
+  PrintfOneVar(100, "Do4WD_FRB: %s", btoa(Do4WD_FRB));
+  PrintfOneVar(100, "Do4WD_BLB: %s", btoa(Do4WD_BLB));
+  PrintfOneVar(100, "Do4WD_BRB: %s", btoa(Do4WD_BRB));
   return true;
 }
 

@@ -362,10 +362,6 @@ function RotRight() {
 $(document).ready(function () {
   $("#FourWDControl #FourWDControlForm").submit(function (e) {
     e.preventDefault(); // avoid page refresh
-
-
-    //
-
     //
     var motorArr = [];
     if ($("#FourWDControl #FourWDControlForm #FRAorFRB #FRBToggle").prop("checked") === true) {
@@ -391,7 +387,7 @@ $(document).ready(function () {
       motorArr.push('BLB')
     }
     if ($("#FourWDControl #FourWDControlForm #BLAorBLB #BLAToggle").prop("checked") === true) {
-      motorArr.push('FRB')
+      motorArr.push('BLA')
     }
 
     var cmdStr = {
@@ -419,16 +415,9 @@ $(document).ready(function () {
 //----------------------------------------------------------------
 //6 Degreees of freedom Arm
 $(document).ready(function () {
-
-  $("#DOF6ArmControl #DOF6ArmControlForm #submitBtn").bind('click touchend', function (e) {
+  $("#DOF6ArmControl #DOF6ArmControlForm").submit(function (e) {
     e.preventDefault(); // avoid page refresh
     //
-    let baseEnabled = localStorage.getItem('baseEnabled');
-    let baseTiltEnabled = localStorage.getItem('baseTiltEnabled');
-    let elbowEnabled = localStorage.getItem('elbowEnabled');
-    let elevateWristEnabled = localStorage.getItem('elevateWristEnabled');
-    let wristRotateEnabled = localStorage.getItem('wristRotateEnabled');
-    let clawEnabled = localStorage.getItem('clawEnabled');
     //
     cmdStr = {
       base: {
