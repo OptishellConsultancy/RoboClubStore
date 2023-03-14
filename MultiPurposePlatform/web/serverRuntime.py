@@ -8,14 +8,10 @@ import numpy
 # import numpy.core.multiarray
 # import cv2 #Potential future method for image recog, e.g :https://realpython.com/face-detection-in-python-using-a-webcam/
 # For now, we use rpi_cam feed in the index.html for basic vid feed
-import socket
-import io
+
 from werkzeug.http import dump_cookie
 from FunctionHandler import FunctionHandler
 import sys
-import serial
-import time
-import threading
 import subprocess
 import os  # imports OS library for Shutdown control
 from flask.sessions import SecureCookieSessionInterface
@@ -31,12 +27,17 @@ from scipy.io.wavfile import read
 from scipy.io.wavfile import write     # Imported libaries such as numpy, scipy(read, write), matplotlib.pyplot
 from scipy import signal
 import math
+from flask import render_template
+from flask_login import login_required, current_user
+
+from runServer import app, main
 
 if sys.version_info[0] < 3:
     raise Exception("Python 3 or a more recent version is required.")
 
 fhnd = FunctionHandler()
-app = Flask(__name__)
+
+
 # vc = cv2.VideoCapture(0)
 
 doGPSOLEDPrint = False
@@ -48,6 +49,8 @@ currentTilt = 0
 
 lastRecording = 0
 streamAllowed = True
+
+targetMicName = 'bcm2835 Headphones: - (hw:0,0)'
 
 import time, os, sys, contextlib
 
@@ -71,6 +74,7 @@ def GetThisPath():
 
 @sigsev_guard(default_value=-1, timeout=600)
 def doRecord(duration=10.0):
+    global targetMicName
     pyAud = 0
     with ignoreStderr():
         pyAud = pyaudio.PyAudio()
@@ -79,7 +83,7 @@ def doRecord(duration=10.0):
     for i in range(pyAud.get_device_count()):
         dev = pyAud.get_device_info_by_index(i)
         print((i, dev['name'], dev['maxInputChannels']))
-        if dev['name'] == 'USB PnP Sound Device: Audio (hw:1,0)':
+        if dev['name'] == targetMicName:
             foundUSBMic = True
             dev_index = i 
 
@@ -182,11 +186,18 @@ def doLastRecordingPlayback(wav_input_filename, chunk=1024):
 
 
 @sigsev_guard(default_value=-1, timeout=600)
-def shellESpeak(text):
-    os.popen('espeak "' + text + '" --stdout | aplay 2> /dev/null').read()
+def shellESpeak(text, devicepcm = 'plughw:CARD=Audio,DEV=0'):
+    #run aplay -l to get available devices
+    #run aplay --list-pcms  to get available pcm
+    # Test:
+    # espeak "Hello World" --stdout | aplay -Dplughw:CARD=Audio,DEV=0
+    # c
+    # speaker-test -t wav -c 6
+    os.popen('espeak "' + text + '" --stdout | aplay -D'+ devicepcm).read()
 
 
-@app.route("/")
+# Main page wrapper
+@main.route('/')
 def index():
     # return render_template("index.html")
     resp = make_response(render_template("index.html"))
@@ -205,6 +216,11 @@ def add_header(r):
     r.headers['Cache-Control'] = 'public, max-age=0'
     return r
 
+# Logoin wrapper
+@main.route('/profile')
+@login_required
+def profile():
+    return render_template('profile.html', name=current_user.name)
 
 @app.route("/toggleGPSOLEDDisplay", methods=['POST'])
 def ToggledoGPSOLEDPrint():

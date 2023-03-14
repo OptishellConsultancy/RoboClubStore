@@ -20,29 +20,20 @@ def check_privileges():
 check_privileges()
 
 # http://espeak.sourceforge.net/commands.html
-def shellESpeak(text):
-    os.popen('espeak "' + text + '" --stdout | aplay 2> /dev/null').read()
+def shellESpeak(text, devicepcm = 'plughw:CARD=Audio,DEV=0'):
+    os.popen('espeak "' + text + '" --stdout | aplay -D'+ devicepcm).read()
 
 def StartupConvo():
     shellESpeak("Hello, I'm SAMUEL")
-
-    # time.sleep(0.2)
-    # shellESpeak("READ 'APIExamples.txt' for API documentation")
-    # time.sleep(0.2)
-
-    # time.sleep(0.1)
-    # shellESpeak("Press Button and hold for shutdown.")
-
     shellESpeak("I am now completely operational, and all my circuits are functioning perfectly")
-    # time.sleep(0.6)
-    # shellESpeak("Just Kidding")
+
 
 
 StartupConvo()
 
 
 def held():
-    print("Restarting")
+    print("shutting down")
     shellESpeak("Shutting Down.")
     os.system("shutdown -h now")
     quit()
