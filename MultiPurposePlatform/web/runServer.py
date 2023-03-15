@@ -1,18 +1,12 @@
 #!/usr/bin/env python3
 
 import subprocess
-from flask_sqlalchemy import SQLAlchemy
-from flask_login import LoginManager
-from flask import Flask
-from flask import Blueprint, render_template
-
-
-db = SQLAlchemy()
-main = Blueprint('main', __name__)
-app = Flask(__name__)
-
+from createApp import create_app, db
+import sqlite3
+from sqlite3 import Error
 # refactored with authentication via https://github.com/do-community/flask_auth_scotch/tree/master/project
 
+app = None
 
 def execv(command, path):
     if(len(path) > 0):
@@ -21,47 +15,61 @@ def execv(command, path):
                             stdout=subprocess.PIPE, encoding='UTF-8')
     print(result.stdout)
 
+def create_connection(db_file):
+    """ create a database connection to the SQLite database
+        specified by db_file
+    :param db_file: database file
+    :return: Connection object or None
+    """
+    conn = None
+    try:
+        conn = sqlite3.connect(db_file)
+        return conn
+    except Error as e:
+        print(e)
+
+    return conn
 
 
+def create_table(conn, create_table_sql):
+    """ create a table from the create_table_sql statement
+    :param conn: Connection object
+    :param create_table_sql: a CREATE TABLE statement
+    :return:
+    """
+    try:
+        c = conn.cursor()
+        c.execute(create_table_sql)
+        print("Table check/creation complete")
+    except Error as e:
+        print(e)
 
-def create_app():
-    app.config.update(PERMANENT_SESSION_LIFETIME=600)
 
-    app.config.update(
-        SESSION_COOKIE_SECURE=True,
-        SESSION_COOKIE_HTTPONLY=True,
-        SESSION_COOKIE_SAMESITE='Lax',
-    )
-    app.config['SECRET_KEY'] = '9OLWxND4o83j4K4iuopO'
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite'
+def setupTables():
+    database = r"MultiPurposePlatform/web/db.sqlite"
+    sql_create_projects_table = """ CREATE TABLE IF NOT EXISTS user (
+                                        id integer PRIMARY KEY,
+                                        email text NOT NULL,
+                                        password text,
+                                        name text
+                                    ); """
+    conn = create_connection(database)
 
-    db.init_app(app)
-    login_manager = LoginManager()
-    login_manager.login_view = 'auth.login'
-    login_manager.init_app(app)
-
-    @login_manager.user_loader
-    def load_user(user_id):
-        # since the user_id is just the primary key of our user table, use it in the query for the user
-        return User.query.get(int(user_id))
-
-    # blueprint for auth routes in our app
-    from auth import auth
-    app.register_blueprint(auth)
-
-    # blueprint for non-auth parts of app    
-    app.register_blueprint(main)
-
-    db.create_all(app = app) 
-    return app
-
+    # create tables
+    if conn is not None:
+        # create projects table
+        create_table(conn, sql_create_projects_table)
+    else:
+        print("Error! cannot create the database connection.")
 
 if __name__ == '__main__':
     # shellESpeak("Web server starting")
     execv('start.sh', '/home/pi/Desktop/RPi_Cam_Web_Interface/')
     execv('killWebServer.sh 2223',
           '/home/pi/Desktop/RoboClubStore/MultiPurposePlatform/web/')
+    
 
-
-    app = create_app()    
+    setupTables()
+    
+    app = create_app()
     app.run(debug=False, port=2223, host='0.0.0.0')

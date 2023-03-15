@@ -27,10 +27,8 @@ from scipy.io.wavfile import read
 from scipy.io.wavfile import write     # Imported libaries such as numpy, scipy(read, write), matplotlib.pyplot
 from scipy import signal
 import math
-from flask import render_template
+from flask import render_template, Blueprint
 from flask_login import login_required, current_user
-
-from runServer import app, main
 
 if sys.version_info[0] < 3:
     raise Exception("Python 3 or a more recent version is required.")
@@ -53,6 +51,9 @@ streamAllowed = True
 targetMicName = 'bcm2835 Headphones: - (hw:0,0)'
 
 import time, os, sys, contextlib
+
+
+srt = Blueprint('serverRuntime', __name__)
 
 @contextlib.contextmanager
 def ignoreStderr():
@@ -196,19 +197,7 @@ def shellESpeak(text, devicepcm = 'plughw:CARD=Audio,DEV=0'):
     os.popen('espeak "' + text + '" --stdout | aplay -D'+ devicepcm).read()
 
 
-# Main page wrapper
-@main.route('/')
-def index():
-    # return render_template("index.html")
-    resp = make_response(render_template("index.html"))
-    resp.set_cookie('username', 'flask', secure=True,
-                    httponly=True, samesite='Lax')
-    return resp
-
-# Disable caching
-
-
-@app.after_request
+@srt.after_request
 def add_header(r):
     r.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
     r.headers["Pragma"] = "no-cache"
@@ -216,13 +205,7 @@ def add_header(r):
     r.headers['Cache-Control'] = 'public, max-age=0'
     return r
 
-# Logoin wrapper
-@main.route('/profile')
-@login_required
-def profile():
-    return render_template('profile.html', name=current_user.name)
-
-@app.route("/toggleGPSOLEDDisplay", methods=['POST'])
+@srt.route("/toggleGPSOLEDDisplay", methods=['POST'])
 def ToggledoGPSOLEDPrint():
     global doGPSOLEDPrint  # Use global scope
     doGPSOLEDPrint = not doGPSOLEDPrint
@@ -234,7 +217,7 @@ def ToggledoGPSOLEDPrint():
     return json.dumps(info_list)
 
 
-@app.route("/getGPSOLEDDisplay", methods=['GET'])
+@srt.route("/getGPSOLEDDisplay", methods=['GET'])
 def GetGPSOLEDDisplay():
     global doGPSOLEDPrint  # Use global scope
     infoDict = {}
@@ -246,7 +229,7 @@ def GetGPSOLEDDisplay():
 # See mapApp.js -> DoMapUpdate
 
 
-@app.route("/mapinjectapi", methods=['POST'])
+@srt.route("/mapinjectapi", methods=['POST'])
 def MapApi():
     infoDict = {}
     info_list = []
@@ -285,7 +268,7 @@ def MapApi():
 
 
 # PanTilt
-@app.route('/doPanTilt', methods=['POST'])
+@srt.route('/doPanTilt', methods=['POST'])
 def doPanTilCamera():
     global currentPan, currentTilt
     if request.method == 'POST':
@@ -308,7 +291,7 @@ def doPanTilCamera():
 
 
 # doPanTilt
-@app.route('/getCurrentPan', methods=['GET'])
+@srt.route('/getCurrentPan', methods=['GET'])
 def getCurrentPan():
     global currentPan
     infoDict = {}
@@ -318,7 +301,7 @@ def getCurrentPan():
     return json.dumps(info_list)
 
 
-@app.route('/getCurrentTilt', methods=['GET'])
+@srt.route('/getCurrentTilt', methods=['GET'])
 def getCurrentTilt():
     global currentTilt
     infoDict = {}
@@ -329,7 +312,7 @@ def getCurrentTilt():
 
 
 # textToSpeech
-@app.route('/textToSpeech', methods=['POST'])
+@srt.route('/textToSpeech', methods=['POST'])
 def textToSpeech():
     if request.method == 'POST':
         # version 1:
@@ -344,7 +327,7 @@ def textToSpeech():
 # mic
 
 
-@app.route('/startRecording', methods=['POST'])
+@srt.route('/startRecording', methods=['POST'])
 def startRecording():
     if request.method == 'POST':
         opt = request.form.to_dict()
@@ -362,12 +345,12 @@ def startRecording():
 
 
 
-@app.route('/doLatestPlaybackOnPlatform')
+@srt.route('/doLatestPlaybackOnPlatform')
 def doLatestPlaybackOnPlatform():
     doLastRecordingPlayback((GetThisPath()+'/USBMicRecRaw.wav'), 4096)
     return ''
 
-@app.route('/getRecording_denoised')
+@srt.route('/getRecording_denoised')
 def getRecording_denoised():
     return send_file((GetThisPath()+'/USBMicRecDeNoise.wav'),
                      mimetype="audio/wav",
@@ -375,7 +358,7 @@ def getRecording_denoised():
                      attachment_filename="USBMicRecDeNoise.wav")
                      
 
-@app.route('/getRecording_raw')               
+@srt.route('/getRecording_raw')               
 def getRecording_raw():
     return send_file((GetThisPath()+'/USBMicRecRaw.wav'),
                      mimetype="audio/wav",
@@ -384,7 +367,7 @@ def getRecording_raw():
 
 
 # oLEDDisplayTxt
-@app.route('/writeOLEDText', methods=['POST'])
+@srt.route('/writeOLEDText', methods=['POST'])
 def writeOLEDText():
     if request.method == 'POST':
 
@@ -414,7 +397,7 @@ def writeOLEDText():
 
 
 # ultraSonicReading
-@app.route("/ultraSonicRequest", methods=['POST'])
+@srt.route("/ultraSonicRequest", methods=['POST'])
 def DoultraSonicRequest():
     sampleCount = '1'
     fhnd.DoFunctionNow("<Out>UltSonc", [sampleCount], ([
@@ -427,7 +410,7 @@ def DoultraSonicRequest():
     return json.dumps(info_list)
 
 
-@app.route("/toggleOLEDUltraSonicDisplay", methods=['POST'])
+@srt.route("/toggleOLEDUltraSonicDisplay", methods=['POST'])
 def ToggledoUltraSonicOLEDPrint():
     global doUltraSonicOLEDPrint  # Use global scope
     doUltraSonicOLEDPrint = not doUltraSonicOLEDPrint
@@ -441,7 +424,7 @@ def ToggledoUltraSonicOLEDPrint():
 # AccMagReading
 
 
-@app.route("/toggleOLEDAccMagDisplay", methods=['POST'])
+@srt.route("/toggleOLEDAccMagDisplay", methods=['POST'])
 def ToggleOLEDaccMagDisplay():
     global doAccMagOLEDPrint  # Use global scope
     doAccMagOLEDPrint = not doAccMagOLEDPrint
@@ -453,7 +436,7 @@ def ToggleOLEDaccMagDisplay():
     return json.dumps(info_list)
 
 
-@app.route("/accMagRequest", methods=['POST'])
+@srt.route("/accMagRequest", methods=['POST'])
 def DoAccMagRequest():
     sampleCount = '1'
     fhnd.DoFunctionNow("<Out>AccMag", [sampleCount], ([
@@ -468,7 +451,7 @@ def DoAccMagRequest():
 
 
 # 4WD control
-@app.route("/FourWheeledDriveRequest", methods=['POST'])
+@srt.route("/FourWheeledDriveRequest", methods=['POST'])
 def DoWheeledDriveRequest():
     if request.method == 'POST':
         data = request.get_json()
@@ -499,7 +482,7 @@ def DoWheeledDriveRequest():
 # DOF Control
 
 
-@app.route("/do6DOFARMCmd", methods=['POST'])
+@srt.route("/do6DOFARMCmd", methods=['POST'])
 def do6DOFARMCmd():
     if request.method == 'POST':
         data = request.get_json()
@@ -537,28 +520,3 @@ def do6DOFARMCmd():
             return 'No motors selected'
 
     return ''
-
-# Runtime
-
-
-def execv(command, path):
-    if(len(path) > 0):
-        command = '%s%s' % (path, command)
-    result = subprocess.run(['/bin/bash', '-c', command],
-                            stdout=subprocess.PIPE, encoding='UTF-8')
-    print(result.stdout)
-
-
-app.config.update(PERMANENT_SESSION_LIFETIME=600)
-
-if __name__ == '__main__':
-    # shellESpeak("Web server starting")
-    execv('start.sh', '/home/pi/Desktop/RPi_Cam_Web_Interface/')
-    execv('killWebServer.sh 2223',
-          '/home/pi/Desktop/RoboClubStore/MultiPurposePlatform/web/')
-    app.config.update(
-        SESSION_COOKIE_SECURE=True,
-        SESSION_COOKIE_HTTPONLY=True,
-        SESSION_COOKIE_SAMESITE='Lax',
-    )
-    app.run(debug=True, port=2223, host='0.0.0.0')
