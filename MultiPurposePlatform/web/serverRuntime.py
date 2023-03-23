@@ -48,7 +48,7 @@ currentTilt = 0
 lastRecording = 0
 streamAllowed = True
 
-targetMicName = 'bcm2835 Headphones: - (hw:0,0)'
+targetMicName = 'CM383-80864: USB Audio (hw:1,0)'
 
 import time, os, sys, contextlib
 
@@ -90,7 +90,7 @@ def doRecord(duration=10.0):
 
     if foundUSBMic == False or dev_index == -1:
         print("USB MIC NOT FOUND")
-        shellESpeak("USB MIC NOT FOUND")
+        # shellESpeak("USB MIC NOT FOUND")
 
     if foundUSBMic:
         form_1 = pyaudio.paInt16  # 16-bit resolution
@@ -131,7 +131,7 @@ def doRecord(duration=10.0):
         wavefile.writeframes(b''.join(frames))
         wavefile.close()
 
-        doDenoiseOFRecording(outputRawWavFileName,outputDeNoiseWavFilename)
+        # doDenoiseOFRecording(outputRawWavFileName,outputDeNoiseWavFilename)
 
         frames.clear()
 
@@ -338,9 +338,10 @@ def startRecording():
                 seconds = opt[key].strip()
         seconds = float(seconds)
         if seconds > 0:
-            shellESpeak("Recording started")
+            # shellESpeak("Recording started")
             doRecord(float(seconds))
-            shellESpeak("Recording complete")
+            print("RECORDING COMPLETE")
+            # shellESpeak("Recording complete")
     return ''
 
 
@@ -350,20 +351,19 @@ def doLatestPlaybackOnPlatform():
     doLastRecordingPlayback((GetThisPath()+'/USBMicRecRaw.wav'), 4096)
     return ''
 
-@srt.route('/getRecording_denoised')
-def getRecording_denoised():
-    return send_file((GetThisPath()+'/USBMicRecDeNoise.wav'),
-                     mimetype="audio/wav",
-                     as_attachment=True,
-                     attachment_filename="USBMicRecDeNoise.wav")
+# @srt.route('/getRecording_denoised')
+# def getRecording_denoised():
+#     return send_file((GetThisPath()+'/USBMicRecDeNoise.wav'),
+#                      mimetype="audio/wav",
+#                      as_attachment=True,
+#                      attachment_filename="USBMicRecDeNoise.wav")
                      
 
 @srt.route('/getRecording_raw')               
 def getRecording_raw():
     return send_file((GetThisPath()+'/USBMicRecRaw.wav'),
                      mimetype="audio/wav",
-                     as_attachment=True,
-                     attachment_filename="USBMicRecRaw.wav")
+                     as_attachment=True)
 
 
 # oLEDDisplayTxt

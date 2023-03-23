@@ -4,6 +4,8 @@ import subprocess
 from createApp import create_app, db
 import sqlite3
 from sqlite3 import Error
+from flask import url_for
+from waitress import serve
 # refactored with authentication via https://github.com/do-community/flask_auth_scotch/tree/master/project
 
 app = None
@@ -72,4 +74,8 @@ if __name__ == '__main__':
     setupTables()
     
     app = create_app()
-    app.run(debug=False, port=2223, host='0.0.0.0')
+
+    print("Running server..")
+    # app.run(debug=False, port=2223, host='0.0.0.0')  #debug mode   
+    serve(app, port=2223)  #production
+    

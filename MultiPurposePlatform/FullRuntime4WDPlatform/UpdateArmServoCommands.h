@@ -96,7 +96,8 @@ void EnableArmServos()
 void doPulseLerp(MotorName motorName, int servoIndex, int finalAng)
 {
 
-  PrintfOneVar(100, "Ang: %d.", finalAng);
+  PrintfOneVar(100, "doPulseLerp->Ang: %d.", finalAng);
+  PrintfOneVar(100, "doPulseLerp->servoIndex: %d.", servoIndex);
   pwm.setPWM(servoIndex, 0, map(finalAng, 0, 180, SERVOMIN, SERVOMAX));
 
   int finalPulse = map(finalAng, 0, 180, SERVOMIN, SERVOMAX);

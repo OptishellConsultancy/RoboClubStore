@@ -41,7 +41,7 @@ Examples
 
 E.g.
 <In>6Axis[B.45] Base 5 degrees
-<In>6Axis[BT.70] Base Tilt  40 degrees
+<In>6Axis[BT.10] Base Tilt  40 degrees
 <In>6Axis[E.30] Elbow 70 degrees
 <In>6Axis[WE.10] Wrist Elevate 90 degrees
 <In>6Axis[WR.70] Wrist rotate 5 degrees

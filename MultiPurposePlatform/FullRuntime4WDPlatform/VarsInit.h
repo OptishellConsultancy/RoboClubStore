@@ -106,7 +106,7 @@ int Ang6Axis_WristElevate;
 int Ang6Axis_WristRotate;
 int Ang6Axis_Claw;
 
-int motorIndex[6] = {1, 3, 11, 12, 14, 15};
+int motorIndex[6] = {1, 2, 11, 12, 14, 15};
 
 #define stepsPerPWM 10
 #define delayPerPWN 50

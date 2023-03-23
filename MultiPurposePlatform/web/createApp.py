@@ -1,7 +1,7 @@
 
 
 
-from flask import Flask
+from flask import Flask, url_for
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager 
 import os
@@ -19,11 +19,11 @@ def create_app():
     app = Flask(__name__)
     app.config.update(PERMANENT_SESSION_LIFETIME=600)
 
-    app.config.update(
-        SESSION_COOKIE_SECURE=True,
-        SESSION_COOKIE_HTTPONLY=True,
-        SESSION_COOKIE_SAMESITE='Lax',
-    )
+    # app.config.update(
+    #     SESSION_COOKIE_SECURE=True,Z
+    #     SESSION_COOKIE_HTTPONLY=True,
+    #     SESSION_COOKIE_SAMESITE='Lax',
+    # )
 
     app.config['SECRET_KEY'] = '9OLWxND4o83j4K4iuopO'
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(app.root_path, dbName)

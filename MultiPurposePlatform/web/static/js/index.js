@@ -175,11 +175,11 @@ function dolocalPlayback(e) {
 
 
 
-function getRecordingDeNoised (e) {
-  e.preventDefault(); // avoid page refresh
-  audio = $("#micRecAndPlayback #micRecPlaybackOnWebForm #audio")
-  audio.attr("src", window.location.origin + '/getRecording_denoised');
-}
+// function getRecordingDeNoised (e) {
+//   e.preventDefault(); // avoid page refresh
+//   audio = $("#micRecAndPlayback #micRecPlaybackOnWebForm #audio")
+//   audio.attr("src", window.location.origin + '/getRecording_denoised');
+// }
 
 function getRecordingRaw (e) {
     e.preventDefault(); // avoid page refresh

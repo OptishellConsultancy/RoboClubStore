@@ -67,6 +67,11 @@ python3 -m  pipreqs.pipreqs .
 
 Note on utilising usb soundcard:
 //------------------------------------
+
+sudo aptitude install libc6=2.31-0ubuntu9.2
+sudo apt-get -y install curl && curl -sL https://dtcooper.github.io/raspotify/install.sh | sh
+-Note if you get isntall issues, donwload directly the deb file from : https://dtcooper.github.io/raspotify/raspotify-latest_arm64.deb
+
 cat /proc/asound/cards
 
 cat /proc/asound/card1/pcm0p/info
@@ -90,8 +95,8 @@ And change :
 defaults.pcm.card 0
 defaults.pcm.device 0
 to:
-defaults.pcm.card 1
-defaults.pcm.device 1
+defaults.pcm.card 2
+defaults.pcm.device 2
 
 The reboot, finally customise volume with:
 alsamixer -c 1
@@ -100,7 +105,20 @@ Use arrow keys and enter/space to set (Recommended to set to 98)
 RECOMMENDED: Alsa config tool: https://github.com/JasonLG1979/asound-conf-wizard
 -The built output runtime is included in this repo:
 run ./awiz and follow instructions
+then run 'speaker-test'
+then 'alsamixer' to configure sound level
+then 'sudo systemctl restart raspotify'
+then 'sudo nano /etc/default/raspotify' to configure
+then 'sudo nano /etc/asound.conf' - make sure device setting look ok
 
-To set default audio output device:
-run alsamixer, then:
-sudo alsactl store
+for debugging check the service:
+'sudo systemctl status raspotify'
+
+
+
+If you get stuck:
+sudo apt-get purge alsa-utils
+sudo apt-get install alsa-utils
+
+https://github.com/dtcooper/raspotify/wiki/Troubleshooting
+
