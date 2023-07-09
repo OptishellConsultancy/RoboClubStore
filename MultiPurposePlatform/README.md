@@ -120,5 +120,16 @@ If you get stuck:
 sudo apt-get purge alsa-utils
 sudo apt-get install alsa-utils
 
-https://github.com/dtcooper/raspotify/wiki/Troubleshooting
+NOTE:
+There is an issure installing raspotify, the fix is to install this version:
+
+
+Ensure you're running debian 11: https://linuxize.com/post/how-to-upgrade-debian-10-to-debian-11/ + (sudo apt install gcc-8-base if error on full upgrade)
+sudo systemctl reboot
+sudo apt install raspotify
+
+
+Check what version of debian you're on with:
+cat /etc/os-release
+
 
