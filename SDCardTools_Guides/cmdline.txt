@@ -1,0 +1,4 @@
+console=tty1 console=serial0,115200 root=PARTUUID=ea7d04d6-02 rootfstype=ext4 elevator=deadline fsck.repair=yes rootwait quiet splash plymouth.ignore-serial-consoles
+init=/bin/sh
+systemd.restore_state=0
+rfkill.default_state=1

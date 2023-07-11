@@ -3,3 +3,5 @@ https://elinux.org/RPi-Cam-Web-Interface
 git clone https://github.com/silvanmelchior/RPi_Cam_Web_Interface.git
 E.g:
 http://JamiesPi:80/picamFeed
+
+NOTE: Bullseye requires php 7.4 - use the ./install script to match installed version
