@@ -11,7 +11,7 @@
 #define MQTT_SERV "io.adafruit.com"
 #define MQTT_PORT 1883
 #define MQTT_NAME "JShelley"
-#define MQTT_PASS "aio_OVXA57A2GPFx5XncVC7T8HBzBgzz" // Adafruit IO Key is a string of characters that can be found by pressing the gold key button on your dashboard
+#define MQTT_PASS "<Your key>" // Adafruit IO Key is a string of characters that can be found by pressing the gold key button on your dashboard
 
 WiFiClient client;
 Adafruit_MQTT_Client mqtt(&client, MQTT_SERV, MQTT_PORT, MQTT_NAME, MQTT_PASS);
