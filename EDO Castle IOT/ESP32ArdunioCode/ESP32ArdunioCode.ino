@@ -3,15 +3,15 @@
 #include "Adafruit_MQTT.h"
 #include "Adafruit_MQTT_Client.h"
 // https://io.adafruit.com/JShelley/dashboards/edolightcontrol
-
+#include "settings.h"
 // WIFI//////////////////////
 #define WIFI_SSID "8Glaives0"
 #define WIFI_PASS "Homeworld!"
 // MQTT//////////////////////
-#define MQTT_SERV "io.adafruit.com"
-#define MQTT_PORT 1883
-#define MQTT_NAME "JShelley"
-#define MQTT_PASS "<Your key>" // Adafruit IO Key is a string of characters that can be found by pressing the gold key button on your dashboard
+//#define MQTT_SERV "io.adafruit.com"
+//#define MQTT_PORT 1883
+//#define MQTT_NAME "<your username from in a settings.h file>"
+//#define MQTT_PASS "<your oi key from in a settings.h file>" // Adafruit IO Key is a string of characters that can be found by pressing the gold key button on your dashboard
 
 WiFiClient client;
 Adafruit_MQTT_Client mqtt(&client, MQTT_SERV, MQTT_PORT, MQTT_NAME, MQTT_PASS);
