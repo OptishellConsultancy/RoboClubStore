@@ -66,9 +66,9 @@ def setupTables():
 
 if __name__ == '__main__':
     # shellESpeak("Web server starting")
-    execv('start.sh', '/home/pi/Desktop/RPi_Cam_Web_Interface/')
+    # execv('start.sh', '/home/pi/Desktop/RPi_Cam_Web_Interface/')
     execv('killWebServer.sh 2223',
-          '/home/pi/Desktop/RoboClubStore/MultiPurposePlatform/web/')
+          '/home/pi/RoboClubStore/MultiPurposePlatform/web/')
     
 
     setupTables()

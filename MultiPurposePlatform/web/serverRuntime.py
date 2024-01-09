@@ -29,12 +29,17 @@ from scipy import signal
 import math
 from flask import render_template, Blueprint
 from flask_login import login_required, current_user
-
+import cv2
+from picamera2 import Picamera2
 if sys.version_info[0] < 3:
     raise Exception("Python 3 or a more recent version is required.")
 
 fhnd = FunctionHandler()
 
+ # https://github.com/raspberrypi/picamera2/blob/main/examples/opencv_face_detect.py
+picam2 = Picamera2()
+picam2.configure(picam2.create_preview_configuration(main={"format": 'XRGB8888', "size": (1920, 1080)}))
+picam2.start()
 
 # vc = cv2.VideoCapture(0)
 
@@ -520,3 +525,27 @@ def do6DOFARMCmd():
             return 'No motors selected'
 
     return ''
+
+# Camera feed
+#https://www.aranacorp.com/en/stream-video-from-a-raspberry-pi-to-a-web-browser/
+def gen():
+    """Video streaming generator function."""
+    #run sudo modprobe bcm2835-v4l2 allow opencv to search for camera
+    # test this with: ls -ltrh /dev/video*
+    vs = cv2.VideoCapture('udp://127.0.0.1:5800?fifo_size=5000000')
+    vs.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
+    vs.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
+
+    while True:
+        ret,frame=vs.read()
+        ret, jpeg = cv2.imencode('.jpg', frame)
+        frame=jpeg.tobytes()
+        yield (b'--frame\r\n'
+        b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
+    vs.release()
+    cv2.destroyAllWindows()
+
+@srt.route('/video_feed')
+def video_feed():
+    """Video streaming route. Put this in the src attribute of an img tag."""
+    return Response(gen(),mimetype='multipart/x-mixed-replace; boundary=frame')
