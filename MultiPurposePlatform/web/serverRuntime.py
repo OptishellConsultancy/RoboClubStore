@@ -30,16 +30,19 @@ import math
 from flask import render_template, Blueprint
 from flask_login import login_required, current_user
 import cv2
+
+import picamera2 #camera module for RPi camera
 from picamera2 import Picamera2
+from picamera2.encoders import JpegEncoder, H264Encoder
+from picamera2.outputs import FileOutput, FfmpegOutput
+import io
+from threading import Condition
+import libcamera
+
 if sys.version_info[0] < 3:
     raise Exception("Python 3 or a more recent version is required.")
 
 fhnd = FunctionHandler()
-
- # https://github.com/raspberrypi/picamera2/blob/main/examples/opencv_face_detect.py
-picam2 = Picamera2()
-picam2.configure(picam2.create_preview_configuration(main={"format": 'XRGB8888', "size": (1920, 1080)}))
-picam2.start()
 
 # vc = cv2.VideoCapture(0)
 
@@ -527,25 +530,37 @@ def do6DOFARMCmd():
     return ''
 
 # Camera feed
-#https://www.aranacorp.com/en/stream-video-from-a-raspberry-pi-to-a-web-browser/
-def gen():
-    """Video streaming generator function."""
-    #run sudo modprobe bcm2835-v4l2 allow opencv to search for camera
-    # test this with: ls -ltrh /dev/video*
-    vs = cv2.VideoCapture('udp://127.0.0.1:5800?fifo_size=5000000')
-    vs.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
-    vs.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
 
-    while True:
-        ret,frame=vs.read()
-        ret, jpeg = cv2.imencode('.jpg', frame)
-        frame=jpeg.tobytes()
-        yield (b'--frame\r\n'
-        b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
-    vs.release()
-    cv2.destroyAllWindows()
+# https://www.raspberrypi.com/documentation/computers/camera_software.html#getting-started
+# https://github.com/raspberrypi/picamera2/blob/main/examples/mjpeg_server.py
+# https://github.com/RaspberryPi/picamera2
+
+class StreamingOutput(io.BufferedIOBase):
+    def __init__(self):
+        self.frame = None
+        self.condition = Condition()
+
+    def write(self, buf):
+        with self.condition:
+            self.frame = buf
+            self.condition.notify_all()
+
+def genFrames():
+    with picamera2.Picamera2() as camera:
+        output = StreamingOutput()
+        config = camera.create_video_configuration(main={"size": (1920, 1080)})
+        config["transform"] = libcamera.Transform(hflip=1, vflip=1)
+        camera.configure(config)
+        output = StreamingOutput()
+        camera.start_recording(JpegEncoder(), FileOutput(output))
+        while True:
+            with output.condition:
+                output.condition.wait()
+                frame = output.frame
+            yield (b'--frame\r\n'
+                b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
+            
 
 @srt.route('/video_feed')
 def video_feed():
-    """Video streaming route. Put this in the src attribute of an img tag."""
-    return Response(gen(),mimetype='multipart/x-mixed-replace; boundary=frame')
+    return Response(genFrames(),mimetype='multipart/x-mixed-replace; boundary=frame')
