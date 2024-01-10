@@ -68,29 +68,54 @@ pip3 install scipy --force
 cd into MultiPurposePlatform/web
 python3 -m  pipreqs.pipreqs .
 
-
 //--------------------------------------
-Note on utilising usb soundcard:
 Raspotify:
 sudo apt-get -y install curl && curl -sL https://dtcooper.github.io/raspotify/install.sh | sh
 -Note if you get isntall issues, donwload directly the deb file from : https://dtcooper.github.io/raspotify/raspotify-latest_arm64.deb
+https://github.com/dtcooper/raspotify
+'sudo systemctl restart raspotify'
+'sudo nano /etc/default/raspotify' to configure
+'sudo nano /etc/asound.conf' - make sure device setting look ok
 
+for debugging check the service:
+'sudo systemctl status raspotify'
+
+sudo systemctl reboot
+sudo apt install raspotify
+
+https://pimylifeup.com/raspberry-pi-spotify/
+
+#LIBRESPOT_USERNAME="<Your username>"
+#LIBRESPOT_PASSWORD="<Your username>"
+
+//--------------------------------------
+Note on utilising usb soundcard:
+
+Uninstall/reinstall alsa:
+  sudo apt-get remove alsa-utilssudo
+  sudo apt-get remove alsamixer
+  sudo apt-get install alsa-utils
+  sudo apt-get install alsamixer
+  sudo apt install pulseaudio-module-bluetooth
+  pulseaudio --start
+
+
+To set sound output device, mixed results from:
 cat /proc/asound/cards
+aplay -l
+aplay -L | grep CARD
+OR:
+pacmd list-cards
+dmesg | grep -i snd
+lsusb -v
+OR:
+aplay -lL
+OR:
+cat /proc/asound/modules
 
-cat /proc/asound/card1/pcm0p/info
-Should give:
-
-card: 1
-device: 0
-subdevice: 0
-stream: PLAYBACK
-id: USB Audio
-name: USB Audio
-subname: subdevice #0
-class: 0
-subclass: 0
-subdevices_count: 1
-subdevices_avail: 1
+Test with: speaker-test -c2 -twav -l3 -D plughw:4,0 - where '4' is the sound card index
+Update the following to set new defaults:
+sudo nano /etc/asound.conf - enter: 'defaults.pcm.card 4 defaults.ctl.card 4'
 
 
 sudo nano /usr/share/alsa/alsa.conf
@@ -98,35 +123,25 @@ And change :
 defaults.pcm.card 0
 defaults.pcm.device 0
 to:
-defaults.pcm.card 2
-defaults.pcm.device 2
+defaults.pcm.card <card number>
+defaults.pcm.device <card number>
 
-The reboot, finally customise volume with:
-alsamixer -c 1
-Use arrow keys and enter/space to set (Recommended to set to 98)
-
-then 'alsamixer' to configure sound level
-then 'sudo systemctl restart raspotify'
-then 'sudo nano /etc/default/raspotify' to configure
-then 'sudo nano /etc/asound.conf' - make sure device setting look ok
-
-for debugging check the service:
-'sudo systemctl status raspotify'
-
-If you get stuck:
-sudo apt-get purge alsa-utils
-sudo apt-get install alsa-utils
-
-NOTE:
-There is an issue installing raspotify, the fix is to install this version:
-
-Ensure you're running debian 11: https://linuxize.com/post/how-to-upgrade-debian-10-to-debian-11/ + (sudo apt install gcc-8-base if error on full upgrade)
-sudo systemctl reboot
-sudo apt install raspotify
-
-
-Check what version of debian you're on with:
-cat /etc/os-release
-
+'alsamixer' to configure sound level OR set directly amixer set Master 100%
 
 //--------------------------------------
+Duck dns guide!
+https://pimylifeup.com/raspberry-pi-duck-dns/
+.Go duckdns, login get token for chosen domain
+.Create domain 
+sudo mkdir /opt/duckdns/
+sudo mkdir /var/log/duckdns/
+sudo nano /opt/duckdns/duck.sh
+ > Copy the following line:
+   echo url="https://www.duckdns.org/update?domains=<DOMAIN>&token=<TOKEN> | curl -k -o /var/log/duckdns/duck.log -K -
+sudo chmod 700 /opt/duckdns/duck.sh
+sudo crontab -e
+And add: 
+*/3 * * * * /opt/duckdns/duck.sh >/dev/null 2>&1
+
+sudo nano /etc/profile
+/opt/duckdns/duck.sh &
