@@ -1,6 +1,5 @@
 to compile and upload:
 
-
 bash compileAndUpload.sh
 
 run python3 PySerialArdunioIF.py.py the press F7. to begin API runtime.
@@ -80,21 +79,13 @@ sudo apt install raspotify
 
 https://pimylifeup.com/raspberry-pi-spotify/
 
+sudo nano /etc/raspotify/conf
 #LIBRESPOT_USERNAME="<Your username>"
 #LIBRESPOT_PASSWORD="<Your username>"
 
 //--------------------------------------
-Note on utilising usb soundcard:
-
-Uninstall/reinstall alsa:
-  sudo apt-get remove alsa-utilssudo
-  sudo apt-get remove alsamixer
-  sudo apt-get install alsa-utils
-  sudo apt-get install alsamixer
-  sudo apt install pulseaudio-module-bluetooth
-  pulseaudio --start
-
-
+Sound test:
+NOTE: espeak is required for this framework - 'sudo apt-get install speak'
 To set sound output device, mixed results from:
 cat /proc/asound/cards
 aplay -l
@@ -112,17 +103,9 @@ Test with: 'speaker-test -c2 -twav -l3 -D plughw:4,0' - where '4' is the sound c
 Update the following to set new defaults:
 sudo nano /etc/asound.conf - enter: 'defaults.pcm.card 4 defaults.ctl.card 4'
 
-
-sudo nano /usr/share/alsa/alsa.conf
-And change :
-defaults.pcm.card 0
-defaults.pcm.device 0
-to:
-defaults.pcm.card <card number>
-defaults.pcm.device <card number>
-
-'alsamixer' to configure sound level OR set directly amixer set Master 100%
-
+//--------------------------------------
+Pipewire - bookworm > raspbian audio info:
+systemctl status pipewire-pulse
 //--------------------------------------
 Duck dns guide!
 https://pimylifeup.com/raspberry-pi-duck-dns/
@@ -142,3 +125,7 @@ And add:
 Startup addition:
 sudo nano /etc/profile
 sudo /opt/duckdns/duck.sh &
+
+//--------------------------------------
+git ssh add
+https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent

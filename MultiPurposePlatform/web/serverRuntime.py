@@ -56,7 +56,7 @@ currentTilt = 0
 lastRecording = 0
 streamAllowed = True
 
-targetMicName = 'CM383-80864: USB Audio (hw:1,0)'
+targetMicName = 'CM383-80864: USB Audio (hw:3,0)'
 
 import time, os, sys, contextlib
 
@@ -195,7 +195,7 @@ def doLastRecordingPlayback(wav_input_filename, chunk=1024):
 
 
 @sigsev_guard(default_value=-1, timeout=600)
-def shellESpeak(text, devicepcm = 'plughw:CARD=Audio,DEV=0'):
+def shellESpeak(text, devicepcm = 'plughw:4,0'):
     #run aplay -l to get available devices
     #run aplay --list-pcms  to get available pcm
     # Test:
@@ -349,7 +349,7 @@ def startRecording():
             # shellESpeak("Recording started")
             doRecord(float(seconds))
             print("RECORDING COMPLETE")
-            # shellESpeak("Recording complete")
+            shellESpeak("Recording complete")
     return ''
 
 
@@ -546,7 +546,8 @@ class StreamingOutput(io.BufferedIOBase):
             self.condition.notify_all()
 
 def genFrames():
-    with picamera2.Picamera2() as camera:
+    try:
+        camera = picamera2.Picamera2()    
         output = StreamingOutput()
         config = camera.create_video_configuration(main={"size": (1920, 1080)})
         config["transform"] = libcamera.Transform(hflip=1, vflip=1)
@@ -557,9 +558,9 @@ def genFrames():
             with output.condition:
                 output.condition.wait()
                 frame = output.frame
-            yield (b'--frame\r\n'
-                b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
-            
+            yield (b'--frame\r\n' b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
+    except:   
+        camera.close()
 
 @srt.route('/video_feed')
 def video_feed():
