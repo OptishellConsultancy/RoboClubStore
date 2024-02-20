@@ -32,6 +32,25 @@ function auto_height(elem) {  /* javascript */
   elem.style.height = "30px";
   elem.style.height = (elem.scrollHeight) + "px";
 }
+
+
+function toggleocvDNNAnalysis(chkBox, togChkId, cacheVarName) {
+  $.ajax({
+    url: '/toggleocvDNNAnalysis',
+    type: 'POST',
+    dataType: "json",
+    success: function (toggleocvDNNAnalysisData) {
+      if (GPSOLEDDisplayData.length > 0) {
+        console.log("toggleocvDNNAnalysisData" + JSON.stringify(toggleocvDNNAnalysisData));
+        localStorage.setItem(cacheVarName, toggleocvDNNAnalysisData["nowState"]);
+
+        elementFromId = document.getElementById(togChkId);
+        elementFromId.style.display = (chkBox.checked === true) ? "block" : "none";
+      }
+    }
+  });
+}
+
 //GPSOLEDDisplay----------------------------------------------------------------
 
 function toggleGPSOLEDDisplay() {

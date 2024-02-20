@@ -4,16 +4,13 @@
 from ast import While
 from tkinter import E
 from flask import Flask, render_template, make_response, redirect, Response, request, send_file
-import numpy
-# import numpy.core.multiarray
-# import cv2 #Potential future method for image recog, e.g :https://realpython.com/face-detection-in-python-using-a-webcam/
-# For now, we use rpi_cam feed in the index.html for basic vid feed
+
 
 from werkzeug.http import dump_cookie
 from FunctionHandler import FunctionHandler
 import sys
 import subprocess
-import os  # imports OS library for Shutdown control
+import os 
 from flask.sessions import SecureCookieSessionInterface
 import json
 from datetime import datetime
@@ -29,15 +26,9 @@ from scipy import signal
 import math
 from flask import render_template, Blueprint
 from flask_login import login_required, current_user
-import cv2
 
-import picamera2 #camera module for RPi camera
-from picamera2 import Picamera2
-from picamera2.encoders import JpegEncoder, H264Encoder
-from picamera2.outputs import FileOutput, FfmpegOutput
-import io
-from threading import Condition
-import libcamera
+from imageProcessing import getFrames, genFrames, updateImgPrcing_DNNEnbld
+
 
 if sys.version_info[0] < 3:
     raise Exception("Python 3 or a more recent version is required.")
@@ -49,6 +40,7 @@ fhnd = FunctionHandler()
 doGPSOLEDPrint = False
 doUltraSonicOLEDPrint = False
 doAccMagOLEDPrint = False
+doOCVDNNAnyls = False
 
 currentPan = 0
 currentTilt = 0
@@ -221,6 +213,19 @@ def ToggledoGPSOLEDPrint():
     infoDict = {}
     info_list = []
     infoDict['nowState'] = doGPSOLEDPrint
+    info_list.append(infoDict)
+    return json.dumps(info_list)
+
+
+@srt.route("/toggleocvDNNAnalysis", methods=['POST'])
+def ToggleocvDNNAnalysis():
+    global doOCVDNNAnyls  # Use global scope
+    doOCVDNNAnyls = not doOCVDNNAnyls
+    print("doOCVDNNAnyls is" + str(doOCVDNNAnyls))
+    updateImgPrcing_DNNEnbld(doOCVDNNAnyls)
+    infoDict = {}
+    info_list = []
+    infoDict['nowState'] = doOCVDNNAnyls
     info_list.append(infoDict)
     return json.dumps(info_list)
 
@@ -529,39 +534,11 @@ def do6DOFARMCmd():
 
     return ''
 
-# Camera feed
+     
+genFrames() # starting camera thread on start of server
 
-# https://www.raspberrypi.com/documentation/computers/camera_software.html#getting-started
-# https://github.com/raspberrypi/picamera2/blob/main/examples/mjpeg_server.py
-# https://github.com/RaspberryPi/picamera2
 
-class StreamingOutput(io.BufferedIOBase):
-    def __init__(self):
-        self.frame = None
-        self.condition = Condition()
-
-    def write(self, buf):
-        with self.condition:
-            self.frame = buf
-            self.condition.notify_all()
-
-def genFrames():
-    try:
-        camera = picamera2.Picamera2()    
-        output = StreamingOutput()
-        config = camera.create_video_configuration(main={"size": (1920, 1080)})
-        config["transform"] = libcamera.Transform(hflip=1, vflip=1)
-        camera.configure(config)
-        output = StreamingOutput()
-        camera.start_recording(JpegEncoder(), FileOutput(output))
-        while True:
-            with output.condition:
-                output.condition.wait()
-                frame = output.frame
-            yield (b'--frame\r\n' b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
-    except:   
-        camera.close()
 
 @srt.route('/video_feed')
 def video_feed():
-    return Response(genFrames(),mimetype='multipart/x-mixed-replace; boundary=frame')
+    return Response(getFrames(),mimetype='multipart/x-mixed-replace; boundary=frame')
