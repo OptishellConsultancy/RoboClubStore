@@ -69,7 +69,7 @@ sudo apt-get -y install curl && curl -sL https://dtcooper.github.io/raspotify/in
 https://github.com/dtcooper/raspotify
 'sudo systemctl restart raspotify'
 'sudo nano /etc/default/raspotify' to configure
-'sudo nano /etc/asound.conf' - make sure device setting look ok
+Make sure LIBRESPOT_DEVICE="plughw:4,0" - or any other device
 
 for debugging check the service:
 'sudo systemctl status raspotify'
