@@ -19,9 +19,21 @@ import urllib.request
 import numpy as np
 from PIL import Image, ImageDraw, ImageFont
 
+# 1080
+# VIDEO_WIDTH = 1080
+# VIDEO_HEIGHT = 1920
 
-VIDEO_HEIGHT = 1080
-VIDEO_WIDTH = 1920
+# 720
+VIDEO_WIDTH = 1280 
+VIDEO_HEIGHT = 720
+
+# 512x512
+# VIDEO_WIDTH = 512
+# VIDEO_HEIGHT = 512
+
+# 640x480 allegedly max FOV
+# VIDEO_HEIGHT = 640
+# VIDEO_WIDTH = 480
 
 FONT_DEFAULT = cv2.FONT_HERSHEY_SIMPLEX
 
@@ -119,6 +131,7 @@ def genFrames():
         picam2 = picamera2.Picamera2()
         output = StreamingOutput()
         config = picam2.create_video_configuration(main={"size": (VIDEO_WIDTH, VIDEO_HEIGHT), 'format': 'BGR888'})
+        
         config["transform"] = libcamera.Transform(hflip=1, vflip=1)
         picam2.configure(config)
         global camOutput       
